@@ -1,0 +1,197 @@
+<%@ taglib uri="/WEB-INF/tlds/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tlds/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tlds/fmt.tld" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/tlds/c.tld" prefix="c"%>
+<%@	taglib uri="/WEB-INF/tlds/pager-taglib.tld" prefix="pg"%>
+<tiles:insert page="/jsp/plantilla/plantilla.jsp">
+	<tiles:put name="titulo" direct="true">
+		<bean:message key="principal.titulo" bundle="etiquetas" />
+	</tiles:put>
+	<tiles:put name="titulopagina" content="Búsqueda de Siniestros" direct="true" />
+	<tiles:put name="itemsup" content="/jsp/comunes/items.jsp" />
+	<tiles:put name="itemsdown" content=" " direct="true" />
+	<tiles:put name="cuerpo" direct="true">
+	<input type="hidden" id="idSiniPadre" name="idSiniPadre" />
+	<input type="hidden" id="anioSiniPadre" name="anioSiniPadre" />
+		<c:if test="${titular!=null}">
+			<div style="overflow: visible">
+			<table class="tabla" cellpadding="2" cellspacing="1" border="0">
+				<div class="textorange" style="padding-bottom: 5px">Datos del Asegurado</div>
+				<tr class="tituloCabecera">
+					<td align="left" bgcolor="white" colspan="8"><img width="160" height="120"
+						src="<%=request.getContextPath()%>/security/foto/downloadFoto.do?cedula=<c:out value="${titular.beneficiario.cedula}" />"></td>
+				</tr>
+				<tr class="tituloCabecera">
+					<td><bean:message key="general.cedula" bundle="etiquetas" /></td>
+					<td><bean:message key="general.nombres" bundle="etiquetas" /></td>
+					<td><bean:message key="general.apellidos" bundle="etiquetas" /></td>
+					<td><bean:message key="general.fechanac" bundle="etiquetas" /></td>
+					<td><bean:message key="general.parentesco" bundle="etiquetas" /></td>
+					<td><bean:message key="general.estado" bundle="etiquetas" /></td>
+					<td><bean:message key="general.edad" bundle="etiquetas" /></td>
+					<td><bean:message key="general.estatus" bundle="etiquetas" /></td>
+				</tr>
+				<tr class="item" bgcolor="white" >
+				
+					<td><c:out value="${titular.beneficiario.cedula}" /></td>
+					<td><c:out value="${titular.beneficiario.nombres}" /></td>
+					<td><c:out value="${titular.beneficiario.apellidos}" /></td>
+					<td><fmt:formatDate pattern="dd/MM/yyyy" value="${titular.beneficiario.fechaNacimiento}" /></td>
+					<td><c:out value="${titular.beneficiario.parentesco}" /></td>
+					<td><c:out value="${titular.beneficiario.estado}" /></td>
+					<td><c:out value="${titular.beneficiario.edad}" /></td>
+					<td><c:out value="${titular.beneficiario.estatus}" /></td>
+                    
+                    <input type="hidden" name="cedTitular" value="<c:out value="${titular.cedula}" />" />
+                    <input type="hidden" name="id" value="<c:out value="${titular.beneficiario.cedula}" />" />
+				</tr>
+				<tr class="cgp" bgcolor="white">
+					<td align="right" colspan="8"><a class="turq" href="<%=request.getContextPath()%><c:out value='${myhref}'/>?paramNewSini=nuevo&requestCedBeneficiario=<c:out value='${titular.beneficiario.cedula}'/>&requestCedTitular=<c:out value='${titular.cedula}'/>">Nuevo Siniestro</a></td>
+				</tr>
+			</table>
+			<!-- div class="sp5"></div>
+			<div class="textorange" style="padding-bottom: 5px">Datos del Titular</div>
+			<table class="tabla" width="600" cellpadding="2" cellspacing="1" border="0">
+				<tr class="tituloCabecera">
+					<td><bean:message key="general.cedula" bundle="etiquetas" /></td>
+					<td><bean:message key="general.nombres" bundle="etiquetas" /></td>
+					<td><bean:message key="general.apellidos" bundle="etiquetas" /></td>
+					<td><bean:message key="general.fechanac" bundle="etiquetas" /></td>
+					<td><bean:message key="general.edocivil" bundle="etiquetas" /></td>
+					<td><bean:message key="general.cargo" bundle="etiquetas" /></td>
+					<td><bean:message key="general.telefono" bundle="etiquetas" /></td>
+					<td><bean:message key="general.estado" bundle="etiquetas" /></td>
+				</tr>
+				<tr class="item" bgcolor="white" onclick="javaScript:submit2('<c:out value="${titular.cedula}" />', '1')">
+					<td><c:out value="${titular.cedula}" /></td>
+					<td><c:out value="${titular.nombres}" /></td>
+					<td><c:out value="${titular.apellidos}" /></td>
+					<td><fmt:formatDate pattern="dd/MM/yyyy" value="${titular.fechaNacimiento}" /></td>
+					<td><c:out value="${titular.estadoCivil}" /></td>
+					<td><c:out value="${titular.cargo}" /></td>
+					<td><c:out value="${titular.telefono}" /></td>
+					<td><c:out value="${titular.estado}" /></td>
+				</tr>
+			</table--></div>
+			<!--<div class="s10"></div>
+			<div style="overflow: visible">
+			<div class="textorange" style="padding-bottom: 5px">Datos de las Coberturas</div>
+			<table class="tabla" cellpadding="2" cellspacing="1" border="0">
+				<tr class="tituloCabecera">
+					<td width="25px"><bean:message key="general.descripcion" bundle="etiquetas" /></td>
+					<td width="25px"><bean:message key="general.montoCobertura" bundle="etiquetas" /></td>
+					<td width="25px"><bean:message key="general.coberturaAgotada" bundle="etiquetas" /></td>
+					<td width="25px"><bean:message key="general.coberturadisponible" bundle="etiquetas" /></td>
+				</tr>
+				<c:out value="${cobert.desgloseCobertura}" />
+				<c:forEach items="${cobertura}" var="cobert">
+					<tr class="item" bgcolor="white">
+						<td width="25px"><c:out value="${cobert.tipoCobertura.descripcion}" /></td>
+						<td width="25px"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2" value="${cobert.monto}" /></td>
+						<td width="25px"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2" value="${cobert.montoAgotada}" /></td>
+						<td width="25px"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2" value="${cobert.montoDisponible}" /></td>
+					</tr>
+					<%-- c:if test="${cobert.porOrgano}">
+						<tr class="tituloCabecera">
+							<td colspan="4">Desglose Cobertura</td>
+						</tr>
+						<tr class="tituloCabecera">
+							<td width="25px"><bean:message key="general.descripcion" bundle="etiquetas" /></td>
+							<td width="25px"><bean:message key="general.montoCobertura" bundle="etiquetas" /></td>
+							<td width="25px"><bean:message key="general.coberturaAgotada" bundle="etiquetas" /></td>
+							<td width="25px"><bean:message key="general.coberturadisponible" bundle="etiquetas" /></td>
+						</tr>
+						<c:forEach items="${cobert.desgloseCobertura}" var="detalle">
+							<tr class="item" bgcolor="white">
+								<td width="25px"><c:out value="${detalle.organo}" /></td>
+								<td width="25px"><c:out value="${detalle.montoCobertura}" /></td>
+								<td width="25px"><c:out value="${cobert.montoAgotado}" /></td>
+								<td width="25px"><c:out value="${detalle.montoDisponible}" /></td>
+							</tr>
+						</c:forEach>
+					</c:if --%>
+				</c:forEach>
+			</table>
+			</div>
+            
+			--><div class="s10"></div>
+			<div class="textorange" style="padding-bottom: 5px">Listado de Siniestros</div>
+			<div style="overflow: visible">
+			<table class="tabla" width="500" cellpadding="0" cellspacing="1" border="0">
+				<tr class="tituloCabecera">
+					<td>Número de Siniestro</td>
+					<td>Fecha Ocurrencia</td>
+					<td>Fecha Notif.</td>
+					<td>Servicio</td>
+					<td>Tipo Siniestro</td>
+					<td>Monto Amparado (Bs)</td>
+					<td>Monto Presup. (Bs)</td>
+					<td>Estatus</td>
+					<td>Causa de Ingreso</td>
+				</tr>
+				<pg:pager maxPageItems="<%=20%>" maxIndexPages="10" url="buscarSiniestros.do" isOffset="false" export="offset,currentPageNumber=pageNumber"
+					scope="request">
+					<pg:param name="id"/>
+					<pg:param name="cedTitular"/>
+					<c:forEach items="${siniestros}" var="sini">
+						<pg:item>
+							<c:choose>
+							<c:when test="${sini.subCodigo eq '002'}">
+							<c:set var="varClass">item</c:set>
+							</c:when>
+							<c:otherwise>
+							<c:set var="varClass">itemPadre</c:set>
+							</c:otherwise>
+							</c:choose>
+							
+							<tr class="<c:out value="${varClass}"/>" bgcolor="white" onclick="javaScript:if (confirm('¿Desea crear una secuela de este siniestro?')){submit2('<c:out value="${sini.id}" />','<c:out value="${sini.anioSiniestro}" />')}">
+								<td><c:out
+									value="${sini.numero}" />
+									</td>
+								<td><fmt:formatDate pattern="dd/MM/yyyy" value="${sini.fechaOcurrencia}" /></td>
+								<td><fmt:formatDate pattern="dd/MM/yyyy" value="${sini.fechaNotificacion}" /></td>
+								<td><c:out value="${sini.lsTipoTramite}" /></td>
+								<td><c:out value="${sini.lsTipoSiniestro}" /></td>
+								<td align="right"><fmt:formatNumber minFractionDigits="2"
+							maxFractionDigits="2" value="${sini.lsMontoAmparado}" /></td>
+								<td align="right"><fmt:formatNumber minFractionDigits="2"
+							maxFractionDigits="2" value="${sini.lsMontoPresupuestado}" /></td>
+								<td><c:out value="${sini.lsEstatus}" /></td>
+								<td><c:out value="${sini.lsCausaIngreso}" /></td>
+							</tr>
+						</pg:item>
+					</c:forEach>
+					<pg:index>
+						<tr bgcolor="#FFFFFF">
+							<td colspan="9" width="100%" align="right" class="textblue"><pg:prev export="pageUrl">
+								<IMG height="11" src="<%=request.getContextPath()%>/images/left1.gif" width="10" align="middle">&nbsp; 
+					<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value='${pageUrl}'/>">Anterior</a>
+							</pg:prev>&nbsp; | <pg:pages>
+								<c:choose>
+									<c:when test="${pageNumber==currentPageNumber}">
+										<c:out value="${pageNumber}" />
+									</c:when>
+									<c:otherwise>
+										<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value='${pageUrl}'/>"> <c:out value="${pageNumber}" /> </a>
+									</c:otherwise>
+								</c:choose>
+							</pg:pages>| <pg:next export="pageUrl">
+								<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value="${pageUrl}"/>"> Siguiente</a>&nbsp;<IMG height="11"
+									src="<%=request.getContextPath()%>/images/right1.gif" width="10" align="middle">
+							</pg:next>&nbsp;</td>
+						</tr>
+					</pg:index>
+				</pg:pager>
+			</table>
+			</div>
+		</c:if>
+	</tiles:put>
+</tiles:insert>
+<script>
+function submit2(argVal,anio){
+	document.getElementById('idSiniPadre').value=argVal;
+	document.getElementById('anioSiniPadre').value=anio;
+	document.forms[0].action='<%=request.getContextPath()%><c:out value='${myhref}'/>';
+	document.forms[0].submit();
+}
+</script>

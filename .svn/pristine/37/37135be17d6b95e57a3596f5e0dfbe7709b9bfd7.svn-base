@@ -1,0 +1,97 @@
+<%@ taglib uri="/WEB-INF/tlds/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tlds/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tlds/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tlds/fmt.tld" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/tlds/c.tld" prefix="c"%>
+<%@	taglib uri="/WEB-INF/tlds/pager-taglib.tld" prefix="pg"%>
+<tiles:insert page="/jsp/plantilla/plantilla.jsp">
+	<tiles:put name="titulo" direct="true">
+		<bean:message key="principal.titulo" bundle="etiquetas" />
+	</tiles:put>
+	<tiles:put name="titulopagina" content="Liquidación de Reembolsos" direct="true" />
+	<tiles:put name="itemsup" content="/jsp/comunes/items.jsp" />
+	<tiles:put name="itemsdown" content=" " direct="true" />
+	<tiles:put name="cuerpo" direct="true">
+		<input type="hidden" name="id" id="id" />
+
+		<div class="etiqueta titulo cgp">Año</div>
+		<div class="parametro titulo "><html:select name="globalActionForm" property="anioBusqueda">
+			<html:option value="2010">2010</html:option>
+			<html:option value="2011">2011</html:option>
+			<html:option value="2012">2012</html:option>
+			<html:option value="2013">2013</html:option>
+			<html:option value="2014">2014</html:option>
+			<html:option value="2015">2015</html:option>
+			<html:option value="2016">2016</html:option>
+			<html:option value="2017">2017</html:option>
+			<html:option value="2018">2018</html:option>
+			<html:option value="2019">2019</html:option>
+		</html:select></div>
+		<div class="etiqueta titulo cgp"><bean:message key="general.codigo" bundle="etiquetas" /></div>
+		<div class="parametro titulo "><html:text styleClass="cgp" name="globalActionForm" property="codigo" /><html:submit styleClass="boton"
+			value="Buscar" /></div>
+		<div style="overflow: visible; clear: both;">
+		<table class="tabla" width="500" cellpadding="1" cellspacing="1" border="0" bgcolor="yellow">
+			<tr class="tituloCabecera">
+				<td>Código</td>
+				<td>Fecha Notificación.</td>
+				<td>Servicio</td>
+				<td>Tipo Siniestro</td>
+				<td>Monto Amparado (Bs)</td>
+				<td>Monto Presup (Bs)</td>
+				<td>Tipo Enfermedad</td>
+				<td>Estatus</td>
+				<td>Causa de Ingreso</td>
+			</tr>
+			<pg:pager maxPageItems="<%=10%>" maxIndexPages="10" url="bandejaPorLiquidar.do" isOffset="false" export="offset,currentPageNumber=pageNumber"
+				scope="request">
+				<pg:param name="id" />
+				<c:forEach items="${lsSiniestros}" var="s">
+					<pg:item>
+						<tr class="item" bgcolor="white" onclick="javaScript:submit2('<c:out value="${s.id}" />','<c:out value="${s.anioSiniestro}" />')">
+							<td><c:out value="${s.codigo}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${s.fechaNotificacion}" /></td>
+							<td><c:out value="${s.lsTipoTramite}" /></td>
+							<td><c:out value="${s.lsTipoSiniestro}" /></td>
+							<td><c:out value="${s.lsMontoAmparado}" /></td>
+							<td><c:out value="${s.lsMontoPresupuestado}" /></td>
+							<td><c:out value="${s.lsTipoEnfermedad}" /></td>
+							<td><c:out value="${s.lsEstatus}" /></td>
+							<td><c:out value="${s.lsCausaIngreso}" /></td>
+						</tr>
+					</pg:item>
+				</c:forEach>
+				<pg:index>
+					<tr bgcolor="#FFFFFF">
+						<td colspan="9" width="100%" align="right" class="textblue"><pg:prev export="pageUrl">
+							<IMG height="11" src="<%=request.getContextPath()%>/images/left1.gif" width="10" align="middle">&nbsp; 
+					<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value='${pageUrl}'/>">Anterior</a>
+						</pg:prev>&nbsp; | <pg:pages>
+							<c:choose>
+								<c:when test="${pageNumber==currentPageNumber}">
+									<c:out value="${pageNumber}" />
+								</c:when>
+								<c:otherwise>
+									<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value='${pageUrl}'/>"> <c:out value="${pageNumber}" /> </a>
+								</c:otherwise>
+							</c:choose>
+						</pg:pages>| <pg:next export="pageUrl">
+							<a style="cursor: hand; cursor: pointer;" class="textorange" href="<c:out value="${pageUrl}"/>"> Siguiente</a>&nbsp;<IMG height="11"
+								src="<%=request.getContextPath()%>/images/right1.gif" width="10" align="middle">
+						</pg:next>&nbsp;</td>
+					</tr>
+				</pg:index>
+			</pg:pager>
+		</table>
+		</div>
+	</tiles:put>
+</tiles:insert>
+<script>
+function submit2(arg,arg2){
+document.forms[0].action='<%=request.getContextPath()%>/security/aps/liquidacion/liquidarAps.do';
+document.getElementById('id').value=arg;
+document.forms[0].anioSiniestro.value=arg2;
+document.forms[0].submit();
+}
+
+</script>

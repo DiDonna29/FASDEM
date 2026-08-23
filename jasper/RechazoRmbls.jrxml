@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="RechazoRmbls"
+
+		 language="groovy"		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="528"
+		 columnSpacing="0"
+		 leftMargin="42"
+		 rightMargin="42"
+		 topMargin="42"
+		 bottomMargin="42"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="85" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="RUTA" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="id" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="anio" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="nombres_usuario" isForPrompting="false" class="java.lang.String"/>
+	<queryString><![CDATA[select me.fecha_inicio, me.descripcion as justificacion, s.*,upper(s.apellidos_beneficiario ||', ' || s.nombres_beneficiario)as beneficiario, 
+upper(s.apellidos ||', ' || s.nombres)as titular, tt.descripcion as tipo_tratamiento,ts.descripcion as tipo_siniestro,
+t.descripcion as tratamiento from siniestro s , motivo_estatus me,
+patologia_organo_tratamiento pot,tipo_tratamiento tt, tipo_siniestro ts, tratamiento t
+ where s.anio_siniestro=cast($P{anio} as numeric) and s.id_siniestro=cast($P{id} as numeric)
+ and s.id_patologia_organo_tratamiento=pot.id_pat_org_trat_esp
+ and s.id_tipo_tratamiento=tt.id_tipo_tratamiento
+ and s.id_tipo_siniestro=ts.id_tipo_siniestro
+ and pot.id_tratamiento=t.id_tratamiento
+ and s.id_siniestro=me.id_siniestro
+ and me.fecha_fin is null
+ and me.id_estatus_siniestro=35]]></queryString>
+
+	<field name="fecha_inicio" class="java.sql.Date"/>
+	<field name="justificacion" class="java.lang.String"/>
+	<field name="id_siniestro" class="java.lang.Integer"/>
+	<field name="codigo_siniestro" class="java.lang.String"/>
+	<field name="subcodigo_siniestro" class="java.lang.String"/>
+	<field name="fecha_ocurrencia" class="java.sql.Timestamp"/>
+	<field name="fecha_notificacion" class="java.sql.Timestamp"/>
+	<field name="monto_presupuestado" class="java.lang.Double"/>
+	<field name="id_patologia_organo_tratamiento" class="java.lang.Integer"/>
+	<field name="id_tipo_enfermedad" class="java.lang.Integer"/>
+	<field name="id_proveedor" class="java.lang.Integer"/>
+	<field name="id_tipo_tramite" class="java.lang.Integer"/>
+	<field name="id_tipo_siniestro" class="java.lang.Integer"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="id_tipo_empleado" class="java.lang.Integer"/>
+	<field name="cedula" class="java.lang.String"/>
+	<field name="fecha_nacimiento" class="java.sql.Date"/>
+	<field name="sexo" class="java.lang.String"/>
+	<field name="cedula_beneficiario" class="java.lang.String"/>
+	<field name="sexo_beneficiario" class="java.lang.String"/>
+	<field name="fecha_nacimiento_beneficiario" class="java.sql.Date"/>
+	<field name="parentesco" class="java.lang.String"/>
+	<field name="id_estatus" class="java.lang.Integer"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="apellidos" class="java.lang.String"/>
+	<field name="nombres_beneficiario" class="java.lang.String"/>
+	<field name="apellidos_beneficiario" class="java.lang.String"/>
+	<field name="monto_amparado" class="java.lang.Double"/>
+	<field name="fecha_liquidacion" class="java.sql.Date"/>
+	<field name="aniomes_codigo" class="java.lang.String"/>
+	<field name="fecha_modificacion" class="java.sql.Date"/>
+	<field name="fecha_registro" class="java.sql.Timestamp"/>
+	<field name="id_cobertura" class="java.lang.Integer"/>
+	<field name="nacionalidad_titular" class="java.lang.String"/>
+	<field name="nacionalidad_beneficiario" class="java.lang.String"/>
+	<field name="observacion_reporte" class="java.lang.String"/>
+	<field name="cita_post_operatorio" class="java.lang.Boolean"/>
+	<field name="id_tipo_tratamiento" class="java.lang.Integer"/>
+	<field name="fecha_ingreso" class="java.sql.Date"/>
+	<field name="fecha_egreso" class="java.sql.Date"/>
+	<field name="monto_no_amparado" class="java.lang.Double"/>
+	<field name="anio_siniestro" class="java.math.BigDecimal"/>
+	<field name="cita_pre_operatorio" class="java.lang.Boolean"/>
+	<field name="id_dependencia" class="java.lang.Integer"/>
+	<field name="id_usuario" class="java.lang.String"/>
+	<field name="monto_negociado" class="java.lang.Double"/>
+	<field name="beneficiario" class="java.lang.String"/>
+	<field name="titular" class="java.lang.String"/>
+	<field name="tipo_tratamiento" class="java.lang.String"/>
+	<field name="tipo_siniestro" class="java.lang.String"/>
+	<field name="tratamiento" class="java.lang.String"/>
+
+
+		<group  name="obs" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="186"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="3"
+						y="106"
+						width="524"
+						height="20"
+						forecolor="#000000"
+						backcolor="#CCCCCC"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="false"/>
+					</textElement>
+				<text><![CDATA[RECHAZO DE REEMBOLSO]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="130"
+						width="132"
+						height="15"
+						key="textField-1"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+</box>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Estimado Beneficiario:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="145"
+						width="522"
+						height="26"
+						key="textField-12"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+</box>
+					<textElement textAlignment="Justified" markup="html">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Dando respuesta a su solicitud de reembolso, le informamos que una vez evaluados y analizados los recaudos presentados con nuestro mayor interes de satisfacerle, lamentamos participarle que el caso no es procedente."]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="171"
+						width="523"
+						height="15"
+						key="textField-13"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Dicha información se toma de acuerdo a lo siguiente:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="4"
+						width="95"
+						height="19"
+						key="textField-21"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Ciudadano(a): "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="23"
+						width="95"
+						height="19"
+						key="textField-22"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Presente.- "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="97"
+						y="4"
+						width="430"
+						height="18"
+						key="textField-23"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{titular}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="245"
+						y="25"
+						width="89"
+						height="15"
+						key="staticText-12"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Nro.  De Siniestro:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="245"
+						y="40"
+						width="89"
+						height="15"
+						key="staticText-13"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Titular:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="307"
+						y="55"
+						width="27"
+						height="15"
+						key="staticText-14"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[C.I.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="245"
+						y="70"
+						width="89"
+						height="15"
+						key="staticText-15"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Beneficiario:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="307"
+						y="85"
+						width="27"
+						height="15"
+						key="staticText-16"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[C.I.:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="333"
+						y="25"
+						width="194"
+						height="15"
+						key="textField-24"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["DEM-"+$F{aniomes_codigo}+"-"+$F{codigo_siniestro}+"-"+$F{subcodigo_siniestro}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="333"
+						y="40"
+						width="194"
+						height="15"
+						key="textField-25"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{titular}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="333"
+						y="55"
+						width="194"
+						height="15"
+						key="textField-26"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cedula}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="333"
+						y="70"
+						width="194"
+						height="15"
+						key="textField-27"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{beneficiario}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="333"
+						y="85"
+						width="194"
+						height="15"
+						key="textField-28"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cedula_beneficiario}]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="52"  isSplitAllowed="true" >
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="0"
+						width="111"
+						height="50"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//fasdem.gif"]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="275"
+						y="6"
+						width="252"
+						height="17"
+						key="textField-20"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new SimpleDateFormat("EEEEE").format(new java.util.Date())+", "
++new SimpleDateFormat("dd").format(new java.util.Date())+" de "
++ new SimpleDateFormat("MMMM").format(new java.util.Date()) + " de "
++ new SimpleDateFormat("yyyy").format(new java.util.Date())]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="40"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="14"
+						width="523"
+						height="17"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{justificacion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="65"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="2"
+						width="523"
+						height="18"
+						key="textField-31"/>
+					<box></box>
+					<textElement>
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Funcionario FASDEM: "+$P{nombres_usuario}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="2"
+						y="20"
+						width="424"
+						height="24"
+						key="staticText-19"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Av. Francisco de miranda, entre calle Elice y la Joya. Edif. Tribunal Supremo de Justicia-Dirección Ejecutiva de la Magistratura. Cod Postal 1060. Chacao. Caracas - Venezuela. Rif. G-20000028-7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="425"
+						y="20"
+						width="98"
+						height="24"
+						key="staticText-20"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DEM.TSJ.GOB.VE]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="426"
+						y="44"
+						width="98"
+						height="18"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="120"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="55"
+						width="528"
+						height="20"
+						key="staticText-17"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="100"
+						width="528"
+						height="20"
+						key="staticText-18"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Por la Dirección Ejecutiva de la Magistratura]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="4"
+						width="527"
+						height="25"
+						key="textField-29"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Se hace constar que la presente comunicación no significa en forma alguna renunciar a cualquier otra respuesta o explicación que existiese"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="29"
+						width="527"
+						height="14"
+						key="textField-30"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Sin mas a que hacer referencia, nos suscribimos de usted."]]></textFieldExpression>
+				</textField>
+			</band>
+		</summary>
+</jasperReport>

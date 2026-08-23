@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Impuesto">
+	<typeAlias alias="ObjImpuesto" type="ve.gob.dem.fasdem.bean.Impuesto"/>
+	<resultMap id="result_all" class="ObjImpuesto">
+		<result property="id" column="id_impuesto" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="monto" column="monto" jdbcType="boolean"/>
+		<result property="estatus" column="estatus" jdbcType="integer"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_impuesto, 
+			descripcion,
+			monto,
+			estatus
+  		FROM 
+			impuesto
+	</sql>
+
+	<select id="list" resultClass="ObjImpuesto" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE estatus='1'
+	</select>
+
+</sqlMap>

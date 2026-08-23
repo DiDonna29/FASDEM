@@ -1,0 +1,462 @@
+package ve.gob.dem.fasdem.action.emergencia;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.DynaActionForm;
+
+import ve.gob.dem.fasdem.bean.Mapa;
+import ve.gob.dem.fasdem.bean.NotaTecnica;
+import ve.gob.dem.fasdem.bean.Persona;
+import ve.gob.dem.fasdem.bean.ServicioEnLinea;
+import ve.gob.dem.fasdem.bean.Siniestro;
+import ve.gob.dem.fasdem.bean.SiniestroBandeja;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.exp.ExpSiniestroBandeja;
+import ve.gob.dem.fasdem.per.PerNotaTecnica;
+import ve.gob.dem.fasdem.per.PerPoliza;
+import ve.gob.dem.fasdem.per.PerSiniestro;
+import ve.gob.dem.framework.exception.CoberturaNotDisponibleException;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.exception.SiniestroNotPermittedException;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Utilidad;
+
+public class CargarEmergencia extends GenericAction {
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		ActionMessages am = new ActionMessages();
+		Entorno ent = new Entorno(Entorno.MOD_EMERGENCIA_NUEVO);
+		request.setAttribute(KEY_TIPO_TRAMITE, TIPO_TRAMITE_EMERGENCIA);
+	
+		request.setAttribute("tlf", request.getParameter("tlf"));
+		request.setAttribute("bb", request.getParameter("bb"));
+		request.setAttribute("tt", request.getParameter("tt"));
+		request.setAttribute("bb", request.getAttribute("bb"));
+		request.setAttribute("tt", request.getAttribute("tt"));
+		PerPoliza pp = new PerPoliza();
+		PerSiniestro ps = new PerSiniestro();
+		PerNotaTecnica pnt = new PerNotaTecnica();	
+		Siniestro siniPadre = null;
+		Mapa mapa = new Mapa();
+		int idSini = -1;
+
+		Siniestro s = null;
+		Date today = new Date();
+		log.info("aqui paso el lider66666 "+request.getAttribute("bb")+",,,,, "+request.getAttribute("tt"));
+		String bb="";
+		bb=(String) request.getAttribute("bb");
+		String ttt="";
+		ttt=(String) request.getAttribute("tt");
+		request.setAttribute("requestCedTitular", ttt);
+		request.setAttribute("requestCedBeneficiario", bb);
+		request.setAttribute("valida_emergencia", 1);
+		Persona t = buscarTitularBeneficiario(request);
+		request.setAttribute("sms", request.getParameter("sms"));
+		//request.setAttribute("tlf", request.getParameter("tlf"));
+		if ("INACTIVO".equals(t.getBeneficiario().getEstatus())) {
+			am.add(ALERT_AVISOS, new ActionMessage("env.general.inactivo"));
+			saveMessages(request, am);
+			return mapping.findForward(FWD_INDEX);
+		}
+
+		String paramSiniPadre = request.getParameter("idSiniPadre");
+		
+		DynaActionForm dForm = (DynaActionForm) form;
+		SiniestroBandeja siniestroBandeja = new SiniestroBandeja();
+		mapa.setAnioSiniestro(getAnioBusqueda(request));
+		if (request.getParameter("paramNewSini") != null) {
+			request.getSession().removeAttribute("siniestroPadre");
+			paramSiniPadre = null;
+		}
+
+		if (paramSiniPadre != null) {
+			
+			mapa.setIdSiniestro(Integer.parseInt(paramSiniPadre));
+			siniPadre = ps.search(mapa);
+		
+			
+			
+			
+
+			// if (siniPadre.getCobertura().getId()==8){ent = new
+			// Entorno(Entorno.MOD_EMERGENCIA_NUEVO_SECUELA);}
+			// else {ent = new Entorno(Entorno.MOD_EMERGENCIA_NUEVO); }
+			if (siniPadre.getTipoTramite().getId() != 1
+					&& siniPadre.getTipoTramite().getId() != 2) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.padreerroneo"));
+				saveMessages(request, am);
+				return mapping.findForward("regreso");
+			} else {
+				if (siniPadre.getEstatus().getId() == 34) {
+					am.add(ALERT_AVISOS, new ActionMessage(
+							"env.general.padreerroneo"));
+					saveMessages(request, am);
+					return mapping.findForward("regreso");
+				}
+				if (siniPadre.getEstatus().getId() == 35) {
+					am.add(ALERT_AVISOS, new ActionMessage(
+							"env.general.padreerroneo"));
+					saveMessages(request, am);
+					return mapping.findForward("regreso");
+				}
+			}
+			request.getSession().setAttribute("siniestroPadre", siniPadre);
+			dForm.set("idCausaIngreso", new Integer(siniPadre
+					.getPatologiaOrganoTratamiento().getId()).toString());
+			dForm.set("causaIngreso", siniPadre.getPatologiaOrganoTratamiento()
+					.getDescripcion());
+			dForm.set("cobertura",
+					String.valueOf(siniPadre.getCobertura().getId()));
+		} else {
+			// ent = new Entorno(Entorno.MOD_EMERGENCIA_NUEVO);
+			siniPadre = (Siniestro) request.getSession().getAttribute(
+					"siniestroPadre");
+		}
+		try {
+			validarAction(request, form, ent, am, this.getClass());
+		} catch (PersonalNotFillItems e) {
+			return mapping.findForward(FWD_INPUT);
+		}
+		if (!"procesar".equals(request.getParameter("accion"))) {
+			return mapping.findForward(FWD_INPUT);
+		} else {
+			mapa = getDForm(request, form, ent);
+			try {
+				log.info("antes find");
+				findDisponible(mapa, mapa.getFechaIngreso());
+				log.info("despues find");
+			} catch (CoberturaNotDisponibleException e) {
+				log.info("catch find");
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.coberuragotada"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			try {
+				permitido(mapa);
+			} catch (SiniestroNotPermittedException e) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.notpermitted"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			if (request.getParameter("fechaIngreso") != ""
+					&& request.getParameter("fechaEgreso") == "") {
+				mapa.setIdEstatus(8);
+			} else {
+				mapa.setIdEstatus(9);
+			}
+			Date fechaMenoss = today;
+			Calendar ff = Calendar.getInstance();
+			SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+			ff.setTime(fechaMenoss);
+			ff.add(Calendar.MONTH, -1);
+			formato.format(ff.getTime());
+			String fecha_menos = formato.format(ff.getTime());
+			Date fecha_menoss = Utilidad
+					.StringToDate(fecha_menos, "dd/MM/yyyy");
+			Date fechaIngreso = mapa.getFechaIngreso();
+			Calendar fff = Calendar.getInstance();
+
+			fff.setTime(fechaIngreso);
+			formato.format(fff.getTime());
+			String fecha_ingreso = formato.format(fff.getTime());
+			Date fecha_ingresoo = Utilidad.StringToDate(fecha_ingreso,
+					"dd/MM/yyyy");
+			if (fecha_ingresoo.compareTo(fecha_menoss) < 0) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.diasdeclaracion"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			if (mapa.getMontoPresupuestado() == 0) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.montosvacios"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			if (mapa.getMontoAmparado() == 0) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.montosvacios"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			if (mapa.getMontoNegociado() == 0) {
+				am.add(ALERT_AVISOS, new ActionMessage(
+						"env.general.montosvacios"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			double montoNoAmparado = mapa.getMontoNegociado()
+					- mapa.getMontoAmparado();
+			mapa.setMontoNoAmparado(montoNoAmparado);
+			mapa.setIdTipoEnfermedad(COD_TIPO_ENFERMEDAD_AGUDA);
+			if (request.getParameter("fechaEgreso") == null
+					|| request.getParameter("fechaEgreso") == "") {
+			} else {
+				mapa.setFechaEgreso(Utilidad.StringToDate(
+						request.getParameter("fechaEgreso"), "dd/MM/yyyy"));
+			}
+			mapa.setFechaOcurrencia(Utilidad.StringToDate(
+					request.getParameter("fechaIngreso"), "dd/MM/yyyy"));
+			mapa.setFechaIngreso(Utilidad.StringToDate(
+					request.getParameter("fechaIngreso"), "dd/MM/yyyy"));
+			mapa.setFechaNotificacion(today);
+			mapa.setIdTipoTramite(COD_TIPO_EMERGENCIA);
+			mapa.setIdProveedor(Integer.parseInt(request.getParameter("idProveedor")));
+			mapa.setIdPoliza(pp.searchActivo().getId());
+			siniPadre = (Siniestro) request.getSession().getAttribute("siniestroPadre");
+			if (siniPadre != null) {
+				mapa.setAnioMesCodigo(siniPadre.getAniomesCodigo());
+				mapa.setCodigo(siniPadre.getCodigo());
+				mapa.setIdSiniestroPadre(siniPadre.getId());
+				mapa.setIdCobertura(siniPadre.getCobertura().getId());
+				mapa.setPatologiaOrganoTratamiento(siniPadre.getPatologiaOrganoTratamiento().getId());
+			}
+			log.info("id roveedor fffff "+ mapa.getIdProveedor());
+			idSini = ps.insert(mapa);
+			////inserción de nota técnica con la observacion del siniestro
+			mapa.setIdSiniestro(idSini);
+			s = ps.search(mapa);
+			NotaTecnica nt = new NotaTecnica();
+			
+			nt.setAnioSiniestro(s.getAnioSiniestro());
+			nt.setIdSiniestro(s.getId());
+			nt.setObservacion(s.getObservacion());
+			nt.setLoginUsuario(usuarioSession(request).getCedula());
+			nt.setIdDependencia(usuarioSession(request).getIdDependencia());
+			//nt.setDesUsuario(usuarioSession(request).getNombre() + " " + usuarioSession(request).getApellido());
+			int idNota = pnt.insert(nt);
+			
+			////fin de inserción 
+
+			incluirTraza(TR_EMERGENCIA_DECLARAR, String.valueOf(idSini),
+					"Cargando Emergencia", usuarioSession(request));
+			mapa.setIdSiniestro(idSini);
+			s = ps.search(mapa);
+			siniestroBandeja.setId_siniestro(idSini);
+			siniestroBandeja.setAnio_siniestro(s.getAnioSiniestro());
+			siniestroBandeja.setId_estatus(1);
+			siniestroBandeja.setAnio_siniestro(s.getAnioSiniestro());
+
+			ExpSiniestroBandeja
+					.InsertarSiniestroBandejaMedicos(siniestroBandeja);
+			s.setAnioSiniestro(s.getAnioSiniestro());
+			request.setAttribute("siniestro", s);
+			request.getSession().setAttribute("siniestroPadre", null);
+			mapa.setIdSiniestro(idSini);
+
+			/*
+			 * idFactura = pf.insertPresupuesto(mapa);
+			 * mapa.setIdFactura(idFactura);
+			 * 
+			 * mapa.setMontoAmbulanciaPresupuestado(Double.parseDouble(request
+			 * .getParameter("montoAmbulanciaPresupuestado")));
+			 * mapa.setMontoFunerariaPresupuestado(Double.parseDouble(request
+			 * .getParameter("montoFunerariaPresupuestado")));
+			 * mapa.setMontoHonorariosMedicosPresupuestado(Double
+			 * .parseDouble(request
+			 * .getParameter("montoHonorariosPresupuestado")));
+			 * mapa.setMontoGastosPresupuestado(Double.parseDouble(request
+			 * .getParameter("montoGastosPresupuestado")));
+			 * mapa.setMontoExamenesEspecialesPresupuestado
+			 * (Double.parseDouble(request
+			 * .getParameter("montoExamenesEspecialesPresupuestado")));
+			 * mapa.setMontoAmbulanciaNegociado(Double.parseDouble(request
+			 * .getParameter("montoAmbulanciaNegociado")));
+			 * mapa.setMontoFunerariaNegociado(Double.parseDouble(request
+			 * .getParameter("montoFunerariaNegociado")));
+			 * mapa.setMontoHonorariosNegociado(Double.parseDouble(request
+			 * .getParameter("montoHonorariosNegociado")));
+			 * mapa.setMontoGastosNegociado(Double.parseDouble(request
+			 * .getParameter("montoGastosNegociado")));
+			 * mapa.setMontoExamenesEspecialesNegociado
+			 * (Double.parseDouble(request
+			 * .getParameter("montoExamenesEspecialesNegociado")));
+			 * mapa.setMontoAmbulancia(Double.parseDouble(request
+			 * .getParameter("montoAmbulancia")));
+			 * mapa.setMontoFuneraria(Double.parseDouble(request
+			 * .getParameter("montoFuneraria")));
+			 * mapa.setMontoHonorariosMedicos(Double.parseDouble(request
+			 * .getParameter("montoHonorariosMedicos")));
+			 * mapa.setMontoGastosClinicos(Double.parseDouble(request
+			 * .getParameter("montoGastosClinicos")));
+			 * mapa.setMontoExamenesEspeciales(Double.parseDouble(request
+			 * .getParameter("montoExamenesEspeciales")));
+			 * mapa.setMontoAmbulanciaNoAmparado(Double.parseDouble(request
+			 * .getParameter("montoAmbulanciaNoAmparado")));
+			 * mapa.setMontoFunerariaNoAmparado(Double.parseDouble(request
+			 * .getParameter("montoFunerariaNoAmparado")));
+			 * mapa.setMontoHonorariosMedicosNoAmparado
+			 * (Double.parseDouble(request
+			 * .getParameter("montoHonorariosMedicosNoAmparado")));
+			 * mapa.setMontoGastosClinicosNoAmparado(Double.parseDouble(request
+			 * .getParameter("montoGastosClinicosNoAmparado")));
+			 * mapa.setMontoExamenesEspecialesNoAmparado(Double
+			 * .parseDouble(request
+			 * .getParameter("montoExamenesEspecialesNoAmparado")));
+			 * 
+			 * if (mapa.getMontoHonorariosMedicosPresupuestado() != 0) {
+			 * 
+			 * mapa.setMontoAmparado(mapa.getMontoHonorariosMedicos());
+			 * mapa.setMontoNoAmparado(mapa
+			 * .getMontoHonorariosMedicosNoAmparado());
+			 * mapa.setMontoNegociado(mapa.getMontoHonorariosNegociado());
+			 * 
+			 * mapa.setMontoPresupuestado(mapa
+			 * .getMontoHonorariosMedicosPresupuestado());
+			 * mapa.setIdTipoGasto(COD_TIPO_GASTO_HONORARIOS);
+			 * 
+			 * pf.insertDetalleFactura(mapa);
+			 * 
+			 * }
+			 * 
+			 * if (mapa.getMontoGastosPresupuestado() != 0) {
+			 * 
+			 * mapa.setMontoAmparado(mapa.getMontoGastosClinicos());
+			 * mapa.setMontoNoAmparado(mapa.getMontoGastosClinicosNoAmparado());
+			 * mapa.setMontoNegociado(mapa.getMontoGastosNegociado());
+			 * 
+			 * mapa.setMontoPresupuestado(mapa.getMontoGastosPresupuestado());
+			 * mapa.setIdTipoGasto(COD_TIPO_GASTO_GASTOS_CLINICOS);
+			 * 
+			 * pf.insertDetalleFactura(mapa);
+			 * 
+			 * } if (mapa.getMontoFunerariaPresupuestado() != 0) {
+			 * 
+			 * mapa.setMontoAmparado(mapa.getMontoFuneraria());
+			 * mapa.setMontoNoAmparado(mapa.getMontoFunerariaNoAmparado());
+			 * mapa.setMontoNegociado(mapa.getMontoFunerariaNegociado());
+			 * 
+			 * mapa.setMontoPresupuestado(mapa
+			 * .getMontoFunerariaPresupuestado());
+			 * mapa.setIdTipoGasto(COD_TIPO_GASTO_FUNERARIOS);
+			 * 
+			 * pf.insertDetalleFactura(mapa);
+			 * 
+			 * } if (mapa.getMontoExamenesEspecialesPresupuestado() != 0) {
+			 * 
+			 * mapa.setMontoAmparado(mapa.getMontoExamenesEspeciales());
+			 * mapa.setMontoNoAmparado(mapa
+			 * .getMontoExamenesEspecialesNoAmparado());
+			 * mapa.setMontoNegociado(mapa
+			 * .getMontoExamenesEspecialesNegociado());
+			 * 
+			 * mapa.setMontoPresupuestado(mapa
+			 * .getMontoExamenesEspecialesPresupuestado());
+			 * mapa.setIdTipoGasto(COD_TIPO_GASTO_EXAMENES_ESPECIALES);
+			 * 
+			 * pf.insertDetalleFactura(mapa);
+			 * 
+			 * } if (mapa.getMontoAmbulanciaPresupuestado() != 0) {
+			 * 
+			 * mapa.setMontoAmparado(mapa.getMontoAmbulancia());
+			 * mapa.setMontoNoAmparado(mapa.getMontoAmbulanciaNoAmparado());
+			 * mapa.setMontoNegociado(mapa.getMontoAmbulanciaNegociado());
+			 * 
+			 * mapa.setMontoPresupuestado(mapa
+			 * .getMontoAmbulanciaPresupuestado());
+			 * mapa.setIdTipoGasto(COD_TIPO_GASTO_AMBULANCIA);
+			 * 
+			 * pf.insertDetalleFactura(mapa);
+			 * 
+			 * }
+			 * 
+			 * listFactura = perFactura.listSearchIdSiniestro(mapa); for (int r
+			 * = 0; r != listFactura.size(); r++) { factura = (Factura)
+			 * listFactura.get(r); factura.getId();
+			 * mapa.setIdFactura(factura.getId());
+			 * mapa.setAnioSiniestro(s.getAnioSiniestro()); listDetalle =
+			 * perFactura.listDetallesFactura(mapa); for (int i = 0; i !=
+			 * listDetalle.size(); i++) { detalleFactura = (Factura)
+			 * listDetalle.get(i); request.setAttribute("factura", factura);
+			 * request.setAttribute("detalleFactura", detalleFactura);
+			 * request.setAttribute("listFactura", listFactura);
+			 * request.setAttribute("listDetalle", listDetalle); }
+			 * 
+			 * }
+			 * 
+			 * request.setAttribute("factura", factura);
+			 * request.setAttribute("detalleFactura", detalleFactura);
+			 * request.setAttribute("listFactura", listFactura);
+			 * request.setAttribute("listDetalle", listDetalle);
+			 */
+	
+		  log.info("ANTES DEL TRY**** "+request.getParameter("sms"));
+          try{
+              log.info("ENTRE AL TRY AQUI EL NUMERO --> "+request.getParameter("tlf"));
+          if ("on".equals(request.getParameter("sms"))) {
+              try {log.info("entre aqui en puente "+request.getParameter("tlf"));
+                  Properties props = new Properties();
+
+              
+                  props.setProperty("mail.smtp.host","smtp3.tsj-dem.gob.ve");
+                
+                  props.setProperty("mail.smtp.port", "25");
+                  Session session1 = Session.getDefaultInstance(props);
+                  MimeMessage messagee = new MimeMessage(session1);
+                  
+                  messagee.setFrom(new InternetAddress("sms-fasdem@tsj-dem.gob.ve"));
+       
+                
+                /////mensajeeeee //////////////////////////
+                messagee.setText("Emerg - fasdem informa su solicitud fue procesada "+s.getAniomesCodigo()+"-"+s.getCodigo()+"-"+s.getSubCodigo()+" en: "+s.getProveedor().getDescripcion()+ ", pcte:" +mapa.getNombresBeneficiario()+" "+mapa.getApellidosBeneficiario()+ " Fecha:"+Utilidad.DateToString(
+				    		s.getFechaOcurrencia(), "dd/MM/yyyy"));
+
+                log.info("mensaje sms --> Emerg - fasdem informa su solicitud fue procesada "+s.getAniomesCodigo()+"-"+s.getCodigo()+"-"+s.getSubCodigo()+" en: "+s.getProveedor().getDescripcion()+ ", pcte:" +mapa.getNombresBeneficiario()+" "+mapa.getApellidosBeneficiario()+ " Fecha:"+Utilidad.DateToString(
+			    		s.getFechaOcurrencia(), "dd/MM/yyyy"));
+            
+
+                  String tlf=request.getParameter("tlf");
+                  tlf=tlf.replace("-", "");
+                  log.info("1entre aqui en puente "+tlf);
+                  //messagee.addRecipient(Message.RecipientType.TO,new InternetAddress(tlf+"@sms.tsj-dem.gob.ve"));
+                  messagee.addRecipient(Message.RecipientType.TO,new InternetAddress(tlf+"@sms.tsj-dem.gob.ve"));
+                  // Lo enviamos.
+                  Transport tt = session1.getTransport("smtp");
+                  log.info("1er entre aqui en puente "+tlf);
+                  tt.send(messagee, messagee.getAllRecipients());
+                  log.info("2do entre aqui en puente "+tlf);
+                  tt.close();
+              } catch (Exception e) {log.info("catch  aqui en puenteeeeeeeeeeeeeeee**** ",e);}
+                  /*ServicioEnLinea sel = (ServicioEnLinea) request.getSession().getAttribute("objPuenteOnline");
+                  ExpSiniestroBandeja.CambiarEstatusSiniestro(sel.getIdSolicitud(), 2, usuarioSession(request).getLogin(), usuarioSession(request).getNombre() + " " + usuarioSession(request).getApellido(), sel.getObservacion());
+                  request.getSession().setAttribute("objPuenteOnline", null);*/
+                  //enviarCorreo(sel.getTelefono(), codigoBandeja);
+              }
+          }
+
+          catch (Exception e) {
+              log.info("2errooooentre aqui en puenteeeeeeeeeeeeeeee**** ",e);
+          }
+          /*
+           * detallesPresupuesto = pf.listDetallesFactura(mapa);
+           * request.setAttribute("listDetalle", detallesPresupuesto);
+           * mapa.setIssFactura(true); facturas=pf.listDetallesFactura(mapa);
+           * request.setAttribute("listFactura", facturas);
+           */
+      am.add(ALERT_AVISOS, new ActionMessage("env.general.sms"));
+          saveMessages(request, am);
+          return mapping.findForward(FWD_SUCCESS);
+      } 
+	}	
+}

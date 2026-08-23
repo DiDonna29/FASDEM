@@ -1,0 +1,205 @@
+package ve.gob.dem.fasdem.action.reembolsos;
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+
+import ve.gob.dem.fasdem.bean.Cobertura;
+import ve.gob.dem.fasdem.bean.Estatus;
+import ve.gob.dem.fasdem.bean.EstatusTipoTramite;
+import ve.gob.dem.fasdem.bean.Mapa;
+import ve.gob.dem.fasdem.bean.MotivoEstatus;
+import ve.gob.dem.fasdem.bean.Persona;
+import ve.gob.dem.fasdem.bean.Poliza;
+import ve.gob.dem.fasdem.bean.Siniestro;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.per.PerCobertura;
+import ve.gob.dem.fasdem.per.PerEstatus;
+import ve.gob.dem.fasdem.per.PerEstatusTipoTramite;
+import ve.gob.dem.fasdem.per.PerMotivoEstatus;
+import ve.gob.dem.fasdem.per.PerPoliza;
+import ve.gob.dem.fasdem.per.PerSiniestro;
+import ve.gob.dem.framework.exception.CoberturaNotDisponibleException;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.exception.PersonalNotFoundException;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Utilidad;
+
+public class EditaRmbls extends GenericAction {
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ActionMessages am = new ActionMessages();
+		Entorno ent = new Entorno(Entorno.MOD_REEMBOLSO_EDICION);
+		PerSiniestro ps = new PerSiniestro();
+		Siniestro siniestro = new Siniestro();
+		PerEstatus perEst = new PerEstatus();
+		Estatus est = new Estatus();
+		PerMotivoEstatus perMotEst = new PerMotivoEstatus();
+		EstatusTipoTramite estTipTra = new EstatusTipoTramite();
+		PerEstatusTipoTramite perEstTipTra = new PerEstatusTipoTramite();
+		MotivoEstatus motEst = new MotivoEstatus();
+		Persona p = buscarTitularBeneficiario(request);
+		PerPoliza 			pp 				= new PerPoliza();
+		PerCobertura		perCob	 		= new PerCobertura();
+		Cobertura 			cober 			= new Cobertura();
+		Poliza 				poliza 			= new Poliza();
+		double montoMinimo = 5.0;
+		request.setAttribute(KEY_TIPO_TRAMITE, TIPO_TRAMITE_REEMBOLSO);
+		Mapa m = getDForm(request, form, ent);
+		m.setCedulaBeneficiario(p.getBeneficiario().getCedula());
+		try {
+			validarAction(request, form, ent, am, this.getClass());
+		} catch (PersonalNotFillItems e) {
+			m = getDForm(request, form, ent);
+			m.setIdSiniestro(m.getId());
+			m.setAnioSiniestro(m.getAnioSiniestro());
+			siniestro = ps.search(m);
+			request.setAttribute("siniestro", siniestro);
+			return mapping.findForward(FWD_INPUT);
+		}
+		try {
+			if ("editar".equals(request.getParameter("accion"))) {
+				
+				
+				m.setMontoPresupuestado(m.getMonto());
+				log.info("m.getMonto()" + m.getMonto());
+				log.info("m.MontoPresupuestado()" + m.getMontoPresupuestado());
+				m.setMontoNegociado(m.getMonto());
+				m.setTipoProveedor(m.getIdTipoProveedor());
+				if (m.getIdTipoProveedor() == COD_TIPO_PROVEEDOR_BENEFICIARIO) {
+					m.setIdProveedor(COD_PROVEEDOR_BENEFICIARIO);
+				} else {
+					m.setIdProveedor(COD_PROVEEDOR_TERCERO);
+				}
+				/*
+				 * if ("editar".equals(request.getParameter("accion"))) { //
+				 * Recogo los datos del formulario m = getDForm(request, form,
+				 * ent); m.setIdSiniestro(m.getId());
+				 */
+				log.info("despues" + m.getIdTipoProveedor());
+				m.setIdTipoEnfermedad(COD_TIPO_ENFERMEDAD_CRONICA_R);
+				m.setAnioMesCodigo(siniestro.getAniomesCodigo() + siniestro.getCodigo() + siniestro.getSubCodigo());
+				if (m.getMonto() < montoMinimo) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.montoMinimo"));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+				log.info("mapaaaaaaaaaaaa" + m);
+				
+				m.setIdSiniestro(m.getId());
+				siniestro = ps.search(m);
+				// siniestro = ps.searchByCodigo(m);
+				if (!ps.estatusEditable(m.getId())) {
+					am.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("update.estatusnoeditable"));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+				m.setIdSiniestro(Integer.parseInt(request.getParameter("id")));
+				if (m.getIdEstatus() == COD_ESTATUS_ANULADO || m.getIdEstatus() == COD_ESTATUS_RECHAZADO) {
+					double blanqueo = 0;
+					m.setMontoPresupuestado(blanqueo);
+					m.setMontoNegociado(blanqueo);
+					m.setMontoAmparado(blanqueo);
+					log.info("blanquea amparado" + m);
+				}
+				try {
+					cober = perCob.searchById(m.getIdCobertura());
+					m.setIdPoliza(cober.getPoliza().getId());
+					poliza = pp.search(cober.getPoliza().getId());
+				} catch (Exception e) {
+					poliza = pp.searchActivo();
+					m.setIdPoliza(poliza.getId());
+					log.error("error", e);
+				}
+
+				if (!validaAnioOcurrenciaPoliza(m.getFechaOcurrencia(), poliza.getFechaFin())) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.fechaocurrencia.discordante"));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+				try {
+					log.info("entrando findDisponible");
+					m.setMontoSiniestro(siniestro.getMontoAmparado());
+					m.setMontoAmparado(m.getMonto());
+					findDisponible(m, null);
+				} catch (CoberturaNotDisponibleException e) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.general.coberuragotada"));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+				
+				if (m.getObservacion().length() > 950 || m.getJustificacion().length() > 950) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.maximocaracteres"));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				} else {
+				
+				ps.updateRmbls(m);
+				incluirTraza(TR_APS_MODIFICAR, String.valueOf(siniestro), "MODIFICACION DE SINIESTRO ", usuarioSession(request));
+				siniestro = ps.search(m);
+				m.setIdEstatus(siniestro.getEstatus().getId());
+				m.setIdTipoTramite(siniestro.getTipoTramite().getId());
+				try {
+					est = perEst.buscar(m.getIdEstatus());
+					if (est.isJustificacion()) {
+						try {
+							motEst = perMotEst.searchByEstatus(m);
+							// Si consigo un estatus de ese tipo lo finalizo y
+							// creo
+							// otro
+							perMotEst.finalizaTodosEstatus(motEst.getId());
+							// ******INSERTAR TRAZA
+							incluirTraza(TR_CARTAAVAL_FINALIZAR_CAMBIO_ESTATUS, String.valueOf(m.getId()), TRDESC_CARTAAVAL_FINALIZAR_CAMBIO_ESTATUS, usuarioSession(request));
+						} catch (PersonalNotFoundException e) {
+						}
+						motEst.setDescripcion(m.getJustificacion());
+						motEst.setIdSiniestro(m.getId());
+						motEst.setIdDependencia(usuarioSession(request).getIdDependencia());
+						motEst.setIdUsuario(usuarioSession(request).getCedula());
+						motEst.setIdEstatus(m.getIdEstatus());
+						perMotEst.insert(motEst);
+						request.setAttribute("motEst", motEst);
+						// ******INSERTAR TRAZA
+						incluirTraza(TR_CARTAAVAL_INSERTAR_CAMBIO_ESTATUS, String.valueOf(siniestro), TRDESC_CARTAAVAL_INSERTAR_CAMBIO_ESTATUS, usuarioSession(request));
+					}
+				} catch (Exception e) {
+					log.error("error", e);
+				}
+				m.setId(m.getId());
+				m.setIdSiniestro(m.getId());
+				m.setAnioSiniestro(Integer.parseInt(Utilidad.DateToString(new Date(), "yyyy")));
+				try {
+					estTipTra = perEstTipTra.searchByEstatusTipoTramite(m);
+					if (estTipTra.getReporte() != null) {
+						request.setAttribute("tipoImpresion", COD_TIPO_REPORTE_REEMBOLSO);
+					}
+				} catch (PersonalNotFoundException e) {
+					log.info("info", e);
+				}
+				request.setAttribute("siniestro", siniestro);
+				am.add(ALERT_AVISOS, new ActionMessage("update.success"));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_SUCCESS);
+				}
+			} else {
+				m.setIdSiniestro(m.getId());
+				m.setAnioSiniestro(m.getAnioSiniestro());
+				siniestro = ps.search(m);
+				request.setAttribute("siniestro", siniestro);
+				return mapping.findForward(FWD_INPUT);
+			}
+		} catch (Exception e) {
+			log.error("error ", e);
+			am.add(ALERT_AVISOS, new ActionMessage("update.success"));
+			saveMessages(request, am);
+		}
+		return mapping.findForward(FWD_INPUT);
+	}
+}

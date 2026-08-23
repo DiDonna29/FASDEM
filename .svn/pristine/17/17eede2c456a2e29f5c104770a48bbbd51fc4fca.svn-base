@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ListadoClinicasRazonable"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="552"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoDataSection"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="ruta" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["C://Tomcat//webapps//fd//"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select 
+distinct(servicio_portal.descripcion_tipo) as servicio, to_char(current_TIMESTAMP,'DD/MM/YYYY') as fecha_impresion
+from proveedor
+inner join servicio_portal_proveedor on (proveedor.is_costo_razonable = true and proveedor.id_proveedor = servicio_portal_proveedor.id_proveedor and  servicio_portal_proveedor.is_activo = true and proveedor.is_activo = true)
+inner join servicio_portal on (servicio_portal.id_serpor = servicio_portal_proveedor.id_serpor and servicio_portal.id_serpor=2)
+inner join estado on (proveedor.id_estado = estado.id_estado and proveedor.id_estado in (7,16,23))
+group by servicio_portal.descripcion_tipo
+order by servicio_portal.descripcion_tipo]]></queryString>
+
+	<field name="servicio" class="java.lang.String"/>
+	<field name="fecha_impresion" class="java.lang.String"/>
+
+
+		<group  name="servicio" >
+			<groupExpression><![CDATA[$F{servicio}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="122"  isSplitAllowed="true" >
+				<image  vAlign="Middle" hAlign="Center" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="452"
+						y="0"
+						width="100"
+						height="100"
+						key="image-1"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{ruta}+"images//fasdempopup.jpg"]]></imageExpression>
+				</image>
+				<image  scaleImage="FillFrame" vAlign="Middle" hAlign="Center" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="10"
+						width="80"
+						height="80"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{ruta}+"images//logo.jpg"]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="136"
+						y="15"
+						width="276"
+						height="71"
+						key="textField-5"
+						stretchType="RelativeToBandHeight"
+						isPrintRepeatedValues="false"/>
+					<box leftPadding="2" rightPadding="2" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["LISTADO DE CLÍNICAS AFILIADAS \n CON COSTOS RAZONABLES  \n CARACAS ACTUALIZADO AL"+$F{fecha_impresion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="58"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="40"
+						width="552"
+						height="18"
+						key="subreport-1"/>
+					<subreportParameter  name="servicio">
+						<subreportParameterExpression><![CDATA[$F{servicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{ruta}+"jasper//DetalleClinicasRazonable.jasper"]]></subreportExpression>
+				</subreport>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="1"
+						width="552"
+						height="18"
+						forecolor="#FFFFFF"
+						backcolor="#666666"
+						key="textField-6"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{servicio}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="176"
+						y="18"
+						width="276"
+						height="22"
+						forecolor="#FFFFFF"
+						backcolor="#666666"
+						key="textField-8"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Dirección"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="452"
+						y="18"
+						width="100"
+						height="22"
+						forecolor="#FFFFFF"
+						backcolor="#666666"
+						key="textField-9"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Teléfonos"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="18"
+						width="176"
+						height="22"
+						forecolor="#FFFFFF"
+						backcolor="#666666"
+						key="textField-11"
+						isRemoveLineWhenBlank="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Proveedor de Servicio"]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</summary>
+		<noData>
+			<band height="52"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="10"
+						width="552"
+						height="32"
+						key="staticText-1"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<text><![CDATA[No existen datos]]></text>
+				</staticText>
+			</band>
+		</noData>
+</jasperReport>

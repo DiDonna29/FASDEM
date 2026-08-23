@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="FirmaRegistro">
+	<typeAlias alias="ObjFirmaRegistro" type="ve.gob.dem.fasdem.bean.FirmaRegistro"/>
+	<resultMap id="result_all" class="ObjFirmaRegistro">
+		<result property="id" column="id_upload" jdbcType="integer"/>
+		<result property="idSiniestro" column="id_siniestro" jdbcType="integer"/>
+		<result property="anioSiniestro" column="anio_siniestro" jdbcType="integer"/>
+		<result property="idUsuario" column="id_usuario" jdbcType="character varying"/>
+		<result property="fileName" column="file_name" jdbcType="character varying"/>
+		<result property="idNotaMedica" column="id_nota_medica" jdbcType="integer"/>
+		<result property="contentType" column="content_type" jdbcType="integer"/>
+		<result property="data" column="data" jdbcType="bytea"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="uploadLenght" column="upload_lenght" nullValue="0" jdbcType="integer"/>
+	</resultMap>
+	<resultMap id="result_sindata" class="ObjFirmaRegistro">
+		<result property="id" column="id_upload" jdbcType="integer"/>
+		<result property="idSiniestro" column="id_siniestro" jdbcType="integer"/>
+		<result property="idNotaMedica" column="id_nota_medica" jdbcType="integer"/>
+		<result property="fileName" column="file_name" jdbcType="character varying"/>
+		<result property="contentType" column="content_type" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="uploadLenght" column="upload_lenght" jdbcType="integer"/>
+	</resultMap>
+	<insert id="insert" parameterClass="ObjFirmaRegistro">
+		INSERT INTO registro_nota_medica
+			(id_siniestro, descripcion, file_name, content_type,data, upload_lenght,anio_siniestro,id_usuario,id_nota_medica) 
+		VALUES 
+			(#idSiniestro#, #descripcion# , #fileName#, #contentType#, #data#, #uploadLenght#, #anioSiniestro#, #idUsuario#,#idNotaMedica#);
+	    <selectKey resultClass="int" type="post" keyProperty="id">
+            SELECT currval('registro_nota_medica_id_upload_seq')
+        </selectKey>
+	</insert>
+</sqlMap>

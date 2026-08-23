@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" lazyLoadingEnabled="false" enhancementEnabled="false" useStatementNamespaces="true"/>
+	<transactionManager type="JDBC">
+		<dataSource type="JNDI">
+			<property name="DataSource" value="java:/comp/env/jdbc/fasdem"/>
+		</dataSource>
+	</transactionManager>
+	
+	
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Proveedor.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoProveedor.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Estatus.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoTramite.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Especialidad.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoEnfermedad.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Tratamiento.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Patologias.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Organo.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoSiniestro.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoGasto.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoCobertura.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Siniestro.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/OrdenPago.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/UbicacionFisica.xml"/>
+	<!--sqlMap resource="ve/gob/dem/fasdem/sql/Persona.xml"/-->
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoEmpleado.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Factura.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Poliza.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Cobertura.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/SiniestroPreOrdenPago.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Upload.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/NotaTecnica.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/TipoTratamiento.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/ServicioEnLinea.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/PatologiaOrganoTratamiento.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Dependencia.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/EstatusTipoTramite.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/DetalleFactura.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/MotivoEstatus.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/Cuenta.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/CuentaBenef.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/FirmaRegistro.xml"/>
+	<sqlMap resource="ve/gob/dem/fasdem/sql/PdfOrdenMedicina.xml" />
+	
+</sqlMapConfig>

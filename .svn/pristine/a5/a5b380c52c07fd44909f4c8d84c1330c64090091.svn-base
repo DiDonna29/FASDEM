@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoCobertura">
+	<typeAlias alias="ObjTipoCobertura" type="ve.gob.dem.fasdem.bean.TipoCobertura"/>
+	<resultMap id="result_all" class="ObjTipoCobertura">
+		<result property="id" column="id_tipo_cobertura" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_cobertura, 
+			descripcion
+  		FROM 
+			tipo_cobertura
+	</sql>
+
+	<select id="search" resultClass="ObjTipoCobertura" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_cobertura = #value#
+	</select>
+
+	<select id="list" resultClass="ObjTipoCobertura" resultMap="result_all">
+		SELECT 
+			a.id_tipo_cobertura, 
+			a.descripcion
+  		FROM 
+			tipo_cobertura a, cobertura_tipo_tramite b
+			where a.id_tipo_cobertura=b.id_cobertura
+			and b.id_tipo_tramite=#values#
+	</select>
+</sqlMap>
+
+	
+	

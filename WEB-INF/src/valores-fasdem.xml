@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<fasdem-config>
+	<valor-impuestos>
+		<valor-iva>12</valor-iva>
+		<valor-islr>5</valor-islr>
+		<valor-timbrefiscal>0.1</valor-timbrefiscal>
+	</valor-impuestos>
+	<valores-estaticos>
+		<tipogasto-iva>34</tipogasto-iva>
+		<proveedor-locatel>5</proveedor-locatel>
+	</valores-estaticos>
+
+</fasdem-config>

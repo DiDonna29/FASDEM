@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ServicioEnLinea">
+	<typeAlias alias="ObjServicioEnLinea" type="ve.gob.dem.fasdem.bean.ServicioEnLinea"/>
+	<resultMap id="result_all" class="ObjServicioEnLinea">
+		<result property="idSolicitud" column="id" jdbcType="integer"/>
+		<result property="cedula" column="ced_beneficiario" jdbcType="character varying"/>
+		<result property="rif" column="rif_clinica" jdbcType="character varying"/>
+		<result property="observacion" column="observacion" jdbcType="character varying"/>
+		<result property="monto" column="monto" nullValue="0.0" jdbcType="double"/>
+		<result property="telefono" column="telefono" jdbcType="character varying"/>
+		<result property="causaIngreso" column="causa_ingreso" jdbcType="character varying"/>
+		
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id,
+			ced_beneficiario,
+			rif_clinica,
+			observacion,
+			monto,
+			telefono,
+			causa_ingreso
+  		FROM 
+			solicitudes_en_linea
+	</sql>
+	<select id="search" resultClass="ObjServicioEnLinea" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id = #value#
+	</select>
+</sqlMap>

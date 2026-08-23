@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoGasto">
+	<typeAlias alias="ObjTipoGasto" type="ve.gob.dem.fasdem.bean.TipoGasto"/>
+	<resultMap id="result_all" class="ObjTipoGasto">
+		<result property="id" column="id_tipo_gasto" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="iva" column="iva" jdbcType="boolean"/>
+		<result property="deducible" column="deducible" jdbcType="boolean"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_gasto, 
+			descripcion,
+			iva,
+			deducible
+  		FROM 
+			tipo_gasto
+	</sql>
+	<select id="search" resultClass="ObjTipoGasto" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_gasto = #value#
+	</select>
+	<select id="list" resultClass="ObjTipoGasto" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_gasto != 0 and
+		is_listable = true
+	</select>
+	<update id="updateTipoGasto" parameterClass="map">
+		UPDATE tipo_gasto SET descripcion=#descripcion# WHERE id_tipo_gasto=#id#
+	</update>
+	<insert id="insert" parameterClass="map">
+        INSERT INTO tipo_gasto(descripcion) VALUES( #descripcion#)
+     </insert>
+</sqlMap>

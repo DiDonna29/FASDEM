@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Dependencia">
+	<typeAlias alias="ObjDependencia" type="ve.gob.dem.fasdem.bean.Dependencia"/>
+	<resultMap id="result_all" class="ObjDependencia">
+		<result property="id" column="id" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id,
+	descripcion
+  		FROM 
+			dependencia
+	</sql>
+
+	<select id="search" resultClass="ObjDependencia" parameterClass="int" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id = #value#
+	</select>
+
+
+</sqlMap>
+
+	
+	

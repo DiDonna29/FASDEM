@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Estatus">
+	<typeAlias alias="ObjEstatus" type="ve.gob.dem.fasdem.bean.Estatus"/>
+	<resultMap id="result_all" class="ObjEstatus">
+		<result property="id" column="id_estatus_siniestro" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="editable" column="editable" jdbcType="boolean"/>
+		<result property="justificacion" column="justificacion" jdbcType="boolean"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_estatus_siniestro, 
+			descripcion,
+			editable,justificacion
+  		FROM 
+		estatus_siniestro
+	</sql>
+	<select id="search" resultClass="ObjEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_estatus_siniestro = #value# 
+	</select>
+	<select id="list" resultClass="ObjEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_estatus_siniestro != 0 
+	</select>
+	<select id="listEdit" resultClass="ObjEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE editable is true
+	</select>
+	<select id="listByTipoTramite" resultClass="ObjEstatus" resultMap="result_all">
+		select 
+			es.id_estatus_siniestro, 
+			es.descripcion,
+			es.editable,es.justificacion
+		 from 
+		 	tipo_estatus_tipo_tramite tett
+		 inner join 
+		 	estatus_siniestro es
+		  on 
+		  	tett.id_estatus_siniestro=es.id_estatus_siniestro
+		  inner join 
+		  	tipo_tramite tt
+		  on 
+		  	tett.id_tipo_tramite=tt.id_tipo_tramite and
+		  tt.id_tipo_tramite = #value#   order by id_estatus_siniestro
+	</select>
+	<select id="listByTipoTramiteR" resultClass="ObjEstatus" resultMap="result_all">
+		select 
+			es.id_estatus_siniestro, 
+			es.descripcion,
+			es.editable,es.justificacion
+		 from 
+		 	tipo_estatus_tipo_tramite tett
+		 inner join 
+		 	estatus_siniestro es
+		  on 
+		  	tett.id_estatus_siniestro=es.id_estatus_siniestro
+		  inner join 
+		  	tipo_tramite tt
+		  on 
+		  	tett.id_tipo_tramite=tt.id_tipo_tramite and
+		  tt.id_tipo_tramite = #value# and  tett.reporte = 'lista'  order by id_estatus_siniestro
+	</select>
+</sqlMap>

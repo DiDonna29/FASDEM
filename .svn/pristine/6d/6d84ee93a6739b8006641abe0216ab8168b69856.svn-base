@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Consulta">
+	<typeAlias alias="ObjConsulta" type="ve.gob.dem.fasdem.bean.Consulta"/>
+	<resultMap id="result_consulta" class="ObjConsulta">
+		<result property="cedula" column="cedula" jdbcType="NUMBER"/>
+		<result property="idPersona" column="id_persona" jdbcType="NUMBER"/>
+		<result property="idConsulta" column="consulta" jdbcType="NUMBER"/>
+		<result property="recipes" column="consulta" select="Recipe.searchConsulta"/>
+		<result property="nombres" column="NOMBRES" jdbcType="VARCHAR"/>
+		<result property="apellidos" column="APELLIDOS" jdbcType="VARCHAR"/>
+		<result property="fechaRegistro" column="f_registro" jdbcType="DATE"/>
+		<result property="observaciones" column="observaciones" jdbcType="VARCHAR"/>
+		<result property="especialidad" column="especialidad" jdbcType="VARCHAR"/>
+		<result property="codigoBienestar" column="cod_benef" jdbcType="NUMBER"/>
+	</resultMap>
+	<sql id="sql_buscar"> SELECT 
+		cedula,id_persona,consulta,NOMBRES,APELLIDOS,f_registro,observaciones,especialidad,cod_benef
+	 from view_consulta </sql>
+	<select id="searchFuncionario" resultClass="ObjRecipe" resultMap="result_consulta">
+		<include refid="sql_buscar"/>
+		WHERE cedula = #value#::int 
+	</select>
+	<select id="searchBeneficiario" resultClass="ObjRecipe" resultMap="result_consulta">
+		<include refid="sql_buscar"/>
+		WHERE cod_benef = #value#::int 
+	</select>
+</sqlMap>

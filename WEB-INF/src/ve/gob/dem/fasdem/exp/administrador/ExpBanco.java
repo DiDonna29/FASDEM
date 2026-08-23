@@ -1,0 +1,49 @@
+/**15/07/2010
+ * marcenrl
+ */
+package ve.gob.dem.fasdem.exp.administrador;
+
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.naming.NamingException;
+
+import ve.gob.dem.fasdem.bean.Banco;
+import ve.gob.dem.fasdem.persit.administrador.PerBanco;
+import ve.gob.dem.framework.cnx.Conexion;
+import ve.gob.dem.framework.exception.PersonalNotFoundException;
+
+
+public class ExpBanco {
+   
+ 
+	 
+	 
+	 
+	 public static ArrayList BuscarLista() throws NamingException, SQLException, PersonalNotFoundException  {
+		 Connection cnx = null;
+	    	try {
+	    		cnx = Conexion.getConexion();
+	    		PerBanco ps = new PerBanco(cnx);
+	    	    return ps.buscarLista() ;
+	    	} finally {
+	    	    Conexion.closeConexion(cnx);
+	    	}
+	 }
+	 
+	 public static Banco BuscarPorId(String id) throws NamingException, SQLException, PersonalNotFoundException  {
+		 Connection cnx = null;
+	    	try {
+	    		cnx = Conexion.getConexion();
+	    		PerBanco ps = new PerBanco(cnx);
+	    	    return ps.buscarPorId(id) ;
+	    	} finally {
+	    	    Conexion.closeConexion(cnx);
+	    	}
+	 }
+	 
+	 
+  
+}

@@ -1,0 +1,81 @@
+<!-- 
+// FILE: build.xml (25/Aug/2010)
+// AUTHOR: Olaf Reitmaier Veracierta <olafv@gmail.com>  
+// USAGE: Eclipse java web project custom build specification
+-->
+<project name="fasdem" default="all">
+
+    <!-- classpath -->
+    <path id="compile.classpath">
+    	<!-- External libraries (tomcat/libs) -->
+    	<fileset dir="../../lib">
+          <include name="**/*.jar"/>
+        </fileset>
+    	<!-- Internal libraries -->
+    	<fileset dir="WEB-INF/lib">
+          <include name="**/*.jar"/>
+        </fileset>
+    	<!-- Include build dir -->
+        <pathelement path = "WEB-INF/classes"/>
+    </path>
+
+	<!-- Check timestamp on files -->
+    <target name="prepare">
+    	<property name="myclasspath" refid="compile.classpath"/>
+    	<echo message="CLASSPATH: ${myclasspath}"/>
+    	<tstamp/>
+    	<!--
+		<chmod perm="ug+rwx" type="file">
+		    <fileset dir="logs">
+	          <patternset>    			
+	            <include name="**/*.log"/>
+	          </patternset>
+	        </fileset>    			
+		</chmod>
+    	-->
+    </target>
+
+
+    <!-- Copy any resource or configuration files -->
+    <target name="resources">
+        <copy todir="WEB-INF/classes" includeEmptyDirs="yes">
+            <fileset dir="WEB-INF/src">
+              <patternset>
+                <include name="**/*.conf"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+              </patternset>
+            </fileset>
+        </copy>
+    	<chmod perm="ug+rwx" type="file">
+            <fileset dir="WEB-INF/classes">
+              <patternset>
+                <include name="**/*.conf"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+              </patternset>
+            </fileset>
+    	</chmod>
+    </target>
+
+	<!-- Compilation task -->
+    <target name="compile" depends="prepare,resources">
+        <javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" encoding="iso-8859-1">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+	<!-- Clean task -->
+    <target name="clean"
+      description="Prepare for clean build">
+      <delete dir="WEB-INF/classes"/>
+      <mkdir dir="WEB-INF/classes"/>
+    </target>
+
+	<!-- The common "project" target -->
+    <target name="project" depends="clean,compile"/>
+
+	<!-- The common "all" target -->
+    <target name="all" depends="project"/>
+
+</project>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Upload">
+	<typeAlias alias="ObjUpload" type="ve.gob.dem.fasdem.bean.Upload"/>
+	<resultMap id="result_all" class="ObjUpload">
+		<result property="id" column="id_upload" jdbcType="integer"/>
+		<result property="idSiniestro" column="id_siniestro" jdbcType="integer"/>
+		<result property="anioSiniestro" column="anio_siniestro" jdbcType="integer"/>
+		<result property="idUsuario" column="id_usuario" jdbcType="character varying"/>
+		<result property="idDependencia" column="id_dependencia" jdbcType="integer"/>
+		<result property="fileName" column="file_name" jdbcType="character varying"/>
+		<result property="contentType" column="content_type" jdbcType="integer"/>
+		<result property="data" column="data" jdbcType="bytea"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="uploadLenght" column="upload_lenght" nullValue="0" jdbcType="integer"/>
+	</resultMap>
+	<resultMap id="result_sindata" class="ObjUpload">
+		<result property="id" column="id_upload" jdbcType="integer"/>
+		<result property="idSiniestro" column="id_siniestro" jdbcType="integer"/>
+		<result property="fileName" column="file_name" jdbcType="character varying"/>
+		<result property="contentType" column="content_type" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="uploadLenght" column="upload_lenght" jdbcType="integer"/>
+		<result property="idUsuario" column="id_usuario" jdbcType="character varying"/>
+
+	</resultMap>
+	<select id="search" resultClass="ObjUpload" resultMap="result_all">
+		SELECT id_upload, id_siniestro, content_type, data, descripcion, file_name, anio_siniestro,id_usuario,id_dependencia,
+		       upload_lenght
+		  FROM upload 
+	WHERE 
+	anio_siniestro = #anioSiniestro# AND
+	id_upload = #id# 
+	
+	</select>
+	<select id="listBySiniestro" resultClass="ObjUpload" resultMap="result_sindata">
+		SELECT id_upload, id_siniestro, content_type, descripcion, file_name, anio_siniestro,id_usuario,id_dependencia,
+		       upload_lenght
+		  FROM upload where 
+	anio_siniestro = #anioSiniestro# AND
+	id_siniestro = #idSiniestro#
+	ORDER BY id_upload desc
+	</select>
+	<insert id="insert" parameterClass="ObjUpload">
+		INSERT INTO upload
+			(id_siniestro, descripcion, file_name, content_type,data, upload_lenght,anio_siniestro,id_dependencia,id_usuario) 
+		VALUES 
+			(#idSiniestro#, #descripcion# , #fileName#, #contentType#, #data#, #uploadLenght#, #anioSiniestro#,#idDependencia#, #idUsuario#);
+	    <selectKey resultClass="int" type="post" keyProperty="id">
+            SELECT currval('upload_id_upload_seq')
+        </selectKey>
+	</insert>
+	<delete id="delete" parameterClass="map">
+		DELETE FROM upload
+		 WHERE 
+	anio_siniestro = #anioSiniestro# AND
+	id_upload = #id#;
+	</delete>
+</sqlMap>

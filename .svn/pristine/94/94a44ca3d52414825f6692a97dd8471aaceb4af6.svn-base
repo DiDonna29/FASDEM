@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Siniestro">
+	<typeAlias alias="ObjSiniestro" type="ve.gob.dem.fasdem.bean.Siniestro"/>
+	<resultMap id="result_all" class="ObjSiniestro">
+		<result property="id" column="id_siniestro" jdbcType="NUMBER"/>
+		<result property="cedula" column="cedula" nullValue="0" jdbcType="character    varying"/>
+		<result property="nombres" column="nombres" jdbcType="character varying"/>
+		<result property="apellidos" column="apellidos" jdbcType="character varying"/>
+		<result property="fechaNacimiento" column="fecha_nacimiento" jdbcType="DATE"/>
+		<result property="sexo" column="sexo" jdbcType="character varying"/>
+		<result property="parentesco" column="parentesco" jdbcType="character varying"/>
+		<result property="cedulaBeneficiario" column="cedula_beneficiario" nullValue="0" jdbcType="character    varying"/>
+		<result property="nombresBeneficiario" column="nombres_beneficiario" jdbcType="character    varying"/>
+		<result property="apellidosBeneficiario" column="apellidos_beneficiario" jdbcType="character    varying"/>
+		<result property="fechaNacimientoBeneficiario" column="fecha_nacimiento_beneficiario" jdbcType="DATE"/>
+		<result property="sexoBeneficiario" column="sexo_beneficiario" jdbcType="character    varying"/>
+		<result property="aniomesCodigo" column="aniomes_codigo" nullValue="0" jdbcType="character    varying"/>
+		<result property="codigo" column="codigo_siniestro" nullValue="0" jdbcType="character    varying"/>
+		<result property="subCodigo" column="subcodigo_siniestro" nullValue="0" jdbcType="character    varying"/>
+		<result property="fechaNotificacion" column="fecha_notificacion" jdbcType="DATE"/>
+		<result property="fechaOcurrencia" column="fecha_ocurrencia" jdbcType="DATE"/>
+		<result property="fechaCreado" column="fecha_registro" jdbcType="DATE"/>
+		<result property="fechaLiquidacion" column="fecha_liquidacion" jdbcType="date"/>
+		<result property="fechaUltimaModificacion" column="fecha_modificacion" jdbcType="date"/>
+		<result property="fechaIngreso" column="fecha_ingreso" jdbcType="date"/>
+		<result property="fechaEgreso" column="fecha_egreso" jdbcType="date"/>
+		<result property="tipoTramite" column="id_tipo_tramite" select="TipoTramite.search"/>
+		<result property="tipoEnfermedad" column="id_tipo_enfermedad" select="TipoEnfermedad.search"/>
+		<result property="tipoTratamiento" column="id_tipo_tratamiento" select="TipoTratamiento.search"/>
+		<result property="tipoEmpleado" column="id_tipo_empleado" select="TipoEmpleado.search"/>
+		<result property="tipoSiniestro" column="id_tipo_siniestro" select="TipoSiniestro.search"/>
+		<result property="tipoProveedor" column="id_proveedor" select="TipoProveedor.search"/>
+		<result property="patologiaOrganoTratamiento" column="id_patologia_organo_tratamiento" select="Tratamiento.searchPatologiaOrganoTratamiento"/>
+		<result property="cobertura" column="id_cobertura" select="Cobertura.search"/>
+		<result property="observacionReporte" column="observacion_reporte" jdbcType="character varying"/>
+		<result property="proveedor" column="id_proveedor" select="Proveedor.search"/>
+		<result property="estatus" column="id_estatus" select="Estatus.search"/>
+		<result property="observacion" column="observacion" jdbcType="character varying"/>
+		<result property="citaPreOperatorio" column="cita_pre_operatorio" nullValue="false" jdbcType="boolean"/>
+		<result property="citaPostOperatorio" column="cita_post_operatorio" nullValue="false" jdbcType="boolean"/>
+		<result property="montoPresupuestado" column="monto_presupuestado" nullValue="0.0" jdbcType="numeric"/>
+		<result property="montoNegociado" column="monto_negociado" nullValue="0.0" jdbcType="numeric"/>
+		<result property="montoNoAmparado" column="monto_no_amparado" nullValue="0.0" jdbcType="numeric"/>
+		<result property="montoMaximoAutorizado" column="id_siniestro" nullValue="0.0" select="Siniestro.searchMontoMaximoAutorizado"/>
+		<result property="anioSiniestro" column="anio_siniestro" nullValue="0.0" jdbcType="numeric"/>
+		<result property="montoAmparado" column="monto_amparado" nullValue="0.0" jdbcType="numeric"/>
+		<result property="notaTecnica" column="{idSiniestro=id_siniestro, anioSiniestro=anio_siniestro}" select="NotaTecnica.ultimaNota"/>
+		<result property="adjuntos" column="id_siniestro" select="Upload.listBySiniestro"/>
+		<result property="idUsuario" column="id_usuario" jdbcType="character varying"/>
+		<result property="idDependencia" column="id_dependencia" jdbcType="character varying"/>
+		<result property="motivo" column="id_siniestro" select="MotivoEstatus.searchUltimoEstatus" jdbcType="character varying"/>
+	</resultMap>
+	<resultMap id="result_listado" class="ObjSiniestro">
+		<result property="anioSiniestro" column="anio_siniestro" jdbcType="NUMBER"/>
+		<result property="id" column="id_siniestro" jdbcType="NUMBER"/>
+		<result property="codigo" column="codigo" jdbcType="character varying"/>
+		<result property="subCodigo" column="sub_codigo" jdbcType="character varying"/>
+		<result property="numero" column="numero" jdbcType="character varying"/>
+		<result property="fechaNotificacion" column="fecha_notificacion" jdbcType="date"/>
+		<result property="fechaOcurrencia" column="fecha_ocurrencia" jdbcType="date"/>
+		<result property="lsTipoTramite" column="tipo_tramite" jdbcType="character varying"/>
+		<result property="lsTipoSiniestro" column="tipo_siniestro" jdbcType="character varying"/>
+		<result property="lsMontoAmparado" column="monto_amparado" nullValue="0" jdbcType="double"/>
+		<result property="lsMontoPresupuestado" column="monto_presupuestado" nullValue="0" jdbcType="double"/>
+		<result property="lsTipoEnfermedad" column="tipo_enfermedad" jdbcType="character varying"/>
+		<result property="lsEstatus" column="estatus" jdbcType="character varying"/>
+		<result property="lsCausaIngreso" column="causa_ingreso" jdbcType="character varying"/>
+		<result property="lsTipoEmpleado" column="tipo_empleado" jdbcType="character varying"/>
+		<result property="nombresBeneficiario" column="nombres_beneficiario" jdbcType="character    varying"/>
+		<result property="nombres" column="nombres" jdbcType="character    varying"/>
+		<result property="apellidosBeneficiario" column="apellidos_beneficiario" jdbcType="character    varying"/>
+		<result property="apellidos" column="apellidos" jdbcType="character    varying"/>
+		<result property="cedula" column="cedula" nullValue="0" jdbcType="character    varying"/>
+		<result property="cedulaBeneficiario" column="cedula_beneficiario" nullValue="0" jdbcType="character    varying"/>
+		
+		<result property="aniomesCodigo" column="aniomes_codigo" nullValue="0" jdbcType="character    varying"/>
+		
+	</resultMap>
+	<resultMap id="result_listado_benef" class="ObjSiniestro" extends="result_listado">
+		<result property="cedulaBeneficiario" column="cedula_beneficiario" jdbcType="character varying"/>
+		<result property="nombresBeneficiario" column="nombres_beneficiario" jdbcType="character varying"/>
+		<result property="apellidosBeneficiario" column="apellidos_beneficiario" jdbcType="character varying"/>
+		<result property="montoPresupuestado" column="monto_presupuestado" jdbcType="double"/>
+	</resultMap>
+	<resultMap id="result_listadocorto" class="ObjSiniestro">
+		<result property="id" column="id_siniestro" jdbcType="NUMBER"/>
+		<result property="codigo" column="codigo" jdbcType="character varying"/>
+		<result property="numero" column="codigo" jdbcType="character varying"/>
+		<result property="cedulaBeneficiario" column="cedula_beneficiario" nullValue="0" jdbcType="character    varying"/>
+		<result property="apellidosBeneficiario" column="apellidos_beneficiario" jdbcType="character    varying"/>
+		<result property="nombresBeneficiario" column="nombres_beneficiario" jdbcType="character    varying"/>
+		<result property="anioSiniestro" column="anio_siniestro" jdbcType="numeric"/>
+		<result property="fechaOcurrencia" column="fecha_ocurrencia" jdbcType="date"/>
+		<result property="fechaNotificacion" column="fecha_notificacion" jdbcType="date"/>
+		<result property="lsTipoTramite" column="tipo_tramite" jdbcType="character varying"/>		
+		<result property="lsTipoSiniestro" column="tipo_siniestro" jdbcType="character varying"/>
+		<result property="lsMontoPresupuestado" column="monto_presupuestado" nullValue="0" jdbcType="double"/>
+		<result property="lsMontoAmparado" column="monto_amparado" nullValue="0" jdbcType="double"/>
+		<result property="lsTipoEnfermedad" column="tipo_enfermedad" jdbcType="character varying"/>
+		<result property="lsEstatus" column="estatus" jdbcType="character varying"/>
+		<result property="lsCausaIngreso" column="causa_ingreso" jdbcType="character varying"/>
+		<result property="lsTipoEmpleado" column="tipo_empleado" jdbcType="character varying"/>
+		
+	</resultMap>
+	<sql id="sql_buscar">
+			SELECT 
+				id_siniestro, 
+				cedula,
+				nombres,
+				apellidos,
+				fecha_nacimiento,
+				sexo,
+				parentesco,
+				cedula_beneficiario,
+				nombres_beneficiario,
+				apellidos_beneficiario,
+				fecha_nacimiento_beneficiario,
+				sexo_beneficiario,
+				aniomes_codigo,
+				codigo_siniestro,
+				subcodigo_siniestro,
+				fecha_notificacion,
+				fecha_ocurrencia,
+				fecha_registro,
+				fecha_liquidacion,
+				fecha_modificacion,
+				fecha_ingreso,
+				fecha_egreso,
+				id_tipo_tramite,
+				id_tipo_enfermedad,
+				id_tipo_tratamiento,
+				id_tipo_empleado,
+				id_tipo_siniestro,
+				id_proveedor,
+				id_patologia_organo_tratamiento,
+				id_cobertura,
+				observacion_reporte,
+				id_estatus,
+				observacion,
+				cita_pre_operatorio,
+				cita_post_operatorio,
+				monto_presupuestado,
+				monto_negociado,
+				monto_no_amparado,
+				anio_siniestro,
+				monto_amparado,
+				id_usuario,
+				id_dependencia 
+			FROM 
+				siniestro </sql>
+	<sql id="sql_listado">
+      SELECT 
+            s.id_siniestro, 
+           	s.aniomes_codigo,
+            s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro as numero, 
+			s.cedula_beneficiario,
+			s.nombres_beneficiario,
+			s.nombres_beneficiario as nombres,
+			s.apellidos_beneficiario as apellidos,
+			s.apellidos_beneficiario,
+			s.cedula_beneficiario as cedula,
+			s.subcodigo_siniestro as sub_codigo,
+            s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro as codigo, 
+			s.fecha_ocurrencia, 
+            s.fecha_notificacion, 
+			s.anio_siniestro,
+            tt.descripcion as tipo_tramite, 
+            ts.descripcion as tipo_siniestro, 
+            es.descripcion as estatus, 
+            te.descripcion as tipo_enfermedad, 
+            e.descripcion || '-' || o.descripcion||'-'||p.descripcion||'-'||t.descripcion as causa_ingreso, 
+            s.monto_presupuestado,
+	s.monto_amparado,
+	temp.descripcion as tipo_empleado
+        FROM 
+            public.siniestro s, 
+            public.tipo_tramite tt, 
+            public.tipo_siniestro ts, 
+            public.tipo_enfermedad te, 
+            public.estatus_siniestro es, 
+            public.patologia_organo_tratamiento pot, 
+            public.organo o, 
+            public.patologias p, 
+            public.especialidad e, 
+            public.tratamiento t, 
+            public.cobertura c, 
+            public.poliza po,
+            public.proveedor pro,
+            public.tipo_empleado temp     
+        WHERE 
+            tt.id_tipo_tramite = s.id_tipo_tramite AND
+            ts.id_tipo_siniestro = s.id_tipo_siniestro AND
+            te.id_tipo_enfermedad = s.id_tipo_enfermedad AND
+            es.id_estatus_siniestro = s.id_estatus AND
+            pot.id_pat_org_trat_esp = s.id_patologia_organo_tratamiento AND
+            o.id_organo = pot.id_organo AND
+            p.id_patologia = pot.id_patologia AND
+            s.id_tipo_empleado = temp.id_tipo_empleado AND
+            e.id_especialidad = pot.id_especialidad AND
+            t.id_tratamiento = pot.id_tratamiento AND
+            c.id_cobertura = s.id_cobertura AND
+            po.id_poliza = c.id_poliza and
+            s.id_proveedor=pro.id_proveedor
+          
+	</sql>
+	<select id="listarPorSiniestros" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listado">
+		<include refid="sql_listado"/>
+        AND
+             s.id_estatus not in (34,35) AND 
+            s.subcodigo_siniestro='001'
+        order by s.aniomes_codigo asc, s.codigo_siniestro asc
+	</select>
+	<select id="listarPorEstatus" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listadocorto">
+		<include refid="sql_listado"/>
+        AND
+        	anio_siniestro = #anioSiniestro# AND
+            s.id_estatus in (1,9,31, 32, 33)
+<!--s.id_estatus = #idEstatus#  realice el reemplazo para realizaar una prueba-->
+           
+            AND
+            s.id_tipo_tramite = #idTipoTramite# 
+          
+        <isNotEmpty property="codigo_siniestro">
+            AND (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+		order by s.aniomes_codigo desc, s.codigo_siniestro desc, s.subcodigo_siniestro desc limit 20
+	</select>
+	<select id="bandeja" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listado_benef">
+		<include refid="sql_listado"/>
+        AND
+        	anio_siniestro = #anioSiniestro# AND
+            s.id_estatus in (8,9,1)
+           
+            AND
+            s.id_tipo_tramite in (1,2)
+            AND 
+            s.fecha_notificacion=#fecha#
+          
+        <isNotEmpty property="codigo_siniestro">
+            AND (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+		order by s.aniomes_codigo desc, s.codigo_siniestro desc, s.subcodigo_siniestro desc limit 20
+	</select>
+	
+	
+	
+	<select id="listarPorEstatusLiquidacion" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listadocorto">
+        <include refid="sql_listado"/>
+        AND
+            anio_siniestro = #anioSiniestro# AND
+            (s.id_estatus = 9 OR s.id_estatus = 4)
+         
+           
+            AND
+            s.id_tipo_tramite = #idTipoTramite# 
+          
+        <isNotEmpty property="codigo_siniestro">
+            AND (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+        order by s.aniomes_codigo desc, s.codigo_siniestro desc, s.subcodigo_siniestro desc limit 20
+    </select>
+    
+    
+    
+	<select id="listarPorEstatusTodos" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listado_benef">
+		<include refid="sql_listado"/>
+        AND
+        	anio_siniestro = #anioSiniestro# AND
+            s.id_estatus = #idEstatus#
+        <isNotEmpty property="codigo">
+            AND (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo# || '%')
+        </isNotEmpty>
+		order by s.aniomes_codigo desc, s.codigo_siniestro desc, s.subcodigo_siniestro desc limit 20
+	</select>
+
+	<select id="listarPorRecepcionFactura" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_listado_benef">
+		<include refid="sql_listado"/>
+        AND
+        	anio_siniestro = #anioSiniestro#
+        <isNotEmpty property="codigo">
+            AND (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo# || '%')
+        </isNotEmpty>
+		order by s.aniomes_codigo desc, s.codigo_siniestro desc, s.subcodigo_siniestro desc limit 20
+	</select>
+
+
+	<select id="searchNumero" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        where 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro)=#subCodigo# and
+            id_estatus=9 and
+            anio_siniestro=#anioSiniestro# and
+            id_tipo_tramite=6
+	</select>
+	<select id="searchEmergencia" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        where 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro)=#value# and
+            id_tipo_tramite=1
+	</select>
+	<select id="searchAval" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        where 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro)=#value# and
+            id_tipo_tramite=2
+	</select>
+	<select id="searchPadre" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        where 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro)=#subCodigo# and
+            anio_siniestro = #anioSiniestro#
+	</select>
+	<select id="searchNumeroR" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        where 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro)= #subCodigo# and
+            id_tipo_tramite=3
+	</select>
+	<select id="search" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE 
+		anio_siniestro = #anioSiniestro# AND 
+		id_siniestro=#idSiniestro#
+	</select>
+	<select id="coberturaTipo" resultClass="double">
+        SELECT 
+            sum(s.monto_amparado) 
+        FROM 
+            siniestro s,
+            cobertura c,
+            poliza p
+        WHERE
+            s.id_cobertura=#idCobertura# AND
+            s.id_poliza=p.id_poliza AND
+            p.is_activo=true AND
+            cedula_beneficiario=#cedulaBeneficiario#
+	</select>
+	
+	<select id="searchMontoMaximoAutorizado" resultClass="double">
+        select max(monto_maximo_autorizado)as monto from  autorizacion where id_siniestro=#value#
+	</select>
+	
+	<select id="buscarCedulaBeneficiario" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+            cedula_beneficiario=#value# 
+        order by 
+            cast(aniomes_codigo as numeric) desc,
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+	</select>
+	<select id="buscarPorCedula" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+            cedula=#value# 
+        order by 
+            cast(aniomes_codigo as numeric) desc,  
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+	</select>
+	<select id="searchCedulaBeneficiario" resultClass="ObjSiniestro" resultMap="result_listadocorto">
+		<include refid="sql_listado"/>
+        AND
+        	s.anio_siniestro = #anioSiniestro# AND
+            s.cedula_beneficiario=#cedula# AND s.cedula=#cedulaBeneficiario#
+        order by 
+            cast(s.aniomes_codigo as numeric) desc,
+            cast(s.codigo_siniestro as numeric) desc,
+            cast(s.subcodigo_siniestro as numeric) asc
+	</select>
+
+	
+	<select id="searchCedulaBeneficiarioAps" resultClass="int">
+            SELECT 
+            	count(*)
+    		FROM 
+            	siniestro
+        	WHERE
+         	   anio_siniestro = #anioSiniestro# AND
+               cedula_beneficiario=#cedula# AND 
+	           cedula=#cedulaBeneficiario# AND
+	           id_tipo_tramite = 4 AND 
+	           aniomes_codigo like (to_char(now(), 'YY')||to_char(now(), 'MM'))
+	</select>
+	
+	
+
+	
+	<select id="searchConsulta" resultClass="ObjSiniestro" resultMap="result_listado">
+		<include refid="sql_listado"/>
+        AND
+            s.cedula_beneficiario=#value#
+        order by 
+            cast(s.aniomes_codigo as numeric) desc,
+            cast(s.codigo_siniestro as numeric) desc,
+            cast(s.subcodigo_siniestro as numeric) asc
+	</select>
+	<insert id="insert" parameterClass="map"
+			>
+        INSERT INTO siniestro(
+	        anio_siniestro,                    id_dependencia,                     id_usuario,					
+			id_tipo_empleado,                  cita_pre_operatorio,			       monto_no_amparado,
+	        fecha_ingreso,					   fecha_egreso,				       id_tipo_tratamiento,
+	        cita_post_operatorio,			   observacion_reporte,			       nombres,					
+			apellidos,            		       nombres_beneficiario,         	   apellidos_beneficiario, 		
+			sexo,            			       sexo_beneficiario,    		       fecha_nacimiento,				
+			fecha_nacimiento_beneficiario,	   parentesco,      		           monto_negociado,				
+			id_tipo_siniestro,      		   cedula,          			       cedula_beneficiario,  		
+	        fecha_ocurrencia,            	   monto_amparado,         		       id_proveedor,    			
+			fecha_notificacion,   		       monto_presupuestado,         	   id_estatus,             		
+			id_tipo_tramite, 			       id_tipo_enfermedad,   		       observacion,                  	
+			id_patologia_organo_tratamiento,   id_cobertura,                  	   
+			aniomes_codigo,         		
+	        codigo_siniestro,			       
+			subcodigo_siniestro
+        )VALUES(
+        	#anioSiniestro#,				   #idDependencia#	,				   #idUsuario#,				
+			#idTipoEmpleado#,                  #citaPreOperatorio#,			       #montoNoAmparado#,				
+			#fechaIngreso#,           		   #fechaEgreso#,				       #idTipoTratamiento#,
+			#citaPostOperatorio#, 			   #observacionReporte#, 			   #nombres#,       			
+			#apellidos#,          		       #nombresBeneficiario#,        	   #apellidosBeneficiario#, 		
+			#sexo#,          			       #sexoBeneficiario#,   		       #fechaNacimiento#,           	
+			#fechaNacimientoBeneficiario#, 	   #parentesco#,    			       #montoNegociado#,           
+			#idTipoSiniestro#,     			   #cedula#,        			       #cedulaBeneficiario#, 		
+			#fechaOcurrencia#,            	   #montoAmparado#,       			   #idProveedor#,   			
+			#fechaNotificacion#,  		       #montoPresupuestado#,         	   #idEstatus#,          			
+			#idTipoTramite#,   			       #idTipoEnfermedad#,                 #observacion#,                	
+			#patologiaOrganoTratamiento#, 	   #idCobertura#,
+        	<isNotEmpty
+			property="aniomes_codigo">#aniomes_codigo#,</isNotEmpty>
+		<isEmpty property="aniomes_codigo">to_char(#fechaOcurrencia#::date, 'YY')||to_char(#fechaOcurrencia#::date, 'MM'),</isEmpty>
+		<isNotEmpty property="codigo_siniestro">#codigo_siniestro#,</isNotEmpty>
+		<isEmpty property="codigo_siniestro">
+	            (select 
+	            	coalesce(codigo, '00001')
+	            from
+		            (select 
+		            	max (lpad(cast(cast(codigo_siniestro as integer) + 1 as character varying),5, '0')) as codigo
+		            from
+		            	siniestro
+		            where
+		            	aniomes_codigo like (to_char(#fechaOcurrencia#::date, 'YY')||to_char(#fechaOcurrencia#::date, 'MM'))
+		            ) as codigo
+				),
+        	</isEmpty>
+		<isNotEmpty property="codigo_siniestro">
+	            (select 
+	            	coalesce(sub, '001')
+	            from
+		            (select 
+		            	max(lpad(cast(cast(subcodigo_siniestro as integer) + 1 as character varying),3, '0')) as sub
+		            from
+		            	siniestro
+		            where
+		            	codigo_siniestro like (#codigo_siniestro#) AND
+		            	aniomes_codigo like (#aniomes_codigo#)
+		            ) as subcodigo
+	            ) 
+	        </isNotEmpty>
+		<isEmpty property="codigo_siniestro">'001'</isEmpty>
+        )
+        <selectKey resultClass="int" type="post" keyProperty="id">
+            SELECT currval('siniestro_id_siniestro_seq')
+        </selectKey>
+	</insert>
+	<update id="updateLiquidacion" parameterClass="map">
+        UPDATE 
+            siniestro 
+	        SET 
+	            fecha_liquidacion=#fechaLiquidacion#, 
+	            id_estatus=#idEstatus#, 
+	            monto_amparado=#montoAmparado#,
+	            monto_no_amparado=#montoNoAmparado#,
+	            monto_negociado=#montoNegociado#,
+	            id_usuario_liq=#idUsuario#,
+	             <!-- mmm aqui era el problema con el proveedor-->
+	             id_proveedor=#idProveedor#
+        WHERE
+	        anio_siniestro = #anioSiniestro# AND
+            id_siniestro=#idSiniestro# 
+
+    </update>
+    
+	<update id="updateEstatus" parameterClass="map">
+       UPDATE
+            siniestro
+                SET
+                	monto_amparado=#montoAmparado#,
+                    id_estatus=#idEstatus#
+        WHERE
+                anio_siniestro = #anioSiniestro# AND
+            id_siniestro=#idSiniestro# 
+    </update>
+        
+    
+	<update id="updateLiquidacionEmergencia" parameterClass="map">
+        UPDATE 
+            siniestro 
+        SET 
+            fecha_liquidacion=#fechaLiquidacion#, 
+            id_estatus=#idEstatus#
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+	<update id="activarCartaAval" parameterClass="map">
+        UPDATE 
+            siniestro 
+        SET 
+            fecha_ocurrencia=#fechaOcurrencia#, 
+            fecha_ingreso=#fechaIngreso#, 
+            id_estatus=#idEstatus#
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+	<update id="egresarCartaAval" parameterClass="map">
+        UPDATE 
+            siniestro 
+        SET 
+            fecha_modificacion=#fechaUltimaModificacion#,
+            id_estatus=#idEstatus#,
+            monto_negociado=#montoNegociado#,
+            observacion=#observacion#,
+            monto_amparado=#montoAmparado#,
+            monto_no_amparado=#montoNoAmparado#,
+            cita_post_operatorio=#citaPostOperatorio#,
+            fecha_egreso=#fechaEgreso#, 
+            fecha_ingreso=#fechaIngreso# 
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+	<insert id="justificarEstatus" parameterClass="map">
+        insert into motivo_estatus 
+        (descripcion,id_siniestro,id_dependencia,id_usuario,id_estatus_siniestro) 
+		values 
+		(#justificacion#, #idSiniestro# ,#idDependencia#,#idUsuario#,#idEstatus#)
+	</insert>
+	<update id="update" parameterClass="map"
+		>
+        UPDATE 
+            siniestro 
+        SET 
+            fecha_modificacion=#fechaUltimaModificacion#,
+            fecha_ocurrencia=#fechaOcurrencia#,
+            fecha_notificacion=#fechaNotificacion#,
+            id_estatus=#idEstatus#,
+            id_tipo_enfermedad=#idTipoEnfermedad#,
+            id_patologia_organo_tratamiento=#patologiaOrganoTratamiento#,
+            monto_presupuestado=#montoPresupuestado#,
+            monto_negociado=#montoNegociado#,
+            observacion=#observacion#,
+            observacion_reporte=#observacionReporte#,
+            monto_amparado=#montoAmparado#,
+            monto_no_amparado=#montoNoAmparado#,
+            id_cobertura=#idCobertura#,
+            id_tipo_siniestro=#idTipoSiniestro#,
+            id_proveedor=#idProveedor#,  
+            <isNotEmpty property="fechaIngreso">
+            fecha_ingreso=#fechaIngreso#,
+            </isNotEmpty>
+            <isNotEmpty property="fechaEgreso">
+            fecha_egreso=#fechaEgreso#,
+            </isNotEmpty>
+            id_tipo_tratamiento=#idTipoTratamiento#,
+            cita_post_operatorio=#citaPostOperatorio#,
+            cita_pre_operatorio=#citaPreOperatorio#
+        WHERE
+            id_siniestro=#id#
+	</update>
+	<update id="anularCartaAval" parameterClass="map">
+	UPDATE 
+            siniestro 
+        SET
+        	id_estatus=34,
+      		monto_amparado=0,
+      		monto_no_amparado=#montoNoAmparado#
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+	<update id="updateAps" parameterClass="map">
+        UPDATE 
+            siniestro 
+        SET 
+            id_cobertura=#idCobertura#,
+            fecha_ocurrencia=#fechaOcurrencia#,
+            fecha_notificacion=#fechaNotificacion#,
+            fecha_modificacion=now(),
+            id_tipo_siniestro=#idTipoSiniestro#,
+            id_tipo_enfermedad=#idTipoEnfermedad#,
+            id_proveedor=#idProveedor#, 
+            id_patologia_organo_tratamiento=#patologiaOrganoTratamiento#,
+            observacion=#observacion#, 
+            monto_presupuestado=#montoPresupuestado#,
+            monto_amparado=#montoPresupuestado#,
+			monto_negociado=#montoPresupuestado#
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+	<update id="updateRmbls" parameterClass="map">
+        UPDATE 
+            siniestro 
+        SET 
+            id_cobertura=#idCobertura#,
+            fecha_ocurrencia=#fechaOcurrencia#,
+            fecha_notificacion=#fechaNotificacion#,
+            fecha_modificacion=now(),
+            id_tipo_siniestro=#idTipoSiniestro#,
+	        <isNotEmpty property="idTipoEnfermedad">
+                id_tipo_enfermedad=#idTipoEnfermedad#,
+	        </isNotEmpty>
+            id_proveedor=#idProveedor#,
+            id_estatus=#idEstatus#,
+            id_patologia_organo_tratamiento=#patologiaOrganoTratamiento#,
+            observacion=#observacion#, 
+	        <isNotEmpty property="montoPresupuestado">
+                monto_presupuestado=#montoPresupuestado#,
+	        </isNotEmpty>
+            monto_amparado=#montoNegociado#,
+            monto_negociado=#montoNegociado#
+        WHERE
+            id_siniestro=#idSiniestro#
+	</update>
+
+	<select id="searchMultiple" resultClass="ObjSiniestro" resultMap="result_listadocorto">
+		<include refid="sql_listado"/>
+		AND 
+			s.anio_siniestro = #anioSiniestro# 
+		<isNotEmpty property="idTipoTramite">
+        AND
+       		s.id_tipo_tramite = #idTipoTramite#::int
+		</isNotEmpty> 
+        <isNotEmpty property="cedula">
+            AND ((s.cedula = #cedula#) or (s.cedula_beneficiario = #cedula#))
+        </isNotEmpty>
+        <isNotEmpty property="rif">
+            AND pro.rif = #rif# and s.fecha_notificacion::date=#fecha#::date
+        </isNotEmpty>
+        
+        <isNotEmpty property="idEstatus">
+        AND s.id_estatus = #idEstatus#
+        </isNotEmpty>
+         
+		<isNotEmpty property="nombres">
+            AND 
+                (
+                (upper(s.nombres)                 like upper('%' || #nombres# || '%')) or 
+                (upper(s.nombres_beneficiario)    like upper('%' || #nombres# || '%')) or
+                (upper(s.apellidos)               like upper('%' || #nombres# || '%')) or
+                (upper(s.apellidos_beneficiario)  like upper('%' || #nombres# || '%'))
+                )
+        </isNotEmpty>
+		<isNotEmpty property="codigo_siniestro">
+            AND 
+                (s.aniomes_codigo||s.codigo_siniestro||s.subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+        order by 
+            cast(aniomes_codigo as numeric) desc, 
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+        limit 200
+	</select>
+	
+	
+
+    
+	
+	
+	<select id="searchMultipleConsulta" parameterClass="map" resultClass="ObjSiniestro" resultMap="result_all">
+	SELECT 
+		id_siniestro, 
+		cedula,
+		nombres,
+		apellidos,
+		fecha_nacimiento,
+		sexo,
+		parentesco,
+		cedula_beneficiario,
+		nombres_beneficiario,
+		apellidos_beneficiario,
+		fecha_nacimiento_beneficiario,
+		sexo_beneficiario,
+		aniomes_codigo,
+		codigo_siniestro,
+		subcodigo_siniestro,
+		fecha_notificacion,
+		fecha_ocurrencia,
+		fecha_registro,
+		fecha_liquidacion,
+		fecha_modificacion,
+		fecha_ingreso,
+		fecha_egreso,
+		id_tipo_tramite,
+		id_tipo_enfermedad,
+		id_tipo_tratamiento,
+		id_tipo_empleado,
+		id_tipo_siniestro,
+		id_proveedor,
+		id_patologia_organo_tratamiento,
+		id_cobertura,
+		observacion_reporte,
+		id_estatus,
+		observacion,
+		cita_pre_operatorio,
+		cita_post_operatorio,
+		monto_presupuestado,
+		monto_negociado,
+		monto_no_amparado,
+		anio_siniestro,
+		monto_amparado,
+		id_usuario,
+		id_dependencia
+	 FROM siniestro 
+		where 
+			anio_siniestro = #anioSiniestro# 
+        <isNotEmpty property="cedula">
+            and (cedula_beneficiario = #cedula#)
+        </isNotEmpty>
+		<isNotEmpty property="nombres">
+            and 
+                (
+                (upper(nombres_beneficiario)    like upper('%' || #nombres# || '%')) or
+                (upper(apellidos_beneficiario)  like upper('%' || #nombres# || '%'))
+                )
+        </isNotEmpty>
+		<isNotEmpty property="codigo_siniestro">
+            and 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+        order by 
+            cast(aniomes_codigo as numeric) desc, 
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) asc
+	</select>
+	<select id="searchMultipleByStatus" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+            anio_siniestro=#anioSiniestro# and 
+            id_tipo_tramite=#idTipoTramite#
+            and id_estatus=#idEstatus#
+        <isNotEmpty property="cedula">
+            AND ((cedula = #cedula#) or (cedula_beneficiario = #cedula#))
+        </isNotEmpty>
+		<isNotEmpty property="nombres">
+            AND 
+                (
+                (upper(nombres)                 like upper('%' || #nombres# || '%')) or 
+                (upper(nombres_beneficiario)    like upper('%' || #nombres# || '%')) or
+                (upper(apellidos)               like upper('%' || #nombres# || '%')) or
+                (upper(apellidos_beneficiario)  like upper('%' || #nombres# || '%'))
+                )
+        </isNotEmpty>
+		<isNotEmpty property="codigo_siniestro">
+            AND 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+        order by 
+            cast(aniomes_codigo as numeric) desc, 
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+	</select>
+	<select id="searchMultipleByMultipleStatus" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+            anio_siniestro=#anioSiniestro# and 
+            id_tipo_tramite=#idTipoTramite#
+            and id_estatus in (8,9)
+        <isNotEmpty property="cedula">
+            AND ((cedula = #cedula#) or (cedula_beneficiario = #cedula#))
+        </isNotEmpty>
+		<isNotEmpty property="nombres">
+            AND 
+                (
+                (upper(nombres)                 like upper('%' || #nombres# || '%')) or 
+                (upper(nombres_beneficiario)    like upper('%' || #nombres# || '%')) or
+                (upper(apellidos)               like upper('%' || #nombres# || '%')) or
+                (upper(apellidos_beneficiario)  like upper('%' || #nombres# || '%'))
+                )
+        </isNotEmpty>
+		<isNotEmpty property="codigo_siniestro">
+            AND 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro like #codigo_siniestro# || '%')
+        </isNotEmpty>
+        order by 
+            cast(aniomes_codigo as numeric) desc, 
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+	</select>
+	<select id="searchByCodigo" resultClass="ObjSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+            (aniomes_codigo||codigo_siniestro||subcodigo_siniestro like #codigo_siniestro# || '%')
+            and anio_siniestro=#anioSiniestro#
+        ORDER BY
+            cast(aniomes_codigo as numeric) desc,
+            cast(codigo_siniestro as numeric) desc,
+            cast(subcodigo_siniestro as numeric) desc
+	</select>
+	<select id="estatusEditable" resultClass="boolean">
+        SELECT 
+            es.editable
+        FROM 
+            public.siniestro s, 
+            public.estatus_siniestro es
+        WHERE 
+            es.id_estatus_siniestro = s.id_estatus AND
+            s.id_siniestro=#value#
+	</select>
+
+	
+	
+	<select id="cpd_heathcheck_intance" resultClass="ObjSiniestro" resultMap="result_all">
+       <include refid="sql_buscar"/>
+        LIMIT 1
+    </select>   
+    
+	<select id="cpd_heathcheck_bdestatus" resultClass="ObjSiniestro" resultMap="result_listado_benef">
+       <include refid="sql_listado"/>
+        LIMIT 1
+    </select>   
+		
+    <select id="cpd_heathcheck_memory" resultClass="ObjSiniestro" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        LIMIT 5
+    </select>	
+    
+</sqlMap>

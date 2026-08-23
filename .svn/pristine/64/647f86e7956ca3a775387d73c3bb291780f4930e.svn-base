@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Tratamiento">
+	<typeAlias alias="ObjTratamiento" type="ve.gob.dem.fasdem.bean.Tratamiento"/>
+	<resultMap id="result_all" class="ObjTratamiento">
+		<result property="id" column="id_tratamiento" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+	<resultMap id="result_list" class="ObjTratamiento" extends="result_all">
+		<result property="desEspecialidad" column="especialidad" jdbcType="character varying"/>
+		<result property="desOrgano" column="organo" jdbcType="character varying"/>
+		<result property="desPatologia" column="patologia" jdbcType="character varying"/>
+		<result property="desTratamiento" column="tratamiento" jdbcType="character varying"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_tratamiento, 
+			descripcion
+  		FROM 
+			tratamiento
+			
+	</sql>
+	<select id="search" resultClass="ObjTratamiento" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE
+		id_tratamiento = #value#
+	</select>
+	<select id="searchPatologiaOrganoTratamiento" resultClass="ObjTratamiento" resultMap="result_all">
+		SELECT 
+			pot.id_pat_org_trat_esp as id_tratamiento,
+			e.descripcion || '-' || o.descripcion || '-' || p.descripcion || '-' || t.descripcion as descripcion
+		FROM 
+			public.patologia_organo_tratamiento pot, 
+			public.tratamiento t, 
+			public.organo o, 
+			public.patologias p, 
+			public.especialidad e
+		WHERE 
+			pot.id_patologia = p.id_patologia AND
+			pot.id_organo = o.id_organo AND
+			pot.id_especialidad = e.id_especialidad AND
+			t.id_tratamiento = pot.id_tratamiento AND
+			pot.id_pat_org_trat_esp =#value#
+	</select>
+	<select id="list" resultClass="ObjTratamiento" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+	<select id="porEspOrgPat" parameterClass="map" resultClass="ObjTratamiento" resultMap="result_all">
+		SELECT 
+		    distinct(pot.id_pat_org_trat_esp) as id_tratamiento,
+			t.descripcion 
+		FROM 
+			public.patologia_organo_tratamiento pot, 
+			public.tratamiento t
+		WHERE 
+			t.id_tratamiento = pot.id_tratamiento AND
+			id_especialidad = #idEspecialidad# AND
+			id_organo= #idOrgano# AND
+			pot.is_activo=TRUE AND
+			id_patologia = #idPatologia#
+		ORDER BY 
+			descripcion
+	</select>
+	<update id="updateTratamiento" parameterClass="map">
+		UPDATE tratamiento SET descripcion=#descripcion# WHERE id_tratamiento=#id#
+	</update>
+	<insert id="insert" parameterClass="map">
+        INSERT INTO tratamiento(descripcion) VALUES( #descripcion#)
+	</insert>
+	<select id="porEspOrgPat2" parameterClass="map" resultClass="ObjTratamiento" resultMap="result_all">
+		SELECT 
+		distinct(t.id_tratamiento) as id_tratamiento,
+		t.descripcion 
+		FROM 
+		public.patologia_organo_tratamiento pot, 
+		public.tratamiento t
+		WHERE 
+		t.id_tratamiento = pot.id_tratamiento AND
+		id_especialidad = #idEspecialidad# AND
+		id_organo= #idOrgano# AND
+		id_patologia = #idPatologia#
+		ORDER BY 
+		descripcion
+	</select>
+	<select id="porDescripcion" resultClass="ObjTratamiento" resultMap="result_list">
+		SELECT 
+			pot.id_pat_org_trat_esp as id_tratamiento,
+			e.descripcion || '-' || o.descripcion || '-' || p.descripcion || '-' || t.descripcion as descripcion,
+			e.descripcion as especialidad,
+			o.descripcion as organo,
+			p.descripcion as patologia,
+			t.descripcion as tratamiento
+		FROM 
+			public.organo o, 
+			public.patologias p, 
+			public.especialidad e, 
+			public.tratamiento t, 
+			public.patologia_organo_tratamiento pot
+		WHERE 
+			o.id_organo = pot.id_organo AND
+			p.id_patologia = pot.id_patologia AND
+			e.id_especialidad = pot.id_especialidad AND
+			t.id_tratamiento = pot.id_tratamiento AND
+			pot.is_activo=TRUE AND
+			upper(o.descripcion) ||' '|| upper(p.descripcion) || ' '||upper(e.descripcion) || ' '||upper(t.descripcion) like upper('%' || #value# || '%')
+			order by
+			e.descripcion asc,
+			o.descripcion asc,
+			p.descripcion asc,
+			t.descripcion asc
+	</select>
+</sqlMap>

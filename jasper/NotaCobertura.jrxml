@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="NotaCobertura"
+
+		 language="groovy"		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="528"
+		 columnSpacing="0"
+		 leftMargin="42"
+		 rightMargin="42"
+		 topMargin="42"
+		 bottomMargin="42"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="85" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="RUTA" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["http://localhost:8080/fd/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="anio" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="descripcion_usuario" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["C:\\Tomcat\\webapps\\fd\\jasper\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="facturas" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["No posee"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT * FROM view_nota_cobertura where anio_siniestro  = cast($P{anio} as numeric)
+ and id_siniestro  = cast($P{id} as numeric);]]></queryString>
+
+	<field name="tratamiento" class="java.lang.String"/>
+	<field name="anio_siniestro" class="java.math.BigDecimal"/>
+	<field name="id_siniestro" class="java.lang.Integer"/>
+	<field name="anio_factura" class="java.math.BigDecimal"/>
+	<field name="fecha_notificacion" class="java.sql.Timestamp"/>
+	<field name="proveedor" class="java.lang.String"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="cedula_beneficiario" class="java.lang.String"/>
+	<field name="numero" class="java.lang.String"/>
+	<field name="fecha_liquidacion" class="java.sql.Date"/>
+	<field name="rif" class="java.lang.String"/>
+	<field name="monto_amparado" class="java.lang.Double"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="parentesco" class="java.lang.String"/>
+	<field name="nro_factura" class="java.lang.String"/>
+	<field name="fecha_factura" class="java.sql.Date"/>
+	<field name="monto_letras" class="java.lang.String"/>
+
+	<variable name="enLetras" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new ve.gob.dem.reportes.utilidades.NumerosLetras().convertirLetras($F{monto_amparado}.toString())]]></variableExpression>
+	</variable>
+	<variable name="formatoNumero" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new ve.gob.dem.reportes.utilidades.FormatoNumeros().formatoNumero($F{monto_amparado}.toString())]]></variableExpression>
+	</variable>
+
+		<group  name="siniestro" >
+			<groupExpression><![CDATA[$F{id_siniestro}]]></groupExpression>
+			<groupHeader>
+			<band height="275"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="73"
+						width="493"
+						height="67"
+						key="textField-1"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="1" rightPadding="1" topPadding="1" bottomPadding="1">					<pen lineWidth="0.0" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+</box>
+					<textElement textAlignment="Justified">
+						<font size="11"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["    Por medio de la presente cumplo en informarles que el señor(a) "+$F{nombre}+", Cédula de Identidad Número: "+$F{cedula_beneficiario}+", es nuestro asegurado con el FONDO AUTOADMINISTRADO DE SALUD DE LA DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA, Siniestro Número: "+$F{numero}+".\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="140"
+						width="493"
+						height="105"
+						key="textField-2"
+						positionType="Float"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="1" rightPadding="1" topPadding="1" bottomPadding="1"></box>
+					<textElement textAlignment="Justified">
+						<font size="11"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["    En virtud de lo antes expuesto LA DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA, se hace responsable hasta por el monto máximo de BOLÍVARES "+$F{monto_letras}+ " (" +$V{formatoNumero} + ") como monto único total y definitivo por "+$F{descripcion}+ " realizado a "+$F{nombre} +" ("+$F{parentesco}+") por presentar: "+$F{tratamiento}+".\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="7"
+						width="493"
+						height="19"
+						key="textField-3"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica" size="12" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Señores: "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="45"
+						width="493"
+						height="22"
+						key="textField-6"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["RIF: "+$F{rif}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="26"
+						width="493"
+						height="19"
+						key="textField-7"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{proveedor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="244"
+						width="493"
+						height="31"
+						key="textField-8"
+						positionType="Float"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="1" rightPadding="1" topPadding="1" bottomPadding="1"></box>
+					<textElement textAlignment="Justified">
+						<font size="11"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["    "+$P{facturas}+"\n"]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="143"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="39"
+						width="528"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="123"
+						width="528"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font size="12"/>
+					</textElement>
+				<text><![CDATA[Por la Dirección Ejecutiva de la Magistratura.]]></text>
+				</staticText>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="101"  isSplitAllowed="true" >
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="417"
+						y="6"
+						width="111"
+						height="47"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//fasdem.gif"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="14"
+						y="75"
+						width="494"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[NOTA DE COBERTURA]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="MMMMM dd, yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="277"
+						y="53"
+						width="228"
+						height="19"
+						key="textField-5"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Caracas, "+new SimpleDateFormat("dd/MM/yyyy").format(new java.sql.Date($F{fecha_notificacion}.getTime()))]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="0"
+						width="129"
+						height="88"
+						key="image-3"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//logo.jpg"]]></imageExpression>
+				</image>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="2"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="66"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="0"
+						width="514"
+						height="18"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Funcionario FASDEM: "+$P{descripcion_usuario}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="14"
+						y="18"
+						width="494"
+						height="24"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[NOTA: Para el pago de las facturas se agradece enviarlas a nuestras oficinas con los resultados de los exámenes y estudios practicados al paciente.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="14"
+						y="42"
+						width="415"
+						height="24"
+						key="staticText-10"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Av. Francisco de miranda, entre calle Elice y la Joya. Edif. Tribunal Supremo de Justicia-Dirección Ejecutiva de la Magistratura. Cod Postal 1060. Chacao. Caracas - Venezuela. Rif. G-20000028-7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="429"
+						y="42"
+						width="78"
+						height="24"
+						key="staticText-11"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DEM.TSJ.GOB.VE]]></text>
+				</staticText>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

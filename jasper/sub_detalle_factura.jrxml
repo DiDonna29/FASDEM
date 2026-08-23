@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="sub_detalle_factura"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="552"
+		 pageHeight="792"
+		 columnWidth="552"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="idFactura" isForPrompting="false" class="java.lang.Integer"/>
+	<queryString><![CDATA[SELECT 
+  detalles_factura.id_detalle, 
+  tipo_gasto.descripcion, 
+  detalles_factura.monto_amparado
+FROM 
+  public.detalles_factura, 
+  public.tipo_gasto
+WHERE 
+  detalles_factura.id_tipo_gasto = tipo_gasto.id_tipo_gasto and
+detalles_factura.id_factura = $P{idFactura}
+]]></queryString>
+
+	<field name="id_detalle" class="java.lang.Integer"/>
+	<field name="id_factura" class="java.lang.Integer"/>
+	<field name="id_tipo_gasto" class="java.lang.Integer"/>
+	<field name="monto_amparado" class="java.lang.Double"/>
+	<field name="monto_presupuestado" class="java.lang.Double"/>
+	<field name="monto_negociado" class="java.lang.Double"/>
+	<field name="monto_no_amparado" class="java.lang.Double"/>
+	<field name="anio_siniestro" class="java.math.BigDecimal"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="100"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

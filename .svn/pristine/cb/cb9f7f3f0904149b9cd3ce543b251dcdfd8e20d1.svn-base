@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Estadistica" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fechaInicio" class="java.lang.String"/>
+	<parameter name="RUTA" class="java.lang.String"/>
+	<parameter name="fechaFin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select s.codigo_siniestro,s.subcodigo_siniestro,s.aniomes_codigo,s.cedula,s.nombres,s.apellidos,s.fecha_liquidacion,e.descripcion,s.monto_presupuestado from siniestro s, estatus_siniestro e,tipo_tramite t,tipo_siniestro d ,siniestro_pre_orden_pago p
+
+where s.id_estatus = e.id_estatus_siniestro and
+      s.id_tipo_tramite = t.id_tipo_tramite and
+      s.id_tipo_siniestro = d.id_tipo_siniestro and
+      s.id_siniestro_pre_orden_pago = p.id_siniestro_pre_orden_pago and
+      s.fecha_notificacion between  TO_TIMESTAMP($P{fechaInicio},'DD/MM/YYYY')
+            AND TO_TIMESTAMP($P{fechaFin},'DD/MM/YYYY')]]>
+	</queryString>
+	<field name="codigo_siniestro" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="subcodigo_siniestro" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="aniomes_codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cedula" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombres" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="apellidos" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha_liquidacion" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="monto_presupuestado" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="Contador" class="java.lang.String" incrementType="Report" calculation="Count"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="91" splitType="Stretch">
+			<image>
+				<reportElement key="image-2" x="404" y="9" width="121" height="59"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//fasdem.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText-3" x="116" y="21" width="254" height="21"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
+				</textElement>
+				<text><![CDATA[ESTADISTICO GENERAL]]></text>
+			</staticText>
+			<image>
+				<reportElement key="image-3" x="10" y="4" width="72" height="65"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//logo.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText-1" x="10" y="69" width="187" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="472" y="72" width="100" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" x="10" y="0" width="187" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[G-20000028-7]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="18" backcolor="#999999"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="-4" y="4" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nro Siniestro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="4" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="161" y="4" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="4" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Cedula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="4" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Fecha Factura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="4" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Fecha Cheque]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="513" y="4" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Monto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="418" y="4" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Estatus]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="347" y="4" width="84" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{fecha_cheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="279" y="4" width="81" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{fecha_factura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="4" width="61" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="151" y="4" width="74" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{apellidos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="223" y="4" width="66" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cedula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="25" y="4" width="52" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigo_siniestro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="4" width="31" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{subcodigo_siniestro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="4" width="33" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{aniomes_codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="4" width="94" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="525" y="0" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{monto_presupuestado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-11" x="409" y="11" width="163" height="43"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DEM.TS.J.GOB.VE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" x="-9" y="10" width="469" height="44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Av. Francisco de miranda, entre calle Elice y la Joya. Edif. Tribunal Supremo de Justicia-Dirección Ejecutiva de la Magistratura. Cod Postal 1060. Chacao. Caracas - Venezuela. Rif. G-20000028-7]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="0" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.75"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

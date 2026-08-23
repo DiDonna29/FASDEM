@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoSiniestro">
+	<typeAlias alias="ObjTipoSiniestro" type="ve.gob.dem.fasdem.bean.TipoSiniestro"/>
+	<resultMap id="result_all" class="ObjTipoSiniestro">
+		<result property="id" column="id_tipo_siniestro" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_siniestro, 
+			descripcion
+  		FROM 
+			tipo_siniestro
+	</sql>
+
+	<select id="search" resultClass="ObjTipoSiniestro" parameterClass="int" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_siniestro = #value#
+	</select>
+
+	<select id="list" resultClass="ObjTipoSiniestro" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+	
+	<select id="listByTipoTramite" resultClass="ObjTipoSiniestro" resultMap="result_all">
+		SELECT 
+		  ts.id_tipo_siniestro,
+		  ts.descripcion 
+		FROM 
+		  public.tipo_tramite tt, 
+		  public.tipo_siniestro ts, 
+		  public.tipo_siniestro_tipo_tramite tstt
+		WHERE 
+		  ts.id_tipo_siniestro = tstt.id_tipo_siniestro AND
+		  tstt.id_tipo_tramite = tt.id_tipo_tramite AND
+		  tt.id_tipo_tramite = #value#
+	</select>
+
+</sqlMap>
+
+	
+	

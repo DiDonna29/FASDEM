@@ -1,0 +1,263 @@
+/**15/07/2010
+ * marcenrl
+ */
+package ve.gob.dem.fasdem.action.pago;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
+
+import ve.gob.dem.fasdem.bean.Clinica;
+import ve.gob.dem.fasdem.bean.DetalleFacturaPago;
+import ve.gob.dem.fasdem.bean.DetallePreOrdenPago;
+import ve.gob.dem.fasdem.bean.Persona;
+import ve.gob.dem.fasdem.bean.PreOrdenPago;
+import ve.gob.dem.fasdem.bean.TipoProveedor;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.exp.ExpClinica;
+import ve.gob.dem.fasdem.exp.ExpPersona;
+
+import ve.gob.dem.fasdem.exp.pagos.ExpDetalleFacturaPago;
+import ve.gob.dem.fasdem.exp.pagos.ExpPreOrdenPago;
+import ve.gob.dem.fasdem.exp.pagos.ExpTipoEmpleado;
+import ve.gob.dem.fasdem.exp.pagos.ExpTipoProveedor;
+import ve.gob.dem.fasdem.exp.pagos.ExpUnidadTributaria;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Constantes;
+import ve.gob.dem.framework.recursos.Utilidad;
+import ve.gob.dem.framework.seguridad.bean.Usuario;
+
+public class NuevoPago extends GenericAction {
+	static protected Logger log = Logger.getLogger(NuevoPago.class);
+
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpSession session = request.getSession();
+		Usuario usuario = null;
+		usuario = (Usuario) session.getAttribute("usuario");
+		ActionMessages am = new ActionMessages();
+		Entorno ent = new Entorno(Entorno.MOD_NINGUNO);
+		try {
+			validarAction(request, form, ent, am, this.getClass());
+		} catch (PersonalNotFillItems e) {
+			return mapping.findForward(FWD_INPUT);
+		}
+		String accion = request.getParameter("accionPago");
+		log.info("ACCION " + accion);
+		if (accion == null) // INGRESO A LA PAGINA POR PRIMERA VEZ
+		{
+			request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+			request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+			return mapping.findForward("H1");
+		} else {
+			if (accion.equals("1")) { // // BUSQUEDA DE FACTURAS POR FECHAS;
+										// PROVEEDOR Y TIPO DE EMPLEADO
+				int anio = Integer.parseInt(request.getParameter("fechaInicio").substring(6, 10));
+				ArrayList list = ExpDetalleFacturaPago.buscarListaProveedorFechaSiniestro(Integer.parseInt(request.getParameter("tipoempleado")), Integer.parseInt(request.getParameter("idProveedor")), request.getParameter("fechaInicio"), request.getParameter("fechaFin"), anio);
+				request.setAttribute("prov", ExpClinica.BuscarPorid(Integer.parseInt(request.getParameter("idProveedor"))));
+				request.setAttribute("listaUnidad", ExpUnidadTributaria.buscarLista());
+				request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+				request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+				request.setAttribute("primera", "no");
+				request.setAttribute("anio_pre", anio);
+				request.setAttribute("dselect", request.getParameter("fechaInicio"));
+				request.setAttribute("hselect", request.getParameter("fechaFin"));
+				request.setAttribute("tipselect", request.getParameter("tipoempleado"));
+				request.setAttribute("tipProvSelect", request.getParameter("tipoProveedor"));
+				request.setAttribute("lista", list);
+				return mapping.findForward("H1");
+			}
+			if (accion.equals("4")) { // // BUSQUEDA DE FACTURAS CODIGO DE
+										// SINIESTRO
+				
+				int anio=0;
+				
+				
+				if (Integer.parseInt(request.getParameter("anio_busca"))==0){
+					
+					anio = Integer.parseInt("20" + request.getParameter("cod_sin").substring(0, 2));
+					
+				}else{
+					
+					anio =Integer.parseInt(request.getParameter("anio_busca"));
+							
+				}
+				
+				
+				
+				
+				log.info("ANIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + anio); 
+				
+				
+				//int anio = Integer.parseInt("20" + request.getParameter("cod_sin").substring(0, 2));
+				//int anio=2011;
+				//ArrayList list = ExpDetalleFacturaPago.buscarListaBuscaFacPorSiniestro(request.getParameter("cod_sin").replace("-", "").trim(), (!request.getParameter("cod_sin").trim().equals("") ? Integer.parseInt("20" + request.getParameter("cod_sin").substring(0, 2)) : Integer.parseInt(Utilidad.DateToString(new Date(), "YYYY"))));
+				ArrayList list = ExpDetalleFacturaPago.buscarListaBuscaFacPorSiniestro(request.getParameter("cod_sin").replace("-", "").trim(), (!request.getParameter("cod_sin").trim().equals("") ? anio : Integer.parseInt(Utilidad.DateToString(new Date(), "YYYY"))));
+				try {
+					DetalleFacturaPago det = (DetalleFacturaPago) list.get(0);
+					request.setAttribute("prov", det.getProveedor());
+					request.setAttribute("tipselect", det.getTipoEmpleado().getId());
+					request.setAttribute("tipProvSelect", request.getParameter("tipoProveedor"));
+				} catch (Exception e) {
+				}
+				
+				request.setAttribute("lista", list);
+				request.setAttribute("listaUnidad", ExpUnidadTributaria.buscarLista());
+				request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+				request.setAttribute("primera", "no");
+				request.setAttribute("anio_pre", anio);
+				request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+				return mapping.findForward("H1");
+			}
+			if (accion.equals("5")) { // // BUSQUEDA DE FACTURAS CODIGO DE
+										// FACTURA
+				int anio = Integer.parseInt(request.getParameter("anio_factura"));
+				ArrayList list = ExpDetalleFacturaPago.buscarListaBuscaFacPorCodigo(request.getParameter("numero_factura"), anio);
+				try {
+					DetalleFacturaPago det = (DetalleFacturaPago) list.get(0);
+					request.setAttribute("prov", det.getProveedor());
+					request.setAttribute("tipselect", det.getTipoEmpleado().getId());
+				} catch (Exception e) {
+				}
+				request.setAttribute("dselect", request.getParameter("fechaInicio"));
+				request.setAttribute("hselect", request.getParameter("fechaFin"));
+				request.setAttribute("lista", list);
+				request.setAttribute("listaUnidad", ExpUnidadTributaria.buscarLista());
+				request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+				request.setAttribute("primera", "no");
+				request.setAttribute("anio_pre", anio);
+				request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+				return mapping.findForward("H1");
+			}
+			if (accion.equals("2")) {
+				String[] listFact = request.getParameterValues("listfact");
+				String Cadena_Valores = "";
+				for (int i = 0; i < listFact.length; i++) {
+					Cadena_Valores = Cadena_Valores + listFact[i] + ",";
+				}
+				Cadena_Valores = Cadena_Valores.substring(0, Cadena_Valores.length() - 1);
+				DetallePreOrdenPago det = ExpPreOrdenPago.buscarDetallePreOrden(Cadena_Valores, Integer.parseInt(request.getParameter("anio_pre1")));
+				try {
+					TipoProveedor tip = null;
+					Clinica prov = null;
+					try {
+						log.info("prov_select");
+						prov = ExpClinica.BuscarPorid(Integer.parseInt(request.getParameter("prov_select")));
+						request.setAttribute("prov", prov);
+						tip = prov.getTipoProveedor();
+					} catch (Exception e) {
+						log.info("provTerc");
+						prov = ExpClinica.BuscarPorid(Integer.parseInt(request.getParameter("provTerc")));
+						request.setAttribute("prov", prov);
+						tip = prov.getTipoProveedor();
+					}
+					log.info("tipo preorder del proveedor"+ tip.getId_tipo_preOrden());
+					
+					request.setAttribute("tipoPre", tip.getId_tipo_preOrden());
+				} catch (Exception e) {
+					request.setAttribute("tipoPre", Constantes.TipoPreOrdenReembolsos);
+				}
+				request.setAttribute("cadena", Cadena_Valores);
+				request.setAttribute("detalle", det);
+				request.setAttribute("anio_pre2", Integer.parseInt(request.getParameter("anio_pre1")));
+				request.setAttribute("tip_select2", request.getParameter("tip_select"));
+				return mapping.findForward("H2");
+			}
+			if (accion.equals("3")) {
+				
+log.info("tipo "+request.getParameter("tipopre1"));
+				String dateOut;
+				int anio_preorden = Integer.parseInt(request.getParameter("anio_pre3"));
+				int anio_actual = Integer.parseInt(Utilidad.DateToString(new Date(), "yyyy"));
+				if (anio_preorden != anio_actual) {
+					dateOut = String.valueOf(anio_preorden).substring(2, 4) + "12";
+				} else {
+					dateOut = Utilidad.DateToString(new Date(), "yyMM");
+				}
+				PreOrdenPago pre = new PreOrdenPago();
+				pre.setAniomes(dateOut);
+				pre.setFecha_preorden(new Date());
+				try {
+					pre.setProveedor(ExpClinica.BuscarPorid(Integer.parseInt(request.getParameter("prov_selection"))));
+				} catch (Exception e) {
+					pre.setProveedor(ExpClinica.BuscarPorid(44));
+					pre.setTitular(ExpPersona.buscarporCedula(request.getParameter("prov_selection")));
+				}
+				pre.setAnioPreorden(anio_preorden);
+				pre.setId_dependencia(usuario.getIdDependencia());
+				pre.setUsuario(usuario.getLogin());
+				pre.setUnidad_tributaria(Double.parseDouble(request.getParameter("uni")));
+				if (Integer.parseInt(request.getParameter("isrl")) == 1) {
+					pre.setAplica_isrl(true);
+				} else {
+					pre.setAplica_isrl(false);
+				}
+				int cantidadSeleccionadas = ExpDetalleFacturaPago.buscarSeleccionadas(request.getParameter("cadena"), String.valueOf(anio_preorden));
+				if (cantidadSeleccionadas == 0) {
+					int codigo_preOrden = 0;
+					String cod = "";
+					try {
+						codigo_preOrden = ExpPreOrdenPago.buscarCodigoNuevo(anio_preorden, dateOut) + 1;
+						String DIGITOS = "00000";
+						cod = ((DIGITOS + String.valueOf(codigo_preOrden)).substring((DIGITOS + String.valueOf(codigo_preOrden)).length() - DIGITOS.length()));
+						pre.setCodigo_preorden(cod);
+						pre.setSecuenciaPreOrden(codigo_preOrden);
+						pre.setCod_completo(dateOut + "-" + pre.getCodigo_preorden());
+						
+						ExpPreOrdenPago.crearPreOrden(pre, dateOut + "-" + pre.getCodigo_preorden(), Double.parseDouble(request.getParameter("uni")), Integer.parseInt(request.getParameter("aplicTim")), Integer.parseInt(request.getParameter("tipopre1")), Double.parseDouble(request.getParameter("por")));
+						ExpPreOrdenPago.agregarFacturasOrden(request.getParameter("cadena"), dateOut + "-" + pre.getCodigo_preorden(), anio_preorden);
+					} catch (Exception e) { // / si duplica el numero de
+											// preorden
+						try {
+							codigo_preOrden = ExpPreOrdenPago.buscarCodigoNuevo(anio_preorden, dateOut) + 1;
+							String DIGITOS = "00000";
+							cod = ((DIGITOS + String.valueOf(codigo_preOrden)).substring((DIGITOS + String.valueOf(codigo_preOrden)).length() - DIGITOS.length()));
+							pre.setCodigo_preorden(cod);
+							pre.setSecuenciaPreOrden(codigo_preOrden);
+							pre.setCod_completo(dateOut + "-" + pre.getCodigo_preorden());
+							ExpPreOrdenPago.crearPreOrden(pre, dateOut + "-" + pre.getCodigo_preorden(), Double.parseDouble(request.getParameter("uni")), Integer.parseInt(request.getParameter("aplicTim")), Integer.parseInt(request.getParameter("tipopre1")), Double.parseDouble(request.getParameter("por")));
+							ExpPreOrdenPago.agregarFacturasOrden(request.getParameter("cadena"), dateOut + "-" + pre.getCodigo_preorden(), anio_preorden);
+						} catch (Exception e1) { // / si duplica el numero de
+													// preorden
+							codigo_preOrden = ExpPreOrdenPago.buscarCodigoNuevo(anio_preorden, dateOut) + 1;
+							String DIGITOS = "00000";
+							cod = ((DIGITOS + String.valueOf(codigo_preOrden)).substring((DIGITOS + String.valueOf(codigo_preOrden)).length() - DIGITOS.length()));
+							pre.setCodigo_preorden(cod);
+							pre.setSecuenciaPreOrden(codigo_preOrden);
+							pre.setCod_completo(dateOut + "-" + pre.getCodigo_preorden());
+							ExpPreOrdenPago.crearPreOrden(pre, dateOut + "-" + pre.getCodigo_preorden(), Double.parseDouble(request.getParameter("uni")), Integer.parseInt(request.getParameter("aplicTim")), Integer.parseInt(request.getParameter("tipopre1")), Double.parseDouble(request.getParameter("por")));
+							ExpPreOrdenPago.agregarFacturasOrden(request.getParameter("cadena"), dateOut + "-" + pre.getCodigo_preorden(), anio_preorden);
+						}
+					}
+					incluirTraza(TR_PAGO_CREAR_PREORDEN, dateOut + "-" + pre.getCodigo_preorden(), "Creacion de PreOrden de Pago", usuarioSession(request));
+					request.setAttribute("mensaje", "Pre-Orden de Pago Nro " + pre.getAniomes() + "-" + cod + " ha sido creada satisfactoriamente");
+					DetallePreOrdenPago det = ExpPreOrdenPago.buscarDetallePreOrdenPorCodigo(dateOut + "-" + pre.getCodigo_preorden(), anio_preorden);
+					request.setAttribute("aplica", Integer.parseInt(request.getParameter("aplicTim")));
+					request.setAttribute("detalle", det);
+					request.setAttribute("preorden", pre);
+					return mapping.findForward("H3");
+				} else {
+					request.setAttribute("mensaje", "Algunas facturas seleccionadas ya fueron cargadas en otra PreOrden de Pago; Verifique el Criterio de Busqueda");
+					request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+					request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+					return mapping.findForward("H1");
+				}
+			}
+			if (accion.equals("6")) { // //
+				request.setAttribute("tipoEmpleado", ExpTipoEmpleado.BuscarLista());
+				request.setAttribute("listaTipoProv", ExpTipoProveedor.BuscarLista());
+				return mapping.findForward("H1");
+			}
+			return mapping.findForward("H1");
+		}
+	}
+}

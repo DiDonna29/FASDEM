@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoTramite">
+	<typeAlias alias="ObjTipoTramite" type="ve.gob.dem.fasdem.bean.TipoTramite"/>
+	<resultMap id="result_all" class="ObjTipoTramite">
+		<result property="id" column="id_tipo_tramite" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_tramite, 
+			descripcion
+  		FROM 
+			tipo_tramite
+	</sql>
+
+	<select id="search" resultClass="ObjTipoTramite" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_tramite = #value#
+	</select>
+
+	<select id="list" resultClass="ObjTipoTramite" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_tramite != 0
+	</select>
+	
+</sqlMap>
+
+	
+	

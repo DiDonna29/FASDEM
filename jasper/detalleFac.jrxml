@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="detalleFac"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="1848"
+		 pageHeight="792"
+		 columnWidth="1848"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="idfactura" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["748"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="anioSiniestro" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["2011"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select sum(COALESCE(gastos_clinicos, 0::double precision)) AS gastos_clinicos, 
+       sum(COALESCE(honorarios_medicos, 0::double precision)) AS honorarios_medicos,
+       sum(COALESCE(material_iva, 0::double precision))AS material_iva,
+       sum(COALESCE(material, 0::double precision)) AS material,
+       sum(COALESCE(odontologia, 0::double precision)) AS odontologia,
+       sum(COALESCE(funerarios, 0::double precision)) AS funerarios, 
+       sum(COALESCE(vida, 0::double precision)) AS vida,
+       sum(COALESCE(farmacia, 0::double precision)) AS medicinas,
+       sum(COALESCE(otros, 0::double precision)) AS otros,
+       sum(COALESCE(iva, 0::double precision)) AS monto_iva,
+
+       sum((COALESCE(gastos_clinicos, 0::double precision) + 
+            COALESCE(odontologia, 0::double precision)  +  
+            COALESCE(funerarios, 0::double precision) + 
+            COALESCE(otros, 0::double precision) +  
+	    COALESCE(vida, 0::double precision) + 
+	    COALESCE(material_iva, 0::double precision) + 
+	    COALESCE(material, 0::double precision) ) ) as base_imponible_isrl, 
+
+
+       sum((COALESCE(gastos_clinicos, 0::double precision) +  
+            COALESCE(odontologia, 0::double precision)  +  
+            COALESCE(funerarios, 0::double precision) + 
+            COALESCE(otros, 0::double precision) + 
+            COALESCE(material, 0::double precision) +  
+	    COALESCE(material_iva, 0::double precision) + 
+	    COALESCE(vida, 0::double precision) + 
+	    COALESCE(honorarios_medicos, 0::double precision) + 
+	    COALESCE(farmacia, 0::double precision) + 
+	    COALESCE(iva, 0::double precision))) as monto_liquidado, 
+
+
+
+       sum(fact.porcentaje_isrl * ( COALESCE(gastos_clinicos, 0::double precision) +  
+                                    COALESCE(odontologia, 0::double precision)  +  
+                                    COALESCE(funerarios, 0::double precision) + 
+				    COALESCE(otros, 0::double precision) + 
+				    COALESCE(vida, 0::double precision) +  
+				    COALESCE(material_iva, 0::double precision) +  
+				    COALESCE(material, 0::double precision) )/100) as monto_isrl, 
+
+
+	sum(fact.porcentaje_timbre * (COALESCE(gastos_clinicos, 0::double precision) + 
+	                              COALESCE(odontologia, 0::double precision)  +  
+	                              COALESCE(funerarios, 0::double precision) +  
+	                              COALESCE(otros, 0::double precision) +  
+				      COALESCE(material, 0::double precision) +  
+				      COALESCE(material_iva, 0::double precision) +  
+				      COALESCE(vida, 0::double precision) +  
+				      COALESCE(honorarios_medicos, 0::double precision) + 
+				      COALESCE(farmacia, 0::double precision))/100) as monto_timbre, 
+
+				      count(id_factura) AS numero_pagos 
+
+
+
+				      from  (select id_factura, porcentaje_isrl, porcentaje_timbre, porcentaje_iva, anio_siniestro  
+				      from facturas where is_factura is true 
+				      and anio_siniestro= $P{anioSiniestro}::int and id_factura =$P{idfactura}::int) fact 
+
+
+				LEFT JOIN ( SELECT df.id_factura AS id_facturagc, sum(df.monto_amparado) AS gastos_clinicos 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 3 and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) gc ON fact.id_factura = gc.id_facturagc 
+
+				LEFT JOIN ( SELECT df.id_factura AS id_facturahm, sum(df.monto_amparado) AS honorarios_medicos 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 6 and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) hm ON fact.id_factura = hm.id_facturahm 
+
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_mativa, sum(df.monto_amparado) AS material_iva 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 9  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) mmi ON fact.id_factura = mmi.id_factura_mativa 
+
+                                LEFT JOIN ( SELECT df.id_factura AS id_factura_mat, sum(df.monto_amparado) AS material 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 10  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) mm ON fact.id_factura = mm.id_factura_mat 
+
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_odo, sum(df.monto_amparado) AS odontologia 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 1  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) od ON fact.id_factura = od.id_factura_odo 
+
+				
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_fun, sum(df.monto_amparado) AS funerarios 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 2  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) fu ON fact.id_factura = fu.id_factura_fun 
+
+				
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_vida, sum(df.monto_amparado) AS vida 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 4  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) vid ON fact.id_factura = vid.id_factura_vida 
+
+				
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_farmacia, sum(df.monto_amparado) AS farmacia 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 7  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) farm ON fact.id_factura = farm.id_factura_farmacia 
+
+				
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_otros, sum(df.monto_amparado) AS otros 
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 8  and anio_siniestro=$P{anioSiniestro}::int
+				GROUP BY df.id_factura) otr ON fact.id_factura = otr.id_factura_otros 
+
+				LEFT JOIN ( SELECT df.id_factura AS id_factura_iva, sum(df.monto_amparado) AS iva
+				FROM detalles_factura df,tipo_gasto tg 
+				WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 11  and anio_siniestro=$P{anioSiniestro}::int
+				
+				GROUP BY df.id_factura) iva ON fact.id_factura = iva.id_factura_iva]]></queryString>
+
+	<field name="gastos_clinicos" class="java.lang.Double"/>
+	<field name="honorarios_medicos" class="java.lang.Double"/>
+	<field name="material_iva" class="java.lang.Double"/>
+	<field name="material" class="java.lang.Double"/>
+	<field name="odontologia" class="java.lang.Double"/>
+	<field name="funerarios" class="java.lang.Double"/>
+	<field name="vida" class="java.lang.Double"/>
+	<field name="medicinas" class="java.lang.Double"/>
+	<field name="otros" class="java.lang.Double"/>
+	<field name="monto_iva" class="java.lang.Double"/>
+	<field name="base_imponible_isrl" class="java.lang.Double"/>
+	<field name="monto_liquidado" class="java.lang.Double"/>
+	<field name="monto_isrl" class="java.lang.Double"/>
+	<field name="monto_timbre" class="java.lang.Double"/>
+	<field name="numero_pagos" class="java.lang.Long"/>
+
+	<variable name="total_amparado" class="java.lang.Double" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new java.lang.Double(  ($F{gastos_clinicos}.doubleValue()) +($F{honorarios_medicos}.doubleValue())+($F{material_iva}.doubleValue())+($F{material}.doubleValue())+($F{odontologia}.doubleValue())+($F{funerarios}.doubleValue())+($F{vida}.doubleValue())+($F{medicinas}.doubleValue())+($F{otros}.doubleValue()))
+]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="18"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{gastos_clinicos}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="100"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{honorarios_medicos}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="200"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{material_iva}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="300"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{material}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="400"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{odontologia}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="500"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{funerarios}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="600"
+						y="0"
+						width="150"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{vida}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="750"
+						y="0"
+						width="150"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{medicinas}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="900"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{otros}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1000"
+						y="0"
+						width="200"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{base_imponible_isrl}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1200"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monto_liquidado}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1300"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monto_isrl}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1400"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monto_iva}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1500"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{monto_timbre}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1600"
+						y="0"
+						width="124"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<pen lineWidth="0.0" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{numero_pagos}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1724"
+						y="0"
+						width="124"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box>					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{total_amparado}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CuentaBenef">
+	<typeAlias alias="ObjCuentaBenef" type="ve.gob.dem.fasdem.bean.CuentaBenef"/>
+	<resultMap id="result_cuentabenef" class="ObjCuentaBenef">
+		<result property="cedula" column="cedula" jdbcType="character varying"/>
+		<result property="numero_cuenta" column="numero_cuenta" jdbcType="character varying"/>
+		<result property="tipo_cuenta" column="tipo_cuenta" jdbcType="character varying"/> 
+		<result property="idBanco" column="id_banco" jdbcType="character varying"/>
+<!-- 		<result property="nombreBanco" column="banco" jdbcType="character varying"/> -->
+		<result property="is_activo" column="is_activo" jdbcType="character varying"/>
+	
+		
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT cedula,numero_cuenta,tipo_cuenta,id_banco,is_activo
+			
+		FROM
+			cuenta_beneficiario
+	</sql>
+	
+	<select id="search" resultClass="ObjCuentaBenef" resultMap="result_cuentabenef">
+		<include refid="sql_buscar"/>
+		WHERE cedula = #value# AND is_activo = true
+	</select>
+</sqlMap>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="Nota_Cobertura"
+
+		 language="groovy"		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="555"
+		 columnSpacing="0"
+		 leftMargin="20"
+		 rightMargin="20"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="85" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="RUTA" isForPrompting="true" class="java.lang.String"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="79"  isSplitAllowed="true" >
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="146"
+						height="79"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//fasdem.gif"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="407"
+						y="32"
+						width="100"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Caracas, ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd MMMMM yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="458"
+						y="32"
+						width="100"
+						height="20"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="35"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="192"
+						y="0"
+						width="164"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font isBold="false"/>
+					</textElement>
+				<text><![CDATA[NOTA DE COBERTURA]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="412"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Señores:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="34"
+						width="100"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Ciudad.-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="66"
+						width="572"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[	Por medio de la presente cumplo en informarles que el señor(a)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="86"
+						width="572"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Cédula de Identidad Número                              es nuestro asegurado con el FONDO AUTOADMINISTRADO DE SALUD ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="2"
+						y="106"
+						width="569"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[DE LA DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA, Sniestro Número:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="141"
+						width="571"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[En virtud de antes expuesto LA DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA., se hace responsable hasta por el ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="161"
+						width="572"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[monto máximo de BOLIVARES                                                                                                                               ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="181"
+						width="283"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[monto único total y definitivo por ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="201"
+						width="571"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[realizado a                                                                                                                                                      por]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="221"
+						width="572"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[presentar                                                              Segun Pre-factura numero               de fecha ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="192"
+						y="264"
+						width="100"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="146"
+						y="348"
+						width="210"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Por la Dirección Ejecutiva de la Magistratura.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="371"
+						width="572"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+				<text><![CDATA[NOTA: Para el pago de las facturas se agradece enviarlas a nuestras oficinas con los resultados de los exámenes y]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="391"
+						width="571"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+				<text><![CDATA[estudios practicados al paciente.]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="45"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="469"
+						height="44"
+						key="staticText-10"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Av. Francisco de miranda, entre calle Elice y la Joya. Edif. Tribunal Supremo de Justicia-Dirección Ejecutiva de la Magistratura. Cod Postal 1060. Chacao. Caracas - Venezuela. Rif. G-20000028-7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="486"
+						y="0"
+						width="85"
+						height="43"
+						key="staticText-11"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DEM.TSJ.GOB.VE]]></text>
+				</staticText>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="54"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

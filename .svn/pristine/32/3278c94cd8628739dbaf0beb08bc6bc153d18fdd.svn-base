@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OrdenPago">
+	<typeAlias alias="ObjOrdenPago" type="ve.gob.dem.fasdem.bean.OrdenPago"/>
+	<resultMap id="result_all" class="ObjOrdenPago">
+		<result property="ubicacionFisica" column="iduf" select="UbicacionFisica.search"/>
+		<result property="montoGastoClinico" column="monto_gastos_clinicos" jdbcType="double"/>
+		<result property="montoHonorarioMedico" column="monto_honorarios_medicos" jdbcType="double"/>
+		<result property="montoProntoPago" column="monto_pronto_pago" jdbcType="double"/>
+		
+		<result property="montoNegociado" column="monto_negociado" jdbcType="double"/>
+		<result property="montoDeducible" column="monto_deducible" jdbcType="double"/>
+		<result property="montoIvaProveedor" column="monto_iva_clinica" jdbcType="double"/>
+		<result property="montoIva" column="monto_iva" jdbcType="double"/>
+		<result property="montoIslr" column="monto_islr" jdbcType="double"/>
+		<result property="numeroOrdenPago" column="numero_orden_pago" jdbcType="integer"/>
+		<result property="siniestros" column="id_orden_pago" select="Siniestro.searchProveedor"/>
+		
+		
+		
+		
+		
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			 
+			a.monto_gastos_clinicos ,
+			a.monto_honorarios_medicos ,
+			u.descripcion as descripcion,
+			a.monto_pronto_pago ,
+			u.id_ubicacion_fisica as iduf,
+			a.monto_negociado ,
+			a.monto_no_amparado ,
+			a.monto_deducible ,
+			a.monto_iva_clinica ,
+			a.monto_iva ,
+			a.monto_islr, 
+			p.numero_orden_pago,
+			s.id_orden_pago
+  		FROM 
+			public.orden_pago a,
+			public.Ubicacion_fisica u,
+			public.siniestro s,
+			public.siniestro_pre_orden_pago p
+			
+	</sql>
+	
+	
+	<insert id="insert" parameterClass="map"  >
+		INSERT INTO orden_pago(
+		
+			id_orden_pago,
+			moto_liquidado,
+			monto_a_pagar,
+			monto_pronto_pago,
+			monto_negociado,
+			monto_no_amparado,
+			monto_deducible,
+			monto_iva_clinica,
+			monto_iva,
+			monto_islr,
+			monto_gastos_clinicos,
+			monto_honorarios_medicos,
+			id_ubicacion_fisica)
+			
+		VALUES(
+			#idOrdenPago#,
+			#montoLiquidado#,
+			#montoApagar#,
+			#montoProntoPago#,
+			#montoDeducible#,
+			#montoIvaProveedor#,
+			#montoIva#,
+			#montoIslr#,
+			#montoGastoClinico#,
+			#montoHonorarioMedico#,
+			#idUbicacionFisica#)
+			<selectKey resultClass="int" type="post" keyProperty="id" >SELECT currval('siniestro_id_siniestro_seq')</selectKey>
+	</insert>
+
+	<select id="search" resultClass="ObjOrdenPago" resultMap="result_all">
+			WHERE a.id_ubicacion_fisica = u.id_ubicacion_fisica AND 
+		a.id_orden_pago = s.id_orden_pago AND 
+		p.id_siniestro = s.id_siniestro AND 
+		p.numero_orden_pago = #numeroOrdenPago# 
+	</select>
+	
+	
+	<select id="consultaOrdenPago" resultClass="ObjOrdenPago" resultMap="result_all">
+		SELECT 
+			a.monto_gastos_clinicos ,
+			a.monto_honorarios_medicos ,
+			u.descripcion ,
+			a.monto_pronto_pago ,
+			t.descripcion,
+			a.monto_negociado ,
+			a.monto_no_amparado ,
+			a.monto_deducible ,
+			a.monto_iva_clinica ,
+			a.monto_iva ,
+			a.monto_islr,
+			p.numero_orden_pago,
+			s.monto_amparado,
+			s.primer_nombre,
+			s.segundo_nombre,
+			s.primer_apellido,
+			s.segundo_apellido,
+			s.cedula,
+			s.edad,
+			s.primer_nombre_beneficiario,
+			s.segundo_nombre_beneficiario,
+			s.primer_apellido_beneficiario,
+			s.segundo_apellido_beneficiario,
+			s.cedula_beneficiario,
+			edad_beneficiario
+  		FROM 
+			public.orden_pago a,
+			public.Ubicacion_fisica u,
+			public.siniestro s,
+			public.tipo_tramite t,
+			public.siniestro_pre_orden_pago p
+		WHERE a.id_ubicacion_fisica = u.id_ubicacion_fisica AND 
+			a.id_orden_pago = s.id_orden_pago AND 
+			p.id_siniestro = s.id_siniestro AND 
+			p.numero_orden_pago = #value# and  and t.id_tipo_tramite=s.id_tipo_tramite
+		
+		</select>
+	
+</sqlMap>
+
+	
+	

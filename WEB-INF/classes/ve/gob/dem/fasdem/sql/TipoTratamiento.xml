@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoTratamiento">
+	<typeAlias alias="ObjTipoTratamiento" type="ve.gob.dem.fasdem.bean.TipoTratamiento"/>
+	<resultMap id="result_all" class="ObjTipoTratamiento">
+		<result property="idTipoTratamiento" column="id_tipo_tratamiento" jdbcType="integer"/>
+		<result property="descripcionTratamiento" column="descripcion" jdbcType="character varying"/>
+	
+	</resultMap>
+	
+	
+	<sql id="sql_tipo_tratamiento">
+		SELECT 
+			id_tipo_tratamiento, 
+			descripcion
+  		FROM 
+			tipo_tratamiento
+	</sql>
+
+	<select id="search" resultClass="ObjTipoTratamiento" resultMap="result_all">
+		<include refid="sql_tipo_tratamiento"/>
+		WHERE id_tipo_tratamiento = #value#
+	</select>
+
+	
+<select id="list" resultClass="ObjTipoTratamiento" resultMap="result_all">
+		<include refid="sql_tipo_tratamiento"/>
+		WHERE id_tipo_tratamiento != 0
+	</select>
+	
+</sqlMap>
+
+	
+	

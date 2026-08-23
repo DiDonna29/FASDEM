@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Poliza">
+	<typeAlias alias="ObjPoliza" type="ve.gob.dem.fasdem.bean.Poliza"/>
+	<resultMap id="result_all" class="ObjPoliza">
+		<result property="id" column="id_poliza" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="fechaInicio" column="fecha_inicio" jdbcType="date"/>
+		<result property="fechaFin" column="fecha_fin" jdbcType="date"/>
+		<result property="activo" column="is_activo" jdbcType="boolean"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_poliza,
+			descripcion,
+			fecha_inicio,
+			fecha_fin,
+			is_activo
+  		FROM 
+			poliza
+	</sql>
+
+	<select id="search" resultClass="ObjPoliza" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_poliza = #value#
+	</select>
+	
+	<select id="searchActivo" resultClass="ObjPoliza" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE is_activo = true
+	</select>
+	
+	<select id="list" resultClass="ObjPoliza" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+</sqlMap>
+
+	
+	

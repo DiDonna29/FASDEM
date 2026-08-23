@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1291233777281
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1291233777281
+java.vm.specification.version,sysinfo,,,"1.0",1291233777281
+java.vm.vendor,sysinfo,,,"Sun Microsystems Inc.",1291233777281
+java.vm.version,sysinfo,,,"16.2-b04",1291233777281
+activated,view,org.eclipse.ui.navigator.resources,3.4.0.I20090525-2000,"org.eclipse.ui.navigator.ProjectExplorer",1291233777375
+activated,view,org.eclipse.ui.navigator.resources,3.4.0.I20090525-2000,"org.eclipse.ui.navigator.ProjectExplorer",1291233777406
+closed,view,org.eclipse.ui,3.5.0.I20090604-2000,"org.eclipse.ui.internal.introview",1291233777453
+started,bundle,org.tigris.subversion.subclipse.mylyn,3.0.0,"org.tigris.subversion.subclipse.mylyn",1291233777640
+started,bundle,org.eclipse.mylyn.monitor.ui,3.2.0.v20090617-0100-e3x,"org.eclipse.mylyn.monitor.ui",1291233777734
+started,bundle,org.eclipse.jsch.core,1.1.100.I20090430-0408,"org.eclipse.jsch.core",1291233777953
+started,bundle,org.eclipse.team.cvs.core,3.3.200.I20090430-0408,"org.eclipse.team.cvs.core",1291233777953
+started,bundle,org.eclipse.team.cvs.ui,3.3.200.I20090521-1750,"org.eclipse.team.cvs.ui",1291233778031
+deactivated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233783781
+activated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233788765
+executed,command,org.eclipse.ui.ide,3.5.0.I20090525-2000,"org.eclipse.ui.edit.text.openLocalFile",1291233788781
+deactivated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233793953
+activated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233810078
+executed,command,org.eclipse.ui.ide,3.5.0.I20090525-2000,"org.eclipse.ui.edit.text.openLocalFile",1291233810078
+deactivated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233818437
+activated,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233840984
+executed,command,org.eclipse.ui,3.5.0.I20090604-2000,"org.eclipse.ui.file.import",1291233841000
+closed,workbench,org.eclipse.ui.workbench,3.5.0.I20090603-2000,"",1291233846640
+stopped,bundle,org.eclipse.jst.ws.axis.creation.ui,1.0.406.v200903031852,"org.eclipse.jst.ws.axis.creation.ui",1291233847312
+stopped,bundle,org.eclipse.jst.ws.axis.consumption.ui,1.0.405.v200901261650,"org.eclipse.jst.ws.axis.consumption.ui",1291233847312

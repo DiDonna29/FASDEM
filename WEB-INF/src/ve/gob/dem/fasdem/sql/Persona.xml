@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Persona">
+	<typeAlias alias="ObjPersona" type="ve.gob.dem.fasdem.bean.Persona"/>
+	<resultMap id="result_base" class="ObjPersona">
+		<result property="cedula" column="cedula" jdbcType="NUMBER"/>
+		<result property="cedulaTitular" column="cedula_titular" jdbcType="NUMBER"/>
+		<result property="tipoCedRif" column="cedrif" jdbcType="VARCHAR2"/>
+		<result property="tipoPersona" column="tipo" jdbcType="VARCHAR2"/>
+		<result property="nombres" column="nombres" jdbcType="VARCHAR2"/>
+		<result property="apellidos" column="apellidos" jdbcType="VARCHAR2"/>
+		<result property="id_parentesco" column="id_parentesco" jdbcType="NUMBER"/>
+		<result property="parentesco" column="parentesco" jdbcType="VARCHAR2"/>
+		<result property="tipoEmpleado" column="tipo_nomina" nullValue="No Aplica" jdbcType="VARCHAR2"/>
+		<result property="dependencia" column="dependencia" nullValue="No Aplica" jdbcType="VARCHAR2"/>
+		<result property="fechaNacimiento" column="fecha_nacimiento" jdbcType="DATE"/>
+		<result property="telefono" column="telefonos" jdbcType="VARCHAR2"/>
+		<result property="estadoCivil" column="estado_civil" jdbcType="VARCHAR2"/>
+		<result property="estado" column="estado" nullValue="No Aplica" jdbcType="VARCHAR2"/>
+		<result property="sexo" column="sexo" jdbcType="VARCHAR2"/>
+		<result property="cargo" column="cargo" nullValue="No Aplica" jdbcType="VARCHAR2"/>
+		<result property="correoElectronico" column="correo_electronico" nullValue="No Aplica" jdbcType="VARCHAR2"/>
+		<result property="fechaIngreso" column="fecha_ingreso" jdbcType="DATE"/>
+		<result property="idTipoEmpleado" column="id_tipo_nomina" nullValue="0" jdbcType="NUMBER"/>
+		<result property="direccion" column="direccion" nullValue="No Disponible" jdbcType="VARCHAR2"/>
+		<result property="estatus" column="estatus" jdbcType="VARCHAR2"/>
+	</resultMap>
+	<resultMap id="result_all" class="ObjPersona" extends="result_base">
+		<result property="cargaFamiliar" column="CEDULA" select="Persona.buscarCargaFamiliar"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+		  cedula,
+		  certif cedula_titular, 
+		  cedrif,
+		  tipo,
+		  nombres,
+		  apellidos,
+		  id_parentesco,
+		  parentesco,
+		  id_tipo_nomina,
+		  tipo_nomina,
+		  dependencia,
+		  fecha_nacimiento,
+		  telefono_celular || ' '|| telefono_oficina ||' '|| telefono_habitacion telefonos,
+		  estado_civil,
+		  estado,
+		  sexo,
+		  cargo,
+		  correo_electronico,
+		  fecha_ingreso,
+		  direccion,
+		  estatus
+		FROM
+		  beneficiarios_fasdem
+	</sql>
+	<sql id="sql_buscar_JC">
+		Select * from (SELECT 
+		  cedula,
+		  certif cedula_titular, 
+		  cedrif,
+		  tipo,
+		  nombres,
+		  apellidos,
+		  id_parentesco,
+		  parentesco,
+		  id_tipo_nomina,
+		  tipo_nomina,
+		  dependencia,
+		  fecha_nacimiento,
+		  telefono_celular || ' '|| telefono_oficina ||' '|| telefono_habitacion telefonos,
+		  estado_civil,
+		  estado,
+		  sexo,
+		  cargo,
+		  correo_electronico,
+		  fecha_ingreso,
+		  direccion,
+		  estatus
+		FROM
+		  beneficiarios_fasdem
+	</sql>
+	<select id="buscar" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar_JC"/>
+		WHERE cedula = #cedula#  ORDER BY estatus ASC ) where rownum = 1
+	</select>
+	<select id="buscarBeneficiario" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar_JC"/>
+		WHERE cedula = #cedula# AND CERTIF = #cedulaT# ORDER BY estatus ASC ) where rownum = 1
+	</select>
+	<select id="buscarBeneficiario1" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar_JC"/>
+		WHERE cedula = #cedula# AND CERTIF = #cedulaBeneficiario# ORDER BY estatus ASC ) where rownum = 1
+	</select>
+	<select id="buscar1" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE certif||'.'||cedula = #cedula# 
+	</select>
+	<select id="buscar2" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE cedula = #idCedulaBene# and certif = #idCedula#
+	</select>
+
+	<select id="buscarPorTitular" resultClass="ObjPersona" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE cedula = #value# AND TIPO='T' 
+	</select>
+	<select id="buscarSinCarga" resultClass="ObjPersona" resultMap="result_base">
+		<include refid="sql_buscar"/>
+		WHERE cedula = #value# 
+	</select>
+	<select id="buscarCargaFamiliar" resultClass="ObjPersona" resultMap="result_base">
+		<include refid="sql_buscar"/>
+		WHERE 
+			CERTIF = #value# AND 
+			TIPO != 'T'
+	</select>
+</sqlMap>

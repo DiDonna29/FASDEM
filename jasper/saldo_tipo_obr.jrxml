@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="saldo_tipo_obr"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="170"
+		 pageHeight="28"
+		 columnWidth="170"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="anio" isForPrompting="true" class="java.lang.Integer"/>
+	<parameter name="hoja" isForPrompting="true" class="java.lang.Integer"/>
+	<queryString><![CDATA[select * from (select 
+numero,
+
+CASE WHEN pre_orden_pago.id_proveedor = 44 THEN (
+				select 
+					nombres||' '||apellidos from facturas, siniestro 
+				where 
+					siniestro.anio_siniestro = cast($P{anio} as numeric) and
+                facturas.anio_siniestro = cast($P{anio} as numeric) and
+facturas.anio_siniestro = pre_orden_pago.anio_preordenpago 
+					and siniestro.anio_siniestro = pre_orden_pago.anio_preordenpago
+					and facturas.pre_orden like pre_orden_pago.pre_orden
+					and facturas.id_siniestro=siniestro.id_siniestro
+					limit 1
+			)ELSE 
+(proveedor.descripcion)
+END AS PROVEEDOR,
+monto_pre_orden,codigo,causado,fecha_hoja_ruta, hoja_ruta.fecha,tipo_hoja_ruta.descripcion AS OBSERVACION,periodo_fiscal,pre_orden_pago.id_tipo_empleado
+from hoja_ruta_preorden,hoja_ruta,pre_orden_pago,proveedor,tipo_hoja_ruta
+where hoja_ruta.id_hoja_ruta=hoja_ruta_preorden.id_hoja_ruta 
+and pre_orden_pago.id_pre_orden=hoja_ruta_preorden.id_preorden 
+and pre_orden_pago.anio_preordenpago=hoja_ruta_preorden.anio_preorden
+and proveedor.id_proveedor=pre_orden_pago.id_proveedor
+and pre_orden_pago.id_tipo_empleado=2
+
+ and tipo_hoja_ruta.id_tipo_hoja_ruta=hoja_ruta.tipo_hoja and hoja_ruta_preorden.id_hoja_ruta= cast($P{hoja} as numeric)
+ union
+select numero,proveedor,monto_neto,'','', 
+fecha_impresion,fecha_impresion,'' AS OBSERVACION,1,0 from relleno_hoja_ruta) v order by fecha_hoja_ruta asc ]]></queryString>
+
+	<field name="numero" class="java.lang.String"/>
+	<field name="proveedor" class="java.lang.String"/>
+	<field name="monto_pre_orden" class="java.lang.Double"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="causado" class="java.lang.String"/>
+	<field name="fecha_hoja_ruta" class="java.sql.Timestamp"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="periodo_fiscal" class="java.lang.Integer"/>
+	<field name="id_tipo_empleado" class="java.lang.Integer"/>
+
+	<variable name="SUM_EMP" class="java.lang.Double" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{monto_pre_orden}]]></variableExpression>
+	</variable>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="22"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="3"
+						y="1"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{SUM_EMP}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

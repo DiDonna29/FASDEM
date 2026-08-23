@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoEmpleado">
+	<typeAlias alias="ObjTipoEmpleado" type="ve.gob.dem.fasdem.bean.TipoEmpleado"/>
+	<resultMap id="result_all" class="ObjTipoEmpleado">
+		<result property="id" column="id_tipo_empleado" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_empleado, 
+			descripcion
+  		FROM 
+			tipo_empleado
+	</sql>
+
+	<select id="search" resultClass="ObjTipoEmpleado" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_empleado = #value#
+	</select>
+
+	<select id="list" resultClass="ObjTipoEmpleado" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+	
+	
+</sqlMap>
+
+	
+	

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Proveedor">
+	<typeAlias alias="ObjProveedor" type="ve.gob.dem.fasdem.bean.Proveedor"/>
+	<resultMap id="result_all" class="ObjProveedor">
+		<result property="id" column="id_proveedor" jdbcType="integer"/>
+		<result property="identificador" column="identificador" jdbcType="character varying"/>
+		<result property="tipoProveedor" column="id_tipo_proveedor" select="TipoProveedor.search"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT     p.id_proveedor,    p.rif as identificador,    
+		tp.id_tipo_proveedor,    p.descripcion   
+		FROM        public.proveedor p,     public.tipo_proveedor tp
+		WHERE       p.id_tipo_proveedor = tp.id_tipo_proveedor     
+	</sql>
+	<select id="search" resultClass="ObjProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		AND p.id_proveedor = #value#
+	</select>
+	<select id="list" resultClass="ObjProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+	
+	
+	
+	<select id="porNombre" resultClass="ObjProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		AND 
+		tp.id_tipo_proveedor = #idTipoProveedor# AND
+		lower(p.descripcion||' '||p.rif) LIKE lower('%' || #nombres# || '%') AND
+		p.is_activo = true;
+	</select>
+	
+	<select id="porNombreMod" resultClass="ObjProveedor" resultMap="result_all">
+		SELECT     p.id_proveedor,    p.rif as identificador,    
+		tp.id_tipo_proveedor,    p.descripcion   
+		FROM        public.proveedor p,     public.tipo_proveedor tp, public.proveedor_tipo_tramite ptt
+		WHERE       p.id_tipo_proveedor = tp.id_tipo_proveedor
+		AND  p.id_proveedor = ptt.id_proveedor
+		AND tp.id_tipo_proveedor = #idTipoProveedor# 
+		AND
+		lower(p.descripcion||' '||p.rif) LIKE lower('%' || #nombres# || '%') 
+		AND
+		p.is_activo = true
+		AND ptt.id_tipo_tramite=#idListTipoTramite#
+		AND ptt.is_activo = true;
+	</select>
+	
+	<select id="porCombo" resultClass="ObjProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		AND 
+		tp.id_tipo_proveedor = #idTipoProveedor#  AND
+		p.is_activo = true;
+	</select>
+	
+	
+	
+	<select id="porRif" resultClass="ObjProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		AND 
+		p.rif = #value# AND
+		p.is_activo = true;
+	</select>
+	<update id="updateProveedor" parameterClass="map">
+		UPDATE proveedor SET descripcion=#descripcion# WHERE id_proveedor=#id#
+	</update>
+	<insert id="insert" parameterClass="map">
+        INSERT INTO proveedor(descripcion) VALUES( #descripcion#)
+     </insert>
+</sqlMap>

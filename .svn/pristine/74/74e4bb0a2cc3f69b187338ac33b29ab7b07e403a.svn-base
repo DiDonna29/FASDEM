@@ -1,0 +1,10 @@
+/*
+=======================================
+H.D
+==========================================*/
+/*@import url('bootstrap-combined.css');*/
+@import url('bootstrap-231-p.css');
+@import url('daterangepicker.css');
+/*@import url('bootstrap-responsive.min.css');*/
+/*@import url('prettify.css');*/
+/*Para la fecha por rango*/

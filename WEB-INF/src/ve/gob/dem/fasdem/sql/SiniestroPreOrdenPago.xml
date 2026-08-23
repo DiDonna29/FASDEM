@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SiniestroPreOrdenPago">
+    <typeAlias alias="ObjSiniestroPreOrdenPago" type="ve.gob.dem.fasdem.bean.SiniestroPreOrdenPago"/>
+
+    <resultMap id="result_All" class="ObjSiniestroPreOrdenPago">
+
+
+        <result property="fechaIngresoClinica" column="fecha_ingreso_clinica" jdbcType="DATE"/>
+        <result property="fechaEgresoClinica" column="fecha_egreso_clinica" jdbcType="DATE"/>
+        <result property="fechaCheque" column="fecha_cheque" jdbcType="DATE"/>
+        <result property="fechaRemesa" column="fecha_remesa" jdbcType="DATE"/>
+        <result property="fechaRecepcionDeFactura" column="fecha_recepcion_de_factura"
+            jdbcType="DATE"/>
+        <result property="fechaAprobado" column="fecha_aprobado" jdbcType="DATE"/>
+        <result property="fechaCreado" column="fecha_creado" jdbcType="DATE"/>
+        <result property="fechaCartaAval" column="fecha_carta_aval" jdbcType="DATE"/>
+        <result property="numeroOrdenPago" column="numero_orden_pago" jdbcType="numeric"/>
+        <result property="numeroConceptoRetencion" column="numero_concepto_retencion"
+            jdbcType="numeric"/>
+        <result property="numeroCheque" column="numero_cheque" jdbcType="numeric"/>
+        <result property="numeroRemesa" column="numero_remesa" jdbcType="numeric"/>
+        <result property="numeroFactura" column="numero_factura" jdbcType="character
+            varying"/>
+        <result property="id" column="id_siniestro_pre_orden_pago" jdbcType="NUMBER"/>
+        <result property="aniomes" column="aniomes_codigo" nullValue="0" jdbcType="NUMBER"/>
+        <result property="codigoPreOrden" column="codigo_pre_orden" nullValue="0"
+            jdbcType="NUMBER"/>
+
+
+
+    </resultMap>
+
+    <select id="searchPreOrden" resultClass="ObjSiniestroPreOrdenPago" resultMap="result_All">
+        SELECT *
+			
+		FROM siniestro_pre_orden_pago WHERE anio_siniestro = #anioSiniestro#
+            AND
+			(aniomes_codigo||codigo_pre_orden)=#codigoPreOrden#
+    </select>
+
+
+</sqlMap>
+
+	
+	

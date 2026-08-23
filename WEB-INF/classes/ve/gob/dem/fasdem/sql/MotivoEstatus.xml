@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="MotivoEstatus">
+	<typeAlias alias="ObjMotivoEstatus" type="ve.gob.dem.fasdem.bean.MotivoEstatus"/>
+	<resultMap id="result_all" class="ObjMotivoEstatus">
+		<result property="id" column="id_motivo_anulacion" jdbcType="number"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+		<result property="idSiniestro" column="id_siniestro" jdbcType="number"/>
+		<result property="idDependencia" column="id_dependencia" jdbcType="number"/>
+		<result property="idUsuario" column="id_usuario" jdbcType="character varying"/>
+		<result property="fechaInicio" column="fecha_inicio" jdbcType="date"/>
+		<result property="fechaFin" column="fecha_fin" jdbcType="date"/>
+		<result property="idEstatus" column="id_estatus_siniestro" jdbcType="number"/>
+	</resultMap>
+	<sql id="sql_buscar">SELECT 
+		id_motivo_anulacion,
+		descripcion,
+		id_siniestro,
+	id_dependencia,
+	id_usuario,
+	fecha_inicio,
+	fecha_fin,
+	id_estatus_siniestro
+	 FROM motivo_estatus </sql>
+	<select id="search" resultClass="ObjMotivoEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE   
+        	id_motivo_anulacion = #value#
+	</select>
+	<insert id="insert" parameterClass="ObjMotivoEstatus">
+		INSERT INTO motivo_estatus(
+			descripcion, 		id_siniestro, 		id_dependencia, 		
+			id_usuario, 		fecha_inicio, 		fecha_fin, 
+			id_estatus_siniestro)
+		VALUES (
+			#descripcion#,		#idSiniestro#, 		#idDependencia#, 		
+			#idUsuario#, 		now(), 		#fechaFin#,
+			#idEstatus#);
+	</insert>
+	<select id="listBySiniestro" resultClass="ObjMotivoEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+        	id_siniestro = #idSiniestro# 
+        ORDER BY 
+        	fecha_registro DESC  
+    </select>
+    <update id="finalizaTodosEstatus">
+		UPDATE 
+		    motivo_estatus
+		SET 
+		    fecha_fin=now()
+		WHERE 
+            id_siniestro = #value# AND
+            fecha_fin is null
+    </update>    
+    <select id="searchByEstatus" resultClass="ObjMotivoEstatus" resultMap="result_all">
+		<include refid="sql_buscar"/>
+        WHERE 
+        	id_estatus_siniestro = #idEstatus#
+        AND 
+        	 id_siniestro=#idSiniestro#
+       	AND 
+        	 fecha_fin is null
+    </select>
+    <select id="searchUltimoEstatus" resultClass="string" >
+		SELECT 
+            descripcion
+		FROM 
+            motivo_estatus 
+		WHERE 
+		    fecha_fin is null AND
+		    id_siniestro = #value# 
+        ORDER BY 
+            fecha_inicio DESC, 
+            id_motivo_anulacion DESC LIMIT 1 
+    </select>
+    <update id="finalizarEstatus">
+		UPDATE motivo_estatus SET 
+		fecha_fin=now()
+		WHERE id_motivo_anulacion=#value#
+	</update>
+      <update id="update">
+		UPDATE motivo_estatus SET 
+		descripcion=#descripcion#, 		
+		id_dependencia=#idDependencia#, 		
+		id_usuario=#idUsuario#,
+		fecha_inicio=now() 
+		WHERE id_motivo_anulacion=#id#
+	</update>
+</sqlMap>

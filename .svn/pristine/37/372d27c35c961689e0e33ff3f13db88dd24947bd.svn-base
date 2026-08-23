@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="PatologiaOrganoTratamiento">
+	<typeAlias alias="ObjPatologiaOrganoTratamiento" type="ve.gob.dem.fasdem.bean.PatologiaOrganoTratamiento"/>
+	<resultMap id="result_all" class="ObjPatologiaOrganoTratamiento">
+		<result property="id" column="id_pat_org_trat_esp" jdbcType="integer"/>
+		<result property="patologia" column="id_patologia" select="Patologias.search"/>
+		<result property="organo" column="id_organo" select="Organo.search"/>
+		<result property="tratamiento" column="id_tratamiento" select="Tratamiento.search"/>
+		<result property="especialidad" column="id_especialidad" select="Especialidad.search"/>
+	</resultMap>
+	<resultMap id="result_list" class="ObjPatologiaOrganoTratamiento">
+		<result property="id" column="id_pat_org_trat_esp" jdbcType="integer"/>
+		<result property="strEspecialidad" column="especialidad" jdbcType="character varying"/>
+		<result property="strOrgano" column="organo" jdbcType="character varying"/>
+		<result property="strPatologia" column="patologia" jdbcType="character varying"/>
+		<result property="strTratamiento" column="tratamiento" jdbcType="character varying"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_pat_org_trat_esp,
+			id_patologia, 
+			id_organo,
+			id_tratamiento,
+			id_especialidad
+  		FROM 
+			patologia_organo_tratamiento
+			
+	</sql>
+	<select id="search" resultClass="ObjPatologiaOrganoTratamiento" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_pat_org_trat_esp = #value#
+	</select>
+	<select id="list" parameterClass="HashMap" resultClass="ObjPatologiaOrganoTratamiento" resultMap="result_list">
+		SELECT 
+			pot.id_pat_org_trat_esp,
+			e.descripcion as especialidad, 
+			o.descripcion as organo,
+			p.descripcion as patologia,
+			t.descripcion as tratamiento
+		FROM 
+			public.patologia_organo_tratamiento pot, 
+			public.especialidad e, 
+			public.organo o, 
+			public.patologias p, 
+			public.tratamiento t
+		WHERE 
+			e.id_especialidad = pot.id_especialidad AND
+			o.id_organo = pot.id_organo AND
+			p.id_patologia = pot.id_patologia AND
+			pot.is_activo=TRUE AND
+			
+			t.id_tratamiento = pot.id_tratamiento
+			<isNotEmpty property="idEspecialidad">AND pot.id_especialidad = #idEspecialidad#</isNotEmpty>
+			<isNotEmpty property="idOrgano">AND pot.id_organo = #idOrgano#</isNotEmpty>
+			<isNotEmpty property="idPatologia">AND pot.id_patologia = #idPatologia#</isNotEmpty>
+			<isNotEmpty property="idTratamiento">AND pot.id_tratamiento = #idTratamiento#</isNotEmpty>
+	</select>
+</sqlMap>

@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+started,bundle,org.eclipse.wst.jsdt.manipulation,1.0.100.v200809240707,"org.eclipse.wst.jsdt.manipulation",1291233777234
+started,bundle,org.eclipse.wst.jsdt.ui,1.0.200.v200905242047,"org.eclipse.wst.jsdt.ui",1291233777234
+started,bundle,org.eclipse.wst.sse.core,1.1.400.v200905141750,"org.eclipse.wst.sse.core",1291233777234
+started,bundle,org.eclipse.wst.validation,1.2.102.v200905201610,"org.eclipse.wst.validation",1291233777250
+started,bundle,org.eclipse.wst.web,1.1.300.v200901261500,"org.eclipse.wst.web",1291233777265
+started,bundle,org.eclipse.wst.ws.service.policy.ui,1.0.102.v200903070248,"org.eclipse.wst.ws.service.policy.ui",1291233777265
+started,bundle,org.eclipse.wst.xml.core,1.1.400.v200904300540,"org.eclipse.wst.xml.core",1291233777265
+started,bundle,com.collabnet.subversion.merge,1.9.0.4,"com.collabnet.subversion.merge",1291233777265
+started,bundle,org.tigris.subversion.clientadapter,1.6.0.2,"org.tigris.subversion.clientadapter",1291233777265
+started,bundle,org.tigris.subversion.subclipse.core,1.6.2,"org.tigris.subversion.subclipse.core",1291233777265
+started,bundle,org.tigris.subversion.subclipse.ui,1.6.2,"org.tigris.subversion.subclipse.ui",1291233777265
+os,sysinfo,,,"win32",1291233777281
+arch,sysinfo,,,"x86",1291233777281
+ws,sysinfo,,,"win32",1291233777281
+locale,sysinfo,,,"es_VE",1291233777281
+processors,sysinfo,,,"2",1291233777281
+java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1291233777281
+java.runtime.version,sysinfo,,,"1.6.0_19-b04",1291233777281
+java.specification.name,sysinfo,,,"Java Platform API Specification",1291233777281
+java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1291233777281
+java.specification.version,sysinfo,,,"1.6",1291233777281
+java.vendor,sysinfo,,,"Sun Microsystems Inc.",1291233777281
+java.version,sysinfo,,,"1.6.0_19",1291233777281
+java.vm.info,sysinfo,,,"mixed mode, sharing",1291233777281
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1291233777281

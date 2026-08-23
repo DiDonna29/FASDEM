@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoProveedor">
+	<typeAlias alias="ObjTipoProveedor" type="ve.gob.dem.fasdem.bean.TipoProveedor"/>
+	<resultMap id="result_all" class="ObjTipoProveedor">
+		<result property="id" column="id_tipo_proveedor" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_proveedor, 
+			descripcion
+  		FROM 
+			tipo_proveedor
+	</sql>
+
+	<select id="search" resultClass="ObjTipoProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_proveedor = #value#
+	</select>
+
+	<select id="list" resultClass="ObjTipoProveedor" resultMap="result_all">
+		<include refid="sql_buscar"/>
+	</select>
+	
+	<select id="listByTipoTramite" resultClass="ObjTipoProveedor" resultMap="result_all">
+		SELECT distinct tp.id_tipo_proveedor, tp.descripcion 
+		  
+		FROM 
+		  public.tipo_proveedor tp, 
+		  public.proveedor p, 
+		  public.proveedor_tipo_tramite ptt, 
+		  public.tipo_tramite tt
+		WHERE 
+		  tp.id_tipo_proveedor = p.id_tipo_proveedor AND
+		  tt.id_tipo_tramite = ptt.id_tipo_tramite AND
+		  ptt.id_tipo_tramite = #value# AND
+		  p.id_proveedor=ptt.id_proveedor AND
+  		  tp.is_listable = true order by tp.id_tipo_proveedor
+	</select>
+
+	<select id="listByTipoTramiteRmbls" resultClass="ObjTipoProveedor" resultMap="result_all">
+		SELECT 
+		  tp.id_tipo_proveedor, 
+			tp.descripcion 
+		FROM 
+		  public.tipo_proveedor tp, 
+		  public.proveedor_tipo_tramite tptt, 
+		  public.tipo_tramite tt
+		WHERE 
+		  tp.id_tipo_proveedor = tptt.id_proveedor AND
+		  tt.id_tipo_tramite = tptt.id_tipo_tramite AND
+		  tt.id_tipo_tramite = 3 AND
+  		  tp.is_listable = true order by tp.id_tipo_proveedor
+	</select>
+</sqlMap>
+
+	
+	

@@ -1,0 +1,241 @@
+<%@ taglib uri="/WEB-INF/tlds/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tlds/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tlds/fmt.tld" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/tlds/c.tld" prefix="c"%>
+<%@page import="ve.gob.dem.framework.recursos.*,java.util.*,java.text.NumberFormat,ve.gob.dem.fasdem.bean.*,java.text.SimpleDateFormat"%>
+<tiles:insert page="/jsp/plantilla/plantilla.jsp">
+
+<%
+
+	ArrayList List=(ArrayList)request.getAttribute("lista");
+    String fsle=(String)request.getAttribute("f_select");
+    String fsle2=(String)request.getAttribute("f_select2");
+
+
+	UsuarioEstadistica list;
+	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+	SimpleDateFormat formatofechas = new SimpleDateFormat("dd/MM/yyyy");
+	 NumberFormat nf = NumberFormat.getInstance();
+	    nf.setGroupingUsed(true);
+	    nf.setMaximumFractionDigits(0);
+	    
+	    String dateOut;
+        dateOut = Utilidad.DateToString(new Date(), "d 'de' MMMMMMM 'de' yyyy - hh:mm a");
+		
+        Date today;
+        String dateOut1;
+        
+        today = new Date();
+        dateOut1 =formato.format(today.getTime());
+        Calendar hoy = Calendar.getInstance();
+        Calendar ayer = Calendar.getInstance();
+        Calendar antier = Calendar.getInstance();
+        
+        
+        
+        hoy.setTime(today);
+        ayer.setTime(today);
+        antier.setTime(today);
+        
+        
+        ayer.add(Calendar.DATE,-1);
+        antier.add(Calendar.DATE,-2);
+        
+%>
+
+
+	<tiles:put name="titulo" direct="true">
+		<bean:message key="principal.titulo" bundle="etiquetas" />
+	</tiles:put>
+
+	<tiles:put name="titulopagina" content="Estadisticas de Atención de Solicitudes" direct="true" />
+	<tiles:put name="itemsup" content=""  direct="true" />
+    <tiles:put name="itemsdown" content=""  direct="true"/>
+	<tiles:put name="cuerpo" direct="true">
+			<div style="overflow: visible">
+			
+			<table class="tabla" width="600" cellpadding="2" cellspacing="1"
+				border="0">
+			
+			
+			
+			 <tr> 
+                  <td width="1%"></td>
+                  <td class="item" style="padding-left: 10px; padding-top: 10px;"><strong>Fecha de Registro Desde:</strong>
+
+		            <input 
+						
+						class="item" 
+						readonly="readonly"
+						type="text" 
+						size="12"
+						value="<%=fsle%>"
+						name="fecha" 
+						onfocus="javascript:showCalendarSelected2(
+							document.forms[0].fecha, 
+							document.forms[0].fecha, 
+							'dd/mm/yyyy','es',1);blur();"/>
+							
+							
+							<strong>Hasta:</strong><input 
+						
+						class="item" 
+						readonly="readonly"
+						type="text" 
+						size="12"
+						value="<%=fsle2%>"
+						name="fecha2" 
+						onfocus="javascript:showCalendarSelected2(
+							document.forms[0].fecha2, 
+							document.forms[0].fecha2, 
+							'dd/mm/yyyy','es',1);blur();"/>
+                  
+                      <img src="<%=request. getContextPath()%>/images/f_pts.gif" width="5" height="9"> <span class="grayplink"><a onclick="javascript:document.forms[0].submit();" href="#">Buscar</a></span><br>
+                    </td>
+                    
+                    
+                  
+                    
+                </tr>
+			
+			
+			
+			
+			
+	        </table>
+			
+			
+
+			<table class="tabla" width="600" cellpadding="2" cellspacing="1"
+				border="0">
+				
+<% if (List!=null){%>	
+				
+				<tr class="tituloCabecera">
+
+					<td>Usuario</td>
+					<td>Nombres y Apellidos</td>
+					<td>Solicitudes Atendidas</td>
+					<td>Tiempo Promedio de Atención</td>
+					<td>Detalle</td>		
+					   
+					
+				</tr>
+	
+	<%
+                  int contador=0;
+		          for (int i=0;i!=List.size();i++){
+		          list = (UsuarioEstadistica) List.get(i);
+		          
+		          contador=contador+Integer.parseInt(list.getCantidadAtendidos());
+        		 %>   
+				 
+				<tr class="item" bgcolor="white" >
+				
+				
+					<td><%=list.getLogin()%></td>
+					<td><%=list.getNombre() %></td>
+					<td><strong><%=list.getCantidadAtendidos()%></strong></td>
+					<td><%=list.getTiempoPromedio() + " min"%></td>
+					
+					<td><img
+											onclick="ir('1','<%=list.getLogin()%>')"
+											src="<%=request.getContextPath()%>/images/ic3d_buscar.gif"
+											width="14" height="13" title="Ver"></td>
+
+					
+				</tr>
+				
+				
+			  <%}%>	
+			  
+			  
+			   <tr bgcolor="#13285F" class="white"> 
+                
+                <td width="790" colspan="5" height="20" bgcolor="#FFFFFF" align="right" style="padding-left: 20px; padding-bottom:0px; padding-top: 0px;"> 
+            	<span class="grayplink">Total de solicitudes atendidas: <%=contador%>   </span><br>
+            	</td>
+                </tr>
+                
+                
+       <%}else{%>   
+    
+    
+    <tr> 
+                  <td width="1%"></td>
+                  <td width="95%" valign="top"> 
+                  
+                  <table width="100%" border="0" cellspacing="3" cellpadding="2">
+                      
+                   <tr>
+						<td align="center" class="grayp" style="padding-left: 20px; padding-bottom: 5px;">
+							<div class="grayp"></div>
+							<strong>No existen estadisticas para esta fecha</strong>
+							<div class="grayp"></div>
+						</td>
+					</tr>
+					
+					
+					<tr>
+						<td
+							 colspan="10" align="center" style="padding-left: 10px; padding-bottom: 5px; padding-top: 5px;">
+
+						<img
+							onclick="javascript:window.open('<%=request.getContextPath()%>/jsp/fasdem/fasdem.jsp','newwin','menubar=no,location=no,toolbar=no,status=no,scrollbars=yes,directories=no,titlebar=no,resizable=no,copyhistory=no','width=280,height=600');;"
+							src="<%=request.getContextPath()%>/images/b_regresar.gif"
+							width="52" height="11">
+						
+							
+						
+						</td>
+					</tr>
+                   
+                   
+                  </table>
+                    
+                  </td>
+                </tr>
+    
+    
+    
+    
+    
+    	
+    <%}%> 
+     
+               
+				
+
+	
+			</table>
+
+
+			</div>
+			
+			<input id="accion" type="hidden" name="accion" value="0">
+			<input id="analista" type="hidden" name="analista" value="">
+            
+            
+	</tiles:put>
+	
+</tiles:insert>
+
+
+
+<script language="JavaScript">
+	function ir(acc,valor){
+    
+		
+			document.getElementById('accion').value=acc;
+			document.getElementById('analista').value=valor;
+			document.forms[0].submit();
+		
+			
+	}
+
+
+</script>
+
+
+
+

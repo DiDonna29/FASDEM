@@ -1,0 +1,414 @@
+/**15/07/2010
+ * marcenrl
+ */
+package ve.gob.dem.fasdem.action.pago;
+
+
+
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
+
+import ve.gob.dem.fasdem.bean.PreOrdenPago;
+import ve.gob.dem.fasdem.bean.ResumenPreOrdenPago;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.exp.pagos.ExpPreOrdenPago;
+import ve.gob.dem.framework.cnx.Conexion;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Constantes;
+import ve.gob.dem.framework.recursos.Utilidad;
+import ve.gob.dem.framework.seguridad.bean.Usuario;
+import ve.gob.dem.framework.seguridad.exp.ExpUsuario;
+
+
+public class PrintPreordenxls extends GenericAction {
+
+
+    static protected Logger log = Logger.getLogger(PrintPreordenxls.class);
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	
+    	HttpSession session = request.getSession();
+    	
+    	Usuario usuario = null;
+    	Usuario usuario1 = null;
+    	
+    	usuario = (Usuario) session.getAttribute("usuario");
+    	usuario1=ExpUsuario.buscarDatosP(usuario.getLogin());
+    	ArrayList RESUMEN = new ArrayList();
+		ResumenPreOrdenPago r;
+    	
+    	ActionMessages am = new ActionMessages();
+    	Entorno ent = new Entorno(Entorno.MOD_NINGUNO);
+
+    	
+    	try {
+    		validarAction(request, form, ent, am, this.getClass());
+    	} catch (PersonalNotFillItems e) {
+    		return mapping.findForward(FWD_INPUT);
+    	}
+
+				
+				    	HashMap mapa =new HashMap();
+						JasperPrint jasperprint;
+						String realPath = getServlet().getServletContext().getRealPath("/");
+						String path;
+						String rptfilename="";	
+						ServletOutputStream outstream2;
+						
+
+						//ServletOutputStream outstream2;
+						mapa.put("ruta", realPath + "images/");
+						mapa.put("REPORT_LOCALE",  new Locale("es", "VE"));
+						String date = Utilidad.DateToString(new Date(), "ddMMyyyyhhmmss");
+						mapa.put("preorden", request.getParameter("pre"));
+						
+						
+						mapa.put("USUARIO", usuario1.getDescripcion_usuario() );
+						
+						int anio = Integer.parseInt("20"+request.getParameter("pre").substring(0,2));
+						PreOrdenPago p = ExpPreOrdenPago.buscarUnicoporCodigo(request.getParameter("pre"),anio);
+						
+						
+						mapa.put("nroorden", p.getNro_orden());
+						mapa.put("fechaorden", p.getFecha_orden());
+						mapa.put("fechacheque", p.getFecha_pagado());
+						if(p.getProveedor()!=null){
+							mapa.put("beneficiario_rif", p.getProveedor().getRif());
+							mapa.put("beneficiario", p.getProveedor().getNombre());
+						}
+						
+						mapa.put("anio", anio);
+						
+						String sql="";
+						String alias="";
+						
+						switch (anio)
+						{
+							case 2010:
+							alias="000";
+							break;
+							case 2011:
+								alias="010";
+								break;
+							case 2012:
+								alias="020";
+								break;
+							case 2013:
+								alias="030";
+								break;
+							case 2014:
+								alias="040";
+								break;
+							case 2015:
+								alias="050";
+								break;
+							case 2016:
+								alias="060";
+								break;
+							case 2017:
+								alias="070";
+								break;
+							case 2018:
+								alias="080";
+								break;
+							case 2019:
+								alias="090";
+								break;
+							case 2020:
+								alias="100";
+								break;
+							case 2021:
+								alias="110";
+								break;
+							case 2022:
+								alias="120";
+								break;
+							case 2023:
+								alias="130";
+								break;
+							case 2024:
+								alias="140";
+								break;
+							case 2025:
+								alias="150";
+								break;
+							default:
+							break;
+						}
+						
+						//sql="select fact.siniestro as NROSIN, fact.subsiniestro as NROPAG, fact.fecha_factura as FECFAC, fact.nro_factura as NROFAC, fact.monto_total as MTOFAC, COALESCE(gastos_clinicos, 0::double precision)AS MTOCLI, COALESCE(honorarios_medicos, 0::double precision) AS MTOHONO, COALESCE(material_iva, 0::double precision)AS MTOMATIVA, COALESCE(material, 0::double precision) AS MTOMAT, COALESCE(odontologia, 0::double precision) AS MTOODO, COALESCE(funerarios, 0::double precision) AS MTOFUN, COALESCE(vida, 0::double precision) AS MTOVID, COALESCE(farmacia, 0::double precision) AS MTOMED, COALESCE(otros, 0::double precision) AS MTOOTRO,  (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(material, 0::double precision) )  as base_imponible_isrl,   (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(material, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(honorarios_medicos, 0::double precision) +  COALESCE(farmacia, 0::double precision) +  COALESCE(iva, 0::double precision)) as MTOLIQ,  fact.porcentaje_isrl * (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(material, 0::double precision) )/100 as MTOISR,   COALESCE(iva, 0::double precision) as PORRIV,  fact.porcentaje_timbre * (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(material, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(honorarios_medicos, 0::double precision) +  COALESCE(farmacia, 0::double precision)   )/100 as MTOTMF  from  (select siniestro.aniomes_codigo||'-'||siniestro.codigo_siniestro as siniestro, subcodigo_siniestro as subsiniestro, facturas.fecha_factura, facturas.nro_factura, facturas.monto_total, id_factura, porcentaje_isrl, porcentaje_timbre, porcentaje_iva, facturas.anio_siniestro from facturas"+alias+" facturas,siniestro"+alias+" siniestro where  facturas.id_siniestro=siniestro.id_siniestro and is_factura is true and  facturas.anio_siniestro="+anio+"  and siniestro.anio_siniestro="+anio+"  and  pre_orden= '"+p.getCod_completo()+"' ) fact        LEFT JOIN ( SELECT df.id_factura AS id_facturagc, sum(df.monto_amparado)  AS gastos_clinicos FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 3  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) gc ON fact.id_factura = gc.id_facturagc   LEFT JOIN ( SELECT df.id_factura AS id_facturahm, sum(df.monto_amparado)  AS honorarios_medicos FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 6 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) hm ON fact.id_factura = hm.id_facturahm                          LEFT JOIN ( SELECT df.id_factura AS id_factura_mativa,  sum(df.monto_amparado) AS material_iva FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 9 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) mmi ON fact.id_factura = mmi.id_factura_mativa   LEFT JOIN ( SELECT df.id_factura AS id_factura_mat,  sum(df.monto_amparado) AS material FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 10  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) mm ON fact.id_factura = mm.id_factura_mat   LEFT JOIN ( SELECT df.id_factura AS id_factura_odo,  sum(df.monto_amparado) AS odontologia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 1 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) od ON fact.id_factura = od.id_factura_odo   LEFT JOIN ( SELECT df.id_factura AS id_factura_fun,  sum(df.monto_amparado) AS funerarios FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 2  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) fu ON fact.id_factura = fu.id_factura_fun   LEFT JOIN ( SELECT df.id_factura AS id_factura_vida,  sum(df.monto_amparado) AS vida FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 4 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) vid ON fact.id_factura = vid.id_factura_vida   LEFT JOIN ( SELECT df.id_factura AS id_factura_ambulancia,  sum(df.monto_amparado) AS ambulancia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 5 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) amb ON fact.id_factura = amb.id_factura_ambulancia   LEFT JOIN ( SELECT df.id_factura AS id_factura_farmacia,  sum(df.monto_amparado) AS farmacia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 7 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) farm ON fact.id_factura = farm.id_factura_farmacia   LEFT JOIN ( SELECT df.id_factura AS id_factura_otros,  sum(df.monto_amparado) AS otros FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 8 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) otr ON fact.id_factura = otr.id_factura_otros  LEFT JOIN ( SELECT df.id_factura AS id_factura_iva,  sum(df.monto_amparado) AS iva FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 11 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) iva ON fact.id_factura = iva.id_factura_iva order by fact.fecha_pre_orden asc ";
+	                    sql="select fact.siniestro as NROSIN, fact.subsiniestro as NROPAG, fact.fecha_factura as FECFAC, fact.nro_factura as NROFAC, fact.monto_total as MTOFAC,fact.fecha_pre_orden as PREOFAC, COALESCE(gastos_clinicos, 0::double precision)AS MTOCLI, COALESCE(honorarios_medicos, 0::double precision) AS MTOHONO, COALESCE(material_iva, 0::double precision)AS MTOMATIVA, COALESCE(material, 0::double precision) AS MTOMAT, COALESCE(odontologia, 0::double precision) AS MTOODO, COALESCE(funerarios, 0::double precision) AS MTOFUN, COALESCE(vida, 0::double precision) AS MTOVID, COALESCE(farmacia, 0::double precision) AS MTOMED, COALESCE(otros, 0::double precision) AS MTOOTRO,  (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(material, 0::double precision) )  as base_imponible_isrl,   (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(material, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(honorarios_medicos, 0::double precision) +  COALESCE(farmacia, 0::double precision) +  COALESCE(iva, 0::double precision)) as MTOLIQ,  fact.porcentaje_isrl * (COALESCE(gastos_clinicos, 0::double precision) +   COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(material, 0::double precision) )/100 as MTOISR,   COALESCE(iva, 0::double precision) as PORRIV,  fact.porcentaje_timbre * (COALESCE(gastos_clinicos, 0::double precision) +  COALESCE(odontologia, 0::double precision)  +  COALESCE(funerarios, 0::double precision) +  COALESCE(otros, 0::double precision) +  COALESCE(material, 0::double precision) +  COALESCE(material_iva, 0::double precision) +  COALESCE(vida, 0::double precision) +  COALESCE(honorarios_medicos, 0::double precision) +  COALESCE(farmacia, 0::double precision)   )/100 as MTOTMF  from  (select siniestro.aniomes_codigo||'-'||siniestro.codigo_siniestro as siniestro, subcodigo_siniestro as subsiniestro, facturas.fecha_factura, facturas.nro_factura, facturas.monto_total, id_factura, porcentaje_isrl, porcentaje_timbre, porcentaje_iva, facturas.anio_siniestro,facturas.fecha_pre_orden  from facturas"+alias+" facturas,siniestro"+alias+" siniestro where  facturas.id_siniestro=siniestro.id_siniestro and is_factura is true and  facturas.anio_siniestro="+anio+"  and siniestro.anio_siniestro="+anio+"  and  pre_orden= '"+p.getCod_completo()+"' ) fact        LEFT JOIN ( SELECT df.id_factura AS id_facturagc, sum(df.monto_amparado)  AS gastos_clinicos FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 3  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) gc ON fact.id_factura = gc.id_facturagc   LEFT JOIN ( SELECT df.id_factura AS id_facturahm, sum(df.monto_amparado)  AS honorarios_medicos FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 6 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) hm ON fact.id_factura = hm.id_facturahm                          LEFT JOIN ( SELECT df.id_factura AS id_factura_mativa,  sum(df.monto_amparado) AS material_iva FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 9 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) mmi ON fact.id_factura = mmi.id_factura_mativa   LEFT JOIN ( SELECT df.id_factura AS id_factura_mat,  sum(df.monto_amparado) AS material FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 10  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) mm ON fact.id_factura = mm.id_factura_mat   LEFT JOIN ( SELECT df.id_factura AS id_factura_odo,  sum(df.monto_amparado) AS odontologia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 1 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) od ON fact.id_factura = od.id_factura_odo   LEFT JOIN ( SELECT df.id_factura AS id_factura_fun,  sum(df.monto_amparado) AS funerarios FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 2  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) fu ON fact.id_factura = fu.id_factura_fun   LEFT JOIN ( SELECT df.id_factura AS id_factura_vida,  sum(df.monto_amparado) AS vida FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 4 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) vid ON fact.id_factura = vid.id_factura_vida   LEFT JOIN ( SELECT df.id_factura AS id_factura_ambulancia,  sum(df.monto_amparado) AS ambulancia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 5 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) amb ON fact.id_factura = amb.id_factura_ambulancia   LEFT JOIN ( SELECT df.id_factura AS id_factura_farmacia,  sum(df.monto_amparado) AS farmacia FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 7 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) farm ON fact.id_factura = farm.id_factura_farmacia   LEFT JOIN ( SELECT df.id_factura AS id_factura_otros,  sum(df.monto_amparado) AS otros FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 8 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) otr ON fact.id_factura = otr.id_factura_otros  LEFT JOIN ( SELECT df.id_factura AS id_factura_iva,  sum(df.monto_amparado) AS iva FROM detalles_factura"+alias+" df,tipo_gasto tg WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 11 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) iva ON fact.id_factura = iva.id_factura_iva order by fact.fecha_pre_orden asc";
+						
+						log.info("sql  XLS ------> " + sql);
+				     Connection db = null;
+					 try {	
+					      
+						   db =   Conexion.getConexion();
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenClinica ){
+				
+							   if(p.getAplicaTimbre()==1){
+							       rptfilename ="/jasper/FiniquitoDePagoClinicas.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoClinicasSinTimbre.jasper"; 
+							   }
+						   
+						   }
+						   
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenFarmacia ){
+								
+							  
+							   if(p.getAplicaTimbre()==1){
+								   rptfilename ="/jasper/FiniquitoDePagoFarmaciaXLS.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoFarmaciaSinTimbreXLS.jasper"; 
+							   }
+
+						   
+						   }
+						   
+						   
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenReembolsos ){
+								 mapa.put("beneficiario_rif", p.getTitular().getCedula());
+								 mapa.put("beneficiario", p.getTitular().getNombres() + " " + p.getTitular().getApellidos());	
+								 rptfilename ="/jasper/FiniquitoDePagoReembolso.jasper";
+						   
+						   }
+						   
+						   
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenFuneraria){
+								
+							   if(p.getAplicaTimbre()==1){
+							       rptfilename ="/jasper/FiniquitoDePagoFunerarios.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoFunerariosSinTimbre.jasper"; 
+							   }
+						   
+						   }
+						   
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenGenerica){
+								
+							   if(p.getAplicaTimbre()==1){
+							       rptfilename ="/jasper/FiniquitoDePagoOtrosServicios.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoOtrosServiciosSinTimbre.jasper"; 
+							   }
+						   
+						   }
+						   
+						
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenOdontologia){
+								
+							   if(p.getAplicaTimbre()==1){
+							       rptfilename ="/jasper/FiniquitoDePagoOdontologia.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoOdontologiaSinTimbre.jasper"; 
+							   }
+						   
+						   }
+						   
+						   
+						   if(p.getTipo_preorden()== Constantes.TipoPreOrdenMateriales){
+								
+							   if(p.getAplicaTimbre()==1){
+							       rptfilename ="/jasper/FiniquitoDePagoOtrosServicios.jasper";
+							   }else{
+								   rptfilename ="/jasper/FiniquitoDePagoOtrosServiciosSinTimbre.jasper"; 
+							   }
+						   
+						   }
+						   
+						  
+						    
+							
+						   RESUMEN = ExpPreOrdenPago.buscarResumenPreOrden(request.getParameter("pre"), anio);
+							 r = new ResumenPreOrdenPago();
+						   
+							
+							
+						   
+						   
+                            
+                            Double Emp_Cont =0.00;
+                            Double Obreros =0.00;
+                            Double Pensionados =0.00;
+                            Double Jubilados =0.00;
+                            Double iva =0.00;
+                            Double isrl =0.00;
+                            Double timbre =0.00;
+                            Double liquidado =0.00;
+                            Double retencion =0.00;
+                            Double pagar =0.00;
+                            
+                           
+							for (int j=0;j!=RESUMEN.size();j++){
+							r = (ResumenPreOrdenPago) RESUMEN.get(j);
+							
+							   
+							
+							if(r.getTIPO_EMPLEADO()==1){ /// EMPLEADO FIJO---
+								
+								Emp_Cont = Emp_Cont + r.getMONTO_LIQUIDADO();
+							}
+							
+							if(r.getTIPO_EMPLEADO()==3){ /// EMPLEADO CONTRATADO--
+								
+								Emp_Cont = Emp_Cont + r.getMONTO_LIQUIDADO();								
+							}
+						
+							if(r.getTIPO_EMPLEADO()==2){ /// OBRERO FIJO---
+								
+								Obreros = Obreros + r.getMONTO_LIQUIDADO();
+							}
+							
+							if(r.getTIPO_EMPLEADO()==4){ /// OBRERO CONTRATADO--
+								
+								Obreros = Obreros + r.getMONTO_LIQUIDADO();							
+							}
+						
+							if(r.getTIPO_EMPLEADO()==7){ /// JUBILADOS--
+								
+								Jubilados = Jubilados + r.getMONTO_LIQUIDADO();
+							}
+							
+							if(r.getTIPO_EMPLEADO()==5){ /// EMPLEADO SUPLETE--
+								
+								Emp_Cont = Emp_Cont + r.getMONTO_LIQUIDADO();
+							}
+							
+							if(r.getTIPO_EMPLEADO()==8){ /// SIN DEFINIR--
+								
+								Emp_Cont = Emp_Cont + r.getMONTO_LIQUIDADO();
+							}
+							
+							
+							if(r.getTIPO_EMPLEADO()==6){ /// INCAPACITADO--
+								
+								Pensionados = Pensionados + r.getMONTO_LIQUIDADO();
+							}
+							
+								
+
+								 if(p.getAplicaTimbre()==1){
+									 timbre = timbre + r.getMONTO_TIMBRE();
+								   }else{
+									 timbre = 0.00; 
+								 }
+								
+								 if(p.getTipo_preorden()== Constantes.TipoPreOrdenFarmacia ){
+									 iva = 0.00;
+									 isrl = 0.00;
+									 retencion=0.00;
+									   
+								 }else{
+									 
+									 if(p.getTipo_preorden()== Constantes.TipoPreOrdenReembolsos ){
+										 iva = 0.00;
+										 isrl = 0.00;
+										 timbre = 0.00; 
+										 retencion=0.00;
+									 }else{	 
+										 iva = iva + r.getMONTO_IVA();
+										 isrl = isrl + r.getMONTO_ISRL();
+										 retencion=iva * p.getRetencion_iva()/100;
+									 }
+									 
+								 }
+								
+								liquidado = liquidado + r.getMONTO_LIQUIDADO() + iva;
+			      		 		
+							}
+
+							
+						   
+						   
+						   int aplica;
+						   
+						   if (p.isAplica_isrl()==true){
+							  aplica=1;
+						   }else{
+							  aplica=0;
+						   }
+						   
+						   
+						   pagar = liquidado - (isrl*aplica) - timbre - retencion;
+						   
+						   mapa.put("EMP_CONT", Emp_Cont);
+						   mapa.put("OBRE", Obreros);
+						   mapa.put("JUBILAD", Jubilados);
+						   mapa.put("PENSIO",new Double(0.00));
+						   mapa.put("IVA", iva);
+						   mapa.put("LIQUIDADO", liquidado);
+						   mapa.put("TIMBRE", timbre);
+						   mapa.put("ISRL", isrl*aplica);
+						   mapa.put("RETENCION", retencion);
+						   mapa.put("POR_RETENCION", p.getRetencion_iva());
+						   mapa.put("PAGAR", pagar);
+						   mapa.put("APLICA_ISRL",aplica);
+						   mapa.put("sql", sql);
+						 
+						   
+						   path = realPath + rptfilename;
+						   // LLENAR EL INFORME
+						   jasperprint = JasperFillManager.fillReport(path, mapa, db);
+						   // EXPORTAR EL INFORME A FORMATO PDF.
+						   //pdfasbytes = JasperExportManager.e(jasperprint);
+						   outstream2 = response.getOutputStream();
+						   response.setContentType("application/vnd.ms-excel");
+						   //response.setContentLength(pdfasbytes.length);
+						   response.setHeader("Pragma", "no-cache");
+						   response.setDateHeader("Expires", 0);
+						   //log.info("sql  XLS ------> " + sql);
+						   response.setHeader("Content-disposition", "inline; filename=\"Report" + date + ".xls\"");
+						   //outstream2.write(pdfasbytes);
+						   
+						   
+						    JRXlsExporter exporter = new JRXlsExporter();
+							exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperprint);
+							exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+							exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+							exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);
+							exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+							exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outstream2);
+							exporter.exportReport();
+						   
+						   
+						   
+						   
+						   
+						   
+						   
+						
+					} finally {
+					    Conexion.closeConexion(db);
+					}
+					return null;
+    }
+
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NotaTecnica">
+    <typeAlias alias="ObjNotaTecnica" type="ve.gob.dem.fasdem.bean.NotaTecnica"/>
+    <resultMap id="result_all" class="ObjNotaTecnica">
+        <result property="id" column="id_nota_tecnica" jdbcType="NUMBER"/>
+        <result property="idDependencia" column="id_dependencia" jdbcType="NUMBER"/>
+        <result property="anioSiniestro" column="anio_siniestro" jdbcType="NUMBER"/>
+        <result property="observacion" column="observacion" jdbcType="character varying"/>
+        <result property="fecha" column="fecha_registro" jdbcType="date"/>
+        <result property="loginUsuario" column="id_usuario" jdbcType="character varying"/>
+       
+    </resultMap>
+    
+    <sql id="sql_buscar">SELECT 
+    id_nota_tecnica,
+    id_dependencia,
+    anio_siniestro,
+    observacion,
+    fecha_registro,
+    id_usuario
+     FROM nota_tecnica</sql>
+    
+    <select id="search" resultClass="ObjNotaTecnica" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        where  
+            anio_siniestro = #anioSiniestro# AND
+            is_medica = false AND 
+            id_nota_tecnica = #idNota# 
+    </select>
+    
+    <insert id="insert" parameterClass="ObjNotaTecnica">
+        INSERT INTO nota_tecnica(anio_siniestro,
+        observacion,	id_siniestro,  id_usuario ,id_dependencia 
+        )VALUES( #anioSiniestro#,
+            #observacion#, 	#idSiniestro#, #loginUsuario#,#idDependencia#)
+                <selectKey resultClass="int" type="post" keyProperty="id">
+            SELECT currval('nota_tecnica_id_nota_tecnica_seq')
+        </selectKey>
+    </insert>
+    
+    <select id="listBySiniestro" resultClass="ObjNotaTecnica" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        WHERE 
+            anio_siniestro= #anioSiniestro# AND
+            is_medica = false AND
+            id_siniestro = #idSiniestro# 
+        ORDER BY 
+            fecha_registro DESC  
+    </select>
+    
+    <select id="ultimaNota" resultClass="ObjNotaTecnica" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        WHERE  
+            anio_siniestro= #anioSiniestro# AND
+            is_medica = false AND
+            id_siniestro = #idSiniestro#
+        ORDER BY 
+            fecha_registro DESC LIMIT 1
+    </select>
+    
+    <insert id="insertMedica" parameterClass="ObjNotaTecnica">
+        INSERT INTO nota_tecnica(
+            anio_siniestro,     observacion,    id_siniestro,   id_usuario ,    id_dependencia,     is_medica
+        )VALUES( 
+            #anioSiniestro#,    #observacion#,  #idSiniestro#,  #loginUsuario#, #idDependencia#,    true)
+            <selectKey resultClass="int" type="post" keyProperty="id">
+            SELECT currval('nota_tecnica_id_nota_tecnica_seq')
+        </selectKey>
+    </insert>   
+     
+        <select id="listBySiniestroNotaMedica" resultClass="ObjNotaTecnica" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        WHERE 
+            anio_siniestro= #anioSiniestro# AND
+            is_medica = true AND
+            id_siniestro = #idSiniestro# 
+        ORDER BY 
+            fecha_registro DESC  
+    </select>
+    <select id="searchMedica" resultClass="ObjNotaTecnica" resultMap="result_all">
+        <include refid="sql_buscar"/>
+        where  
+            anio_siniestro = #anioSiniestro# AND
+            is_medica = true AND 
+            id_nota_tecnica = #idNota# 
+    </select>
+
+</sqlMap>

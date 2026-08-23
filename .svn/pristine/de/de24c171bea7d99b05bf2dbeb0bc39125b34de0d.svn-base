@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="DetalleClinicasEstadosAPS"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="476"
+		 pageHeight="612"
+		 columnWidth="476"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="ruta" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Z://webapps//fasdem//"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="servicio" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["APS"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_estado" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(2)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_ciudad" isForPrompting="false" class="java.lang.Integer"/>
+	<queryString><![CDATA[select 
+proveedor.Descripcion,
+proveedor.direccion,
+proveedor.telefono,
+proveedor.servicios,
+servicio_portal.descripcion_tipo as servicio,
+servicio_portal.id_serpor as id_servicio,
+estado.descripcion as estado,
+proveedor.servicios as serv
+from proveedor
+inner join servicio_portal_proveedor on (proveedor.is_costo_razonable = false and proveedor.id_proveedor = servicio_portal_proveedor.id_proveedor and  servicio_portal_proveedor.is_activo = true and proveedor.is_activo = true)
+inner join servicio_portal on (servicio_portal.id_serpor = servicio_portal_proveedor.id_serpor and servicio_portal.descripcion_tipo = $P{servicio} and servicio_portal.id_serpor =1)
+inner join estado on (proveedor.id_estado = estado.id_estado and proveedor.id_estado = $P{id_estado})
+inner join ciudad on (proveedor.id_ciudad = ciudad.id_ciudad and ciudad.id_estado = estado.id_estado and ciudad.id_ciudad = $P{id_ciudad})
+order by servicio_portal.id_serpor,proveedor.Descripcion]]></queryString>
+
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="servicios" class="java.lang.String"/>
+	<field name="servicio" class="java.lang.String"/>
+	<field name="id_servicio" class="java.lang.Integer"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="serv" class="java.lang.String"/>
+
+
+		<group  name="servicio" >
+			<groupExpression><![CDATA[$F{id_servicio}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="18"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="125"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{descripcion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="125"
+						y="0"
+						width="150"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{direccion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="275"
+						y="0"
+						width="100"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"
+						isPrintRepeatedValues="false"
+						isPrintInFirstWholeBand="true"
+						isPrintWhenDetailOverflows="true"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{telefono}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="375"
+						y="0"
+						width="101"
+						height="18"
+						key="textField-1"
+						stretchType="RelativeToBandHeight"/>
+					<box leftPadding="2" rightPadding="2">					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+</box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{serv}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</summary>
+</jasperReport>

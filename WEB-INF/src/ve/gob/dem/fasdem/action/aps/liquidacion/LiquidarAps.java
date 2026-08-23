@@ -1,0 +1,221 @@
+/**
+ * 02/03/2011 14:57:46
+ * marcenrl
+ * 2011
+ */
+package ve.gob.dem.fasdem.action.aps.liquidacion;
+
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.DynaActionForm;
+
+import ve.gob.dem.fasdem.bean.Estatus;
+import ve.gob.dem.fasdem.bean.Factura;
+import ve.gob.dem.fasdem.bean.Mapa;
+import ve.gob.dem.fasdem.bean.MotivoEstatus;
+import ve.gob.dem.fasdem.bean.Siniestro;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.per.PerEstatus;
+import ve.gob.dem.fasdem.per.PerFactura;
+import ve.gob.dem.fasdem.per.PerMotivoEstatus;
+import ve.gob.dem.fasdem.per.PerSiniestro;
+import ve.gob.dem.fasdem.valores.CargaValores;
+import ve.gob.dem.fasdem.valores.Valores;
+import ve.gob.dem.framework.exception.PersonalFacturaNoFillException;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.exception.PersonalNotFoundException;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Utilidad;
+
+/**
+ * @author marcenrl
+ * 
+ */
+public class LiquidarAps extends GenericAction {
+	static protected Logger log = Logger.getLogger(LiquidarAps.class);
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ActionMessages am = new ActionMessages();
+		Valores v = CargaValores.getInstance().getValores();
+		Entorno ent = new Entorno(Entorno.MOD_CARGAR_FACTURA);
+		Mapa mapa = new Mapa();
+		List facturas = null;
+		int idSini = 0;
+		PerMotivoEstatus perMotEst = new PerMotivoEstatus();
+		MotivoEstatus motEst = new MotivoEstatus();
+		if (request.getParameter("id") != null) {
+			try {
+				idSini = Integer.parseInt(request.getParameter("id"));
+			} catch (Exception e) {
+				log.info("info", e);
+			}
+		} else {
+			idSini = (Integer) request.getAttribute("id");
+		}
+		Siniestro s = null;
+		PerSiniestro ps = new PerSiniestro();
+		PerFactura pf = new PerFactura();
+		// request.setAttribute(KEY_TIPO_TRAMITE, TIPO_TRAMITE_APS);
+		mapa = getDForm(request, form, ent);
+		mapa.setIdSiniestro(idSini);
+		/*if (request.getParameter("anioSiniestro") != null && !"".equals(request.getParameter("anioSiniestro"))) {
+			mapa.setAnioSiniestro(Integer.parseInt(request.getParameter("anioSiniestro")));
+		} else {
+			// si se redirecciona desde eliminar factura, el parametro se llama
+			// anioBusqueda
+			if (request.getParameter("anioBusqueda") != null) {
+				log.info("anioSini request " + request.getParameter("anioBusqueda"));
+				request.getSession().setAttribute("anioSiniestro", request.getParameter("anioBusqueda"));
+				mapa.setAnioSiniestro(Integer.parseInt(request.getParameter("anioBusqueda")));
+			}
+			if (request.getSession().getAttribute("anioBusqueda") != null && !"".equals(String.valueOf(request.getSession().getAttribute("anioBusqueda")))) {
+				mapa.setAnioSiniestro(Integer.parseInt(String.valueOf(request.getSession().getAttribute("anioBusqueda"))));
+			}
+		}*/
+		mapa.setAnioSiniestro(getAnioBusqueda(request));
+		
+		//getAnioBusqueda(request);
+		log.info("anioSiniestro request " + request.getParameter("anioSiniestro"));
+		log.info("anio en map " + mapa.getAnioSiniestro());
+		s = ps.search(mapa);
+		request.setAttribute("validador", request.getParameter("validador"));
+		if (s.getTipoTramite().getId() == 4) {
+			request.setAttribute("fechaFactura", s.getFechaNotificacion());
+		}
+		if (s.getTipoTramite().getId() == 1) {
+			request.setAttribute("fechaFactura", s.getFechaIngreso());
+		}
+		if (s.getTipoTramite().getId() == 2) {
+			request.setAttribute("fechaFactura", s.getFechaIngreso());
+		}
+		if (s.getTipoTramite().getId() == 3) {
+			request.setAttribute("fechaRecepcionFactura", Utilidad.DateToString(s.getFechaNotificacion(), "dd/MM/yyyy"));
+			DynaActionForm dForm = (DynaActionForm) form;
+			dForm.set("fechaRecepcionFactura", Utilidad.DateToString(s.getFechaNotificacion(), "dd/MM/yyyy"));
+		}
+		PerEstatus perEst = new PerEstatus();
+		Estatus est = new Estatus();
+		est = perEst.buscar(s.getEstatus().getId());
+		if (s.getEstatus().getId() == 4) {
+			try {
+				mapa.setIdEstatus(est.getId());
+				mapa.setIdSiniestro(s.getId());
+				motEst = perMotEst.searchByEstatus(mapa);
+				request.setAttribute("motEst", motEst);
+			} catch (Exception e) {
+				motEst = new MotivoEstatus();
+			}
+		}
+		try {
+			mapa.setIssFactura(true);
+			facturas = pf.listSearchIdSiniestro(mapa);
+		} catch (PersonalNotFoundException e) {
+			request.setAttribute("facturas", null);
+		} catch (Exception e) {
+			log.error("error", e);
+			request.setAttribute("facturas", null);
+		}
+		request.setAttribute("siniestro", s);
+		DynaActionForm dForm = (DynaActionForm) form;
+		dForm.set("idSiniestro", String.valueOf(s.getId()));
+		dForm.set("anioBusqueda", String.valueOf(s.getAnioSiniestro()));
+		dForm.set("anioSiniestro", String.valueOf(s.getAnioSiniestro()));
+		request.setAttribute("facturas", facturas);
+		try {
+			validarAction(request, form, ent, am, this.getClass());
+		} catch (PersonalNotFillItems e) {
+			return mapping.findForward(FWD_INPUT);
+		}
+		mapa = getDForm(request, form, ent);
+		// Se le coloca el año del siniestro
+		mapa.setAnioSiniestro(s.getAnioSiniestro());
+		mapa.setIdSiniestro(s.getId());
+		mapa.setIdProveedor(s.getProveedor().getId());
+		/*
+		 * if (!validarFacturaUnica(mapa)){ am.add(ALERT_AVISOS, new
+		 * ActionMessage("general.factura.duplicada",
+		 * String.valueOf(mapa.getAnioSiniestro()))); saveMessages(request, am);
+		 * return mapping.findForward(FWD_INPUT); }
+		 */
+		mapa.setPorcentajeIsrl(v.getIslr());
+		mapa.setPorcentajeTimbre(v.getTimbreFiscal());
+		//mapa.setPorcentajeIva(v.getIva());
+		mapa.setMontoAmparado(s.getMontoAmparado());
+		mapa.setMontoNegociado(s.getMontoNegociado());
+		// Solo carta Aval
+		if (s.getTipoTramite().getId() == COD_TIPO_TRAMITE_CARTAAVAL) {
+			if (s.getMontoMaximoAutorizado() == 0) {
+				if (calcularDisponibleFacturas(facturas, mapa.getMontoFactura(), s.getMontoNegociado())) {
+					pf.insert(mapa);
+					limpiarDform(dForm);
+				} else {
+					am.add(ALERT_AVISOS, new ActionMessage("general.monto.excedesiniestro", mapa.getMontoFactura()));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+			} else {
+				if (calcularDisponibleFacturas(facturas, mapa.getMontoFactura(), s.getMontoNegociado())) {
+					pf.insert(mapa);
+					limpiarDform(dForm);
+				} else {
+					am.add(ALERT_AVISOS, new ActionMessage("general.monto.excedesiniestro", mapa.getMontoFactura()));
+					saveMessages(request, am);
+					return mapping.findForward(FWD_INPUT);
+				}
+			}
+		} else {
+			int idFactura = pf.insert(mapa);
+			incluirTraza(TR_LIQUIDACION_CARGARFACTURA, String.valueOf(idFactura), "Cargar Factura", usuarioSession(request));
+			limpiarDform(dForm);
+		}
+		try {
+			mapa.setIssFactura(true);
+			facturas = pf.listSearchIdSiniestro(mapa);
+		} catch (PersonalNotFoundException e) {
+			request.setAttribute("facturas", null);
+		} catch (Exception e) {
+			log.error("error", e);
+			request.setAttribute("facturas", null);
+		}
+		request.setAttribute("facturas", facturas);
+		return mapping.findForward(FWD_INPUT);
+	}
+
+	private void limpiarDform(DynaActionForm dForm) {
+		dForm.set("numeroFactura", "");
+		dForm.set("controlFactura", "");
+		dForm.set("fechaFactura", "");
+		dForm.set("listIva", "");
+		dForm.set("fechaRecepcionFactura", "");
+		dForm.set("montoFactura", "");
+	}
+
+	@SuppressWarnings("rawtypes")
+	private boolean calcularDisponibleFacturas(List facturas, double nuevoMonto, double montoSiniestro) throws PersonalFacturaNoFillException, SQLException {
+		Factura f = null;
+		double subTotal = 0.0;
+		if (facturas != null) {
+			for (int i = 0; i < facturas.size(); i++) {
+				f = (Factura) facturas.get(i);
+				subTotal = subTotal + f.getMontoFactura();
+			}
+		}
+		if (montoSiniestro < (subTotal + nuevoMonto)) {
+			return false;
+		}
+		return true;
+	}
+}

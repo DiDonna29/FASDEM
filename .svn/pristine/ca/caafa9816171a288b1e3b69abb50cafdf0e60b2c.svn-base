@@ -1,0 +1,732 @@
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<struts-config>
+	<data-sources />
+	<form-beans>
+		<form-bean name="globalActionForm" type="org.apache.struts.action.DynaActionForm">
+			<form-property name="cedula" type="java.lang.String" />
+			<form-property name="id" type="java.lang.String" />
+			<form-property name="fechaInicio" type="java.lang.String" />
+			<form-property name="fechaFin" type="java.lang.String" />
+			<form-property name="fechaOcurrencia" type="java.lang.String" />
+			<form-property name="fechaNotificacion" type="java.lang.String" />
+			<form-property name="tipoProveedor" type="java.lang.String" initial="-1" />
+			<form-property name="causaIngreso" type="java.lang.String" />
+			<form-property name="tipoEnfermedad" type="java.lang.String" initial="-1" />
+			<form-property name="tipoSiniestro" type="java.lang.String" initial="-1" />
+			<form-property name="observacion" type="java.lang.String" />
+			<form-property name="organo" type="java.lang.String" initial="-1" />
+			<form-property name="tratamiento" type="java.lang.String" initial="-1" />
+			<form-property name="patologias" type="java.lang.String" initial="-1" />
+			<form-property name="especialidad" type="java.lang.String" initial="-1" />
+			<form-property name="numeroFactura" type="java.lang.String" />
+			<form-property name="tipoGasto" type="java.lang.String" initial="-1" />
+			<form-property name="controlFactura" type="java.lang.String" />
+			<form-property name="montoFactura" type="java.lang.String" initial="0.00" />
+			<form-property name="montoNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="idCausaIngreso" type="java.lang.String" />
+			<form-property name="montoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="fechaFactura" type="java.lang.String" />
+			<form-property name="fechaRecepcionFactura" type="java.lang.String" />
+			<form-property name="UbicacionFisica" type="java.lang.String" />
+			<form-property name="TipoDocumento" type="java.lang.String" />
+			<form-property name="MontoProntoPago" type="java.lang.String" />
+			<form-property name="NumeroOrdenPago" type="java.lang.String" />
+			<form-property name="NumeroRemesa" type="java.lang.String" />
+			<form-property name="FechaCheque" type="java.lang.String" />
+			<form-property name="NumeroCheque" type="java.lang.String" />
+			<form-property name="numeroOrdenPago" type="java.lang.String" />
+			<form-property name="proveedor" type="java.lang.String" />
+			<form-property name="montoPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="tipoTramite" type="java.lang.String" />
+			<form-property name="observacionMedicinas" type="java.lang.String" />
+			<form-property name="patologiaOrganoTratamiento" type="java.lang.String" />
+			<form-property name="montoIslr" type="java.lang.String" />
+			<form-property name="montoIva" type="java.lang.String" />
+			<form-property name="montoIvaProveedor" type="java.lang.String" />
+			<form-property name="montoDeducible" type="java.lang.String" />
+			<form-property name="montoNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoProntoPago" type="java.lang.String" />
+			<form-property name="cantFacturas" type="java.lang.String" />
+			<form-property name="idProveedor" type="java.lang.String" />
+			<form-property name="presupInicial" type="java.lang.String" />
+			<form-property name="tgastosClinicos" type="java.lang.String" initial="0.00" />
+			<form-property name="thonoMedicos" type="java.lang.String" initial="0.00" />
+			<form-property name="totalFacturado" type="java.lang.String" initial="0.00" />
+			<form-property name="totalAliquidar" type="java.lang.String" initial="0.00" />
+			<form-property name="totalMontoNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="nombres" type="java.lang.String" />
+			<form-property name="tipoCobertura" type="java.lang.String" initial="-1" />
+			<form-property name="idBeneficiario" type="java.lang.String" />
+			<form-property name="edad" type="java.lang.String" />
+			<form-property name="fechaNacimiento" type="java.lang.String" />
+			<form-property name="sexo" type="java.lang.String" />
+			<form-property name="tipoEmpleado" type="java.lang.String" initial="-1" />
+			<form-property name="apellidos" type="java.lang.String" />
+			<form-property name="codigo" type="java.lang.String" />
+			<form-property name="subCodigo" type="java.lang.String" />
+			<form-property name="fechaEgresoClinica" type="java.lang.String" />
+			<form-property name="fechaIngresoClinica" type="java.lang.String" />
+			<form-property name="fechaCheque" type="java.lang.String" />
+			<form-property name="fechaRemesa" type="java.lang.String" />
+			<form-property name="fechaUltimaModificacion" type="java.lang.String" />
+			<form-property name="fechaAprobado" type="java.lang.String" />
+			<form-property name="fechaLiquidado" type="java.lang.String" />
+			<form-property name="fechaCreado" type="java.lang.String" />
+			<form-property name="fechaCartaAval" type="java.lang.String" />
+			<form-property name="monto" type="java.lang.String" />
+			<form-property name="montoHonorariosMedicos" type="java.lang.String" initial="0.00" />
+			<form-property name="montoGastosClinicos" type="java.lang.String" initial="0.00" />
+			<form-property name="montoExamenesPreoperatorios" type="java.lang.String" initial="0.00" />
+			<form-property name="montoMaterialMedicoConIva" type="java.lang.String" initial="0.00" />
+			<form-property name="montoMaterialMedicoSinIva" type="java.lang.String" initial="0.00" />
+			<form-property name="montoCalculado" type="java.lang.String" initial="0.00" />
+			<form-property name="idTipoGasto" type="java.lang.String" />
+			<form-property name="idPorcentajeImpuesto" type="java.lang.String" />
+			<form-property name="porcentajeImpuesto" type="java.lang.String" />
+			<form-property name="idFactura" type="java.lang.String" />
+			<form-property name="idSiniestroFactura" type="java.lang.String" />
+			<form-property name="idEstatus" type="java.lang.String" />
+			<form-property name="estatus" type="java.lang.String" initial="-1" />
+			<form-property name="idTipoEmpleado" type="java.lang.String" />
+			<form-property name="codigoPreOrden" type="java.lang.String" />
+			<form-property name="cobertura" type="java.lang.String" initial="-1" />
+			<form-property name="medicamento" type="java.lang.String" />
+			<form-property name="posologia" type="java.lang.String" />
+			<form-property name="fechaRegistro" type="java.lang.String" />
+			<form-property name="observaciones" type="java.lang.String" />
+			<form-property name="montoCalculadoNoAmparado" type="java.lang.String" />
+			<form-property name="montoHonorariosMedicosNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoGastosClinicosNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="fechaIngreso" type="java.lang.String" />
+			<form-property name="fechaEgreso" type="java.lang.String" />
+			<form-property name="montoFuneraria" type="java.lang.String" initial="0.00" />
+			<form-property name="montoExamenesEspeciales" type="java.lang.String" initial="0.00" />
+			<form-property name="ambulancia" type="java.lang.String" initial="0.0" />
+			<form-property name="vida" type="java.lang.String" />
+			<form-property name="citaPostOperatorio" type="java.lang.String" />
+			<form-property name="montoAmbulancia" type="java.lang.String" initial="0.00" />
+			<form-property name="idSiniestro" type="java.lang.String" />
+			<form-property name="tipoTratamiento" type="java.lang.String" initial="-1" />
+			<form-property name="idTipoTratamiento" type="java.lang.String" initial="-1" />
+			<form-property name="descripcion" type="java.lang.String" />
+			<form-property name="idEspecialidad" type="java.lang.String" />
+			<form-property name="montoHonorariosPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoGastosPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoHonorariosNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoGastosNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="citaPreOperatorio" type="java.lang.String" />
+			<form-property name="anioSiniestro" type="java.lang.String" initial="2011" />
+			<form-property name="montoAmbulanciaNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoAmbulanciaPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoFunerariaNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoFunerariaPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoExamenesEspecialesNoAmparado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoExamenesEspecialesPresupuestado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoAmbulanciaNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoFunerariaNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="montoExamenesEspecialesNegociado" type="java.lang.String" initial="0.00" />
+			<form-property name="anioBusqueda" type="java.lang.String" />
+			<form-property name="anio" type="java.lang.String" />
+			<form-property name="listTipoTramite" type="java.lang.String" initial="-1" />
+			<form-property name="justificacion" type="java.lang.String" />
+		</form-bean>
+		<form-bean name="FileUpload" type="ve.gob.dem.fasdem.action.upload.formbeam.UploadForm" />
+	</form-beans>
+	<global-exceptions>
+		<exception type="ve.gob.dem.framework.exception.PersonalNotSessionException" key="app.exception.nosession" handler="ve.gob.dem.framework.handler.CustomExceptionHandler" scope="request" />
+		<exception type="ve.gob.dem.framework.exception.PersonalAccessDeniedException" key="app.exception.accessdenied" handler="ve.gob.dem.framework.handler.CustomExceptionHandler" scope="request" />
+		<exception type="java.lang.Exception" key="app.exception.general" handler="ve.gob.dem.framework.handler.CustomExceptionHandler" scope="request" />
+	</global-exceptions>
+	<global-forwards>
+		<forward name="index" path="/login.do" />
+		<forward name="exception.page" redirect="false" path="/jsp/errores/exceptionPage.jsp" />
+		<forward name="global.print" redirect="false" path="/jsp/reportes/redirect.jsp" />
+		<forward name="intranet" path="http://intranet" redirect="true" />
+		<forward name="input_maqueta" path="/jsp/maqueta/index.jsp" redirect="false" />
+		<forward name="buscar.siniestro" path="/" redirect="false" />
+	</global-forwards>
+	<action-mappings>
+		<action path="/login" type="ve.gob.dem.framework.seguridad.access.LoginUser" name="globalActionForm" validate="false" scope="request">
+			<forward name="logged" redirect="false" path="/jsp/index.jsp" />
+		</action>
+		<action path="/noaccess" type="ve.gob.dem.framework.seguridad.access.ExceptionAction" />
+		<action path="/nosession" type="ve.gob.dem.framework.seguridad.access.ExceptionAction" />
+		<action path="/security/maqueta" parameter="1" type="ve.gob.dem.fasdem.action.maqueta.MaquetaAction">
+			<forward name="input_maqueta" path="/jsp/maqueta/index.jsp" redirect="false" />
+			<forward name="aps_carga" path="/maqueta/aps_carga.jsp" redirect="false" />
+			<forward name="aps_consulta" path="/maqueta/aps_consulta.jsp" redirect="false" />
+			<forward name="aps_editar" path="/maqueta/aps_editar.jsp" redirect="false" />
+			<forward name="medicias_carga" path="/maqueta/medicias_carga.jsp" redirect="false" />
+			<forward name="medicias_consulta" path="/maqueta/medicias_consulta.jsp" redirect="false" />
+			<forward name="medicias_editar" path="/maqueta/medicias_editar.jsp" redirect="false" />
+			<forward name="pago_carga" path="/maqueta/pago_carga.jsp" redirect="false" />
+			<forward name="pago_consulta" path="/maqueta/pago_consulta.jsp" redirect="false" />
+			<forward name="pago_editar" path="/maqueta/pago_editar.jsp" redirect="false" />
+			<forward name="reembolso_consulta" path="/maqueta/reembolso_consulta.jsp" redirect="false" />
+			<forward name="reembolso_crear" path="/maqueta/reembolso_crear.jsp" redirect="false" />
+			<forward name="reembolso_editar" path="/maqueta/reembolso_editar.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request" parameter="/security/aps/buscarSiniestros.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarBeneficiario.jsp" />
+		</action>
+		<action path="/security/cartaAval/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request" parameter="/security/cartaAval/buscarSiniestros.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarBeneficiario.jsp" />
+		</action>
+		<action path="/security/aps/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" parameter="/security/aps/prepopulate/nuevo.do" scope="request">
+			<forward name="input" path="/jsp/comunes/buscarSiniestros.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/buscarSiniestros" type="ve.gob.dem.fasdem.action.cartaAval.BuscarSiniestroNuevo" name="globalActionForm" validate="false" parameter="/security/cartaAval/nuevo.do" scope="request">
+			<forward name="input" path="/jsp/cartaAval/buscarSiniestros.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/nuevo" type="ve.gob.dem.fasdem.action.aps.NuevoAps" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/aps/nuevoAps.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/security/aps/bandejaAps.do" />
+		</action>
+		<action path="/security/cartaAval/nuevo" type="ve.gob.dem.fasdem.action.cartaAval.NuevoCartaAval" name="globalActionForm" validate="false" scope="request" parameter="/security/cartaAval/nuevo.do">
+			<forward name="input" path="/jsp/cartaAval/nuevoCartaAval.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+			<forward name="return" redirect="false" path="/jsp/cartaAval/buscarSiniestros.jsp" />
+		</action>
+		<action path="/security/medicinas/nuevoMedicinas" type="ve.gob.dem.fasdem.action.medicinas.NuevoMedicinas" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/medicinas/nuevoMedicina.jsp" />
+			<forward name="success" redirect="false" path="/jsp/medicinas/detalleMedicinas.jsp" />
+			<forward name="inicio" path="/jsp/index.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request" parameter="/security/medicinas/buscarSiniestros.do">
+			<forward name="input" path="/jsp/comunes/buscarBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" scope="request" parameter="/security/medicinas/nuevoMedicinas.do">
+			<forward name="input" path="/jsp/comunes/buscarSiniestros.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" parameter="/security/reembolsos/buscarSiniestros.do" scope="request">
+			<forward name="input" path="/jsp/comunes/buscarBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" scope="request" parameter="/security/reembolsos/prereserva/prenuevo.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarSiniestros.jsp" />
+		</action>
+		<action path="/security/reembolsos/nuevoReembolsos" type="ve.gob.dem.fasdem.action.reembolsos.CreaReembolso" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/reembolsos/nuevoRmblsFirst.jsp" />
+			<forward name="success" redirect="false" path="/jsp/reembolsos/detalleReembolsos.jsp" />
+		</action>
+		<action path="/security/comunes/busquedaCausaIngreso" type="ve.gob.dem.fasdem.action.comunes.BuscarCausaIngreso" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/comunes/causaIngreso.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/consultaMedicinas" type="ve.gob.dem.fasdem.action.medicinas.ConsultaMedicinas" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/medicinas/consultaMedicina.jsp" redirect="false" />
+			<forward name="success" path="/jsp/medicinas/searchMedicina.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/nuevoRmblsreserva" type="ve.gob.dem.fasdem.action.reembolsos.ReembolsoFirst">
+			<forward name="input" path="/jsp/reembolsos/nuevoRmblsFirst.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/cargaFactura" type="ve.gob.dem.fasdem.action.comunes.CargadeFactura" name="globalActionForm" validate="false" scope="request" parameter="/security/comunes/NuFactura.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/cargaFactura.jsp" />
+		</action>
+		<action path="/security/comunes/busquedaProveedor" type="ve.gob.dem.fasdem.action.comunes.BuscarProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/buscarProveedor.jsp" redirect="false" />
+		</action>
+		<action path="/security/comunes/generareporte" type="ve.gob.dem.fasdem.action.comunes.GenerarReportes" name="globalActionForm" validate="false" scope="request" parameter="/security/comunes/pintaReporte.do">
+			<forward name="input" redirect="false" path="/security/comunes/pintaReporte.do" />
+		</action>
+		<action path="/security/comunes/pintaReporte" type="ve.gob.dem.fasdem.action.comunes.PintaReporte" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/pintaReporte.jsp" redirect="false" />
+		</action>
+		<action path="/security/pagos/nuevoPago" type="ve.gob.dem.fasdem.action.pagos.NuevoPago" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/pagos/nuevoPago.jsp" />
+			<forward name="success" path="/jsp/pagos/ResultadoNuevoPago.jsp" redirect="false" />
+		</action>
+		<action path="/security/pagos/ConsultaPago" type="ve.gob.dem.fasdem.action.pagos.ConsultaPago" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/pagos/ConsultaPago.jsp" redirect="false" />
+			<forward name="success" path="/jsp/pagos/ ResultadoConsultaPago.jsp" redirect="false" />
+		</action>
+		<action path="/security/pagos/CreaPreOrdenPago" type="ve.gob.dem.fasdem.action.pagos.CreaPreOrdenPago" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/pagos/CreaPreOrdenPago.jsp" redirect="false" />
+		</action>
+		<action path="/security/pagos/EditarPreOrdenPago" type="ve.gob.dem.fasdem.action.pagos.EditarPreOrdenPago" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/pagos/EditarPreordenPago.jsp" redirect="false" />
+			<forward name="success" path="/jsp/pagos/Actualizado.jsp" redirect="false" />
+		</action>
+		<action path="/security/pagos/EditarPago" type="ve.gob.dem.fasdem.action.pagos.EditarPago" name="globalActionForm" validate="false" scope="request" parameter="/security/pagos/EditarPreOrdenPago.do">
+			<forward name="input" path="/jsp/pagos/EditarPago.jsp" redirect="false" />
+			<forward name="success" path="/jsp/pagos/ResultadoEditarPago.jsp" redirect="false" />
+		</action>
+		<action path="/security/comunes/NuFactura" type="ve.gob.dem.fasdem.action.comunes.NuevoFacturas">
+			<forward name="input" redirect="false" path="/jsp/comunes/cargaFactura.jsp" />
+		</action>
+		<action path="/security/liquidacion/liquidaMedicinas" type="ve.gob.dem.fasdem.action.liquidacion.LiquidaMedicinas" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/liquidacion/liquidaMedicina.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/medicinas/previewMedicinas.jsp" />
+		</action>
+		<action path="/security/liquidacion/liquidaCartaAval" type="ve.gob.dem.fasdem.action.liquidacion.LiquidaCartaAval" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/liquidacion/liquidaCartaAval.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/index.jsp" />
+		</action>
+		<action path="/security/liquidacion/liquidaReembolsos" type="ve.gob.dem.fasdem.action.liquidacion.LiquidaReembolsos" name="globalActionForm" validate="false" scope="request" parameter="/security/liquidacion/liquidaRmbls.do">
+			<forward name="input" path="/jsp/liquidacion/consultaLiquidacionListoReembolsos.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/liquidacion/consultaLiquidacionListoReembolsos.jsp" />
+		</action>
+		<action path="/security/liquidacion/consultaLiquidacionMedicinas" type="ve.gob.dem.fasdem.action.liquidacion.ConsultaLiquidacionMedicinas" name="globalActionForm" validate="false" scope="request" parameter="/security/liquidacion/liquidaMedicinas.do">
+			<forward name="input" path="/jsp/liquidacion/consultaLiquidacionMedicinas.jsp" redirect="false" />
+			<forward name="success" path="/jsp/liquidacion/consultaLiquidacionListoMedicinas.jsp" redirect="false" />
+		</action>
+		<action path="/security/liquidacion/consultaLiquidacionCartaAval" type="ve.gob.dem.fasdem.action.liquidacion.ConsultaLiquidacionCartaAval" name="globalActionForm" validate="false" scope="request" parameter="/security/liquidacion/liquidaCartaAval.do">
+			<forward name="input" path="/jsp/liquidacion/consultaLiquidacionCartaAval.jsp" redirect="false" />
+			<forward name="success" path="/jsp/liquidacion/consultaLiquidacionListoCartaAval.jsp" redirect="false" />
+		</action>
+		<action path="/security/liquidacion/consultaLiquidacionReembolsos" type="ve.gob.dem.fasdem.action.liquidacion.ConsultaLiquidacionReembolsos" name="globalActionForm" scope="request" validate="false" parameter="/security/liquidacion/liquidaReembolsos.do">
+			<forward name="input" path="/jsp/liquidacion/consultaLiquidacionReembolsos.jsp" redirect="false" />
+			<forward name="success" path="/jsp/liquidacion/consultaLiquidacionListoRmbls.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/consultaEditaMedicinas" type="ve.gob.dem.fasdem.action.medicinas.BuscarSiniestro" name="globalActionForm" validate="false" scope="request" parameter="/security/medicinas/editarSiniestros.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarSiniestro.jsp" />
+			<forward name="success" path="/jsp/medicinas/editMedicinas.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/editaMedicinas" type="ve.gob.dem.fasdem.action.medicinas.EditaMedicinas" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/medicinas/editaMedicinas.jsp" redirect="false" />
+			<forward name="success" path="/jsp/medicinas/consultaeditar.jsp" redirect="false" />
+		</action>
+		<action path="/security/servMedico/buscarSiniestro" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" scope="request" parameter="/security/servMedico/consultaServMedico.do">
+			<forward name="input" path="/jsp/comunes/buscarSiniestros.jsp" redirect="false" />
+		</action>
+		<action path="/security/servMedico/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/buscarBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/servMedico/consultaServMedico" type="ve.gob.dem.fasdem.action.medicinas.ServMedico">
+			<forward name="input" path="/jsp/medicinas/servMedico.jsp" redirect="false" />
+			<forward name="success" path="/jsp/medicinas/detalleServMedico.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/consulta" type="ve.gob.dem.fasdem.action.aps.ConsultaAps" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/aps/consultaAps.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/consulta" type="ve.gob.dem.fasdem.action.cartaAval.ConsultaCartaAval" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/cartaAval/consultaCartaAval.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/activacionCartaAval" type="ve.gob.dem.fasdem.action.cartaAval.activarCartaAval" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/cartaAval/consultaActivacionCartaAval.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+		</action>
+		<action path="/security/aps/detalle" type="ve.gob.dem.fasdem.action.aps.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/aps/detalleAps.jsp" />
+		</action>
+		<action path="/security/cartaAval/detalle" type="ve.gob.dem.fasdem.action.cartaAval.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/detalleCartaAval.jsp" />
+		</action>
+		<action path="/security/aps/editar/setupEditSiniestro" type="ve.gob.dem.fasdem.action.aps.SetupEditSiniestro" name="globalActionForm" validate="false" scope="request" parameter="/security/aps/editarSiniestros.do">
+			<forward name="input" path="/jsp/comunes/buscarSiniestro.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/aps/nuevoAps.jsp" />
+		</action>
+		<action path="/security/cartaAval/editar/buscarSiniestro" type="ve.gob.dem.fasdem.action.cartaAval.BuscarSiniestro" name="globalActionForm" validate="false" scope="request" parameter="/security/cartaAval/editarSiniestros.do">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/consultaEdicionCartaAval.jsp" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/editCartaAval.jsp" />
+		</action>
+		<action path="/security/cartaAval/egresar/buscarSiniestro" type="ve.gob.dem.fasdem.action.cartaAval.BuscarSiniestroEgresar" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/consultaEgresoCartaAval.jsp" />
+			<forward name="success" redirect="true" path="/security/cartaAval/egresarSiniestros.do" />
+			<forward name="egresar" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+		</action>
+		<action path="/security/aps/bandejaAps" type="ve.gob.dem.fasdem.action.bandeja.ConsultaBandejaPendientesAPS" name="globalActionForm" validate="false" scope="request">
+			<forward name="h1" redirect="false" path="/jsp/bandeja/fasdemBandejaAPS.jsp" />
+		</action>
+		<action path="/security/aps/fasdemConsultaEstadisticas" type="ve.gob.dem.fasdem.action.bandeja.ConsultaEstadisticas" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/bandeja/fasdemEstadisticas.jsp" redirect="false" />
+			<forward name="H2" path="/jsp/bandeja/fasdemDetalleEstadistica.jsp" redirect="false" />
+		</action>
+		<action path="/security/upload/uploadFile" type="ve.gob.dem.fasdem.action.upload.UploadAction" name="FileUpload" validate="false" scope="request">
+			<forward name="input" path="/jsp/upload/uploadfile.jsp" redirect="false" />
+		</action>
+		<action path="/security/upload/downloadFile" type="ve.gob.dem.fasdem.action.upload.DownloadAction" />
+		<action path="/security/upload/deleteFile" type="ve.gob.dem.fasdem.action.upload.DeleteAction">
+			<forward name="success" redirect="false" path="/security/upload/uploadFile.do" />
+		</action>
+		<action path="/security/aps/editarSiniestros" type="ve.gob.dem.fasdem.action.aps.EditarAps" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/aps/nuevoAps.jsp" />
+		</action>
+		<action path="/security/cartaAval/editarSiniestros" type="ve.gob.dem.fasdem.action.cartaAval.EditarCartaAval" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/editCartaAval.jsp" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+		</action>
+		<action path="/security/cartaAval/egresarSiniestros" type="ve.gob.dem.fasdem.action.cartaAval.EgresarCartaAval" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/egresarCartaAval.jsp" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+		</action>
+		<action path="/security/upload/viewFile" type="ve.gob.dem.fasdem.action.upload.ViewAction" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/upload/viewUpload.jsp" redirect="false" />
+		</action>
+		<action path="/security/foto/downloadFoto" type="ve.gob.dem.fasdem.action.foto.DownloadFotoAction" />
+		<action path="/security/reembolsos/consultaReembolsos" type="ve.gob.dem.fasdem.action.reembolsos.ConsultaReembolsos" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/consultaReembolso.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/reembolsos/searchReembolso.jsp" />
+		</action>
+		<action path="/security/reembolsos/editaReembolsos" type="ve.gob.dem.fasdem.action.reembolsos.EditaReembolsos" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/editaReembolso.jsp" redirect="false" />
+			<forward name="success" path="/jsp/index.jsp" redirect="false" />
+		</action>
+		<action path="/security/pago/nuevoPago" type="ve.gob.dem.fasdem.action.pago.NuevoPago" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/pago/fasdemNuevoPago.jsp" redirect="false" />
+			<forward name="H2" path="/jsp/pago/fasdemDetallePreOrden.jsp" redirect="false" />
+			<forward name="H3" redirect="false" path="/jsp/pago/fasdemDetallePreOrdenCreacion.jsp" />
+		</action>
+		<action path="/security/emergencia/cargarEmergencia" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request" parameter="/security/emergencia/buscarSiniestros.do">
+			<forward name="input" path="/jsp/comunes/buscarBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/liquidacion/emergencia" type="ve.gob.dem.fasdem.action.liquidacion.ConsultaLiquidacionEmergencia" name="globalActionForm" validate="false" scope="request" parameter="/security/liquidacion/liquidaEmergencia.do">
+			<forward name="input" path="/jsp/liquidacion/consultaLiquidacionEmergencia.jsp" redirect="false" />
+			<forward name="success" path="/jsp/liquidacion/consultaLiquidacionListoEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/Tratamientos" type="ve.gob.dem.fasdem.action.administradores.Tratamientos" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administradores/Tratamientos.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/Especialidad" type="ve.gob.dem.fasdem.action.administradores.Especialidad" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administradores/Especialidad.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/AgregarTipoGasto" type="ve.gob.dem.fasdem.action.administradores.AgregarTipoGasto" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administradores/Agregartipogasto.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/adminProveedores" type="ve.gob.dem.fasdem.action.administrador.proveedores.adminProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/proveedores/proveedores.jsp" />
+			<forward name="success" redirect="false" path="/jsp/administrador/proveedores/agregarProveedor.jsp" />
+		</action>
+		<action path="/security/administradores/adminTipoGasto" type="ve.gob.dem.fasdem.action.administradores.AdminTipoGasto" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administradores/tipogasto.jsp" />
+		</action>
+		<action path="/security/administradores/CuentasNomina" type="ve.gob.dem.fasdem.action.administrador.cuenta.adminCuentaBeneficiario" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/cuentaBeneficiario/cuentaBeneficiario.jsp" redirect="false" />
+			<forward name="H1" redirect="false" path="/jsp/administrador/cuentaBeneficiario/CreaCuentaBeneficiario.jsp" />
+		</action>
+		<action path="/security/administradores/AdminCobertura" type="ve.gob.dem.fasdem.action.administrador.cobertura.adminCobertura" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/cobertura/cobertura.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/adminEspecialidad" type="ve.gob.dem.fasdem.action.administrador.especialidad.adminEspecialidad" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/especialidades/especialidad.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/adminPatologia" type="ve.gob.dem.fasdem.action.administrador.patologia.adminPatologia" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/patologia/patologia.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/AgregarEspecialidad" type="ve.gob.dem.fasdem.action.administradores.AgregarEspecialidad" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administradores/AgregarEspecialidad.jsp" redirect="false" />
+		</action>
+		<action path="/security/notatecnica/saveNotaTecnica" type="ve.gob.dem.fasdem.action.notaTecnica.SaveNotaTecnica" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/notaTecnica/notaTecnica.jsp" redirect="false" />
+		</action>
+		<action path="/security/emergencia/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" scope="request" parameter="/security/emergencia/nuevoEmergencia.do">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarSiniestros.jsp" />
+		</action>
+		<action path="/security/emergencia/nuevoEmergencia" type="ve.gob.dem.fasdem.action.emergencia.CargarEmergencia" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/emergencia/nuevoEmergencia.jsp" />
+			<forward name="success" redirect="false" path="/jsp/emergencia/previewEmergencia.jsp" />
+			<forward name="regreso" redirect="false" path="/jsp/index.jsp" />
+		</action>
+		<action path="/security/emergencia/consultarEmergencia" type="ve.gob.dem.fasdem.action.emergencia.ConsultaEmergencia" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/emergencia/consultaEmergencia.jsp" redirect="false" />
+			<forward name="success" path="/jsp/emergencia/searchEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/emergencia/detalle" type="ve.gob.dem.fasdem.action.emergencia.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/emergencia/detalleEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/liquidacion/liquidaEmergencia" type="ve.gob.dem.fasdem.action.liquidacion.LiquidaEmergencia" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/liquidacion/liquidaEmergencia.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/emergencia/previewEmergencia.jsp" />
+		</action>
+		<action path="/security/pago/consultaPreOrden" type="ve.gob.dem.fasdem.action.pago.ConsultaPreorden" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/pago/fasdemConsultaPreOrden.jsp" redirect="false" />
+			<forward name="H2" redirect="false" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" />
+		</action>
+		<action path="/security/aps/puenteOnline" type="ve.gob.dem.fasdem.action.aps.PuenteOnline" name="globalActionForm" scope="request" validate="false" parameter="/security/aps/nuevo.do">
+			<forward name="input" path="/jsp/aps/nuevoAps.jsp" redirect="false" />
+		</action>
+		<action path="/security/emergencia/editarEmergencia" type="ve.gob.dem.fasdem.action.emergencia.BuscarSiniestro" name="globalActionForm" validate="false" scope="request" parameter="/security/emergencia/editarSiniestros.do">
+			<forward name="input" path="/jsp/comunes/buscarSiniestro.jsp" redirect="false" />
+			<forward name="success" path="/jsp/emergencia/editEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/emergencia/editarSiniestros" type="ve.gob.dem.fasdem.action.emergencia.EditarEmergencia" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/emergencia/editEmergencia.jsp" redirect="false" />
+			<forward name="success" path="/jsp/emergencia/previewEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/reportes/reporteUsuario" type="ve.gob.dem.fasdem.action.reportes.reporteUsuario" name="globalActionForm" validate="false" scope="request" parameter="/security/reportes/reporteUsuario.do">
+			<forward name="input" path="/jsp/Reportes/Usuarios.jsp" redirect="false" />
+		</action>
+		<action path="/security/reportes/reporteEstadisticaReembolso" type="ve.gob.dem.fasdem.action.reportes.reporteEstadisticaReembolso" name="globalActionForm" validate="false" scope="request" parameter="/security/reportes/reporteEstadisticaReembolso.do">
+			<forward name="input" path="/jsp/Reportes/Estadistica_reembolso.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/setupLiquidarSiniestro" type="ve.gob.dem.fasdem.action.aps.SetupEditSiniestro" name="globalActionForm" validate="false" parameter="/security/aps/liquidarSiniestro.do" scope="request">
+			<forward name="input" path="/jsp/aps/liquidarAps.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/aps/liquidarAps.jsp" />
+		</action>
+		<action path="/security/aps/liquidarSiniestro" type="ve.gob.dem.fasdem.action.aps.LiquidarSiniestro" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/aps/liquidarAps.jsp" redirect="false" />
+		</action>
+		<action path="/security/pago/imprimirPreOrden" type="ve.gob.dem.fasdem.action.pago.PrintPreorden" name="globalActionForm" validate="false" />
+		<action path="/security/cartaAval/egresarCartaAval" type="ve.gob.dem.fasdem.action.cartaAval.egresarCartaAval" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/egresarCartaAval.jsp" />
+			<forward name="success" redirect="false" path="/jsp/cartaAval/previewCartaAval.jsp" />
+		</action>
+		<action path="/security/reportes/reporteEstadisticaGeneral" parameter="/security/reportes/reporteEstadisticaGeneral.do" type="ve.gob.dem.fasdem.action.reportes.reporteEstadisticaGeneral" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/Reportes/EstadisticaGeneral.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/bandejaPorLiquidar" type="ve.gob.dem.fasdem.action.aps.liquidacion.BandejaPorLiquidar" name="globalActionForm" validate="false" scope="request" parameter="4">
+			<forward name="success" path="/jsp/aps/liquidar/bandejaPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/bandejaAnalizar" type="ve.gob.dem.fasdem.action.aps.BandejaAnalizar" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/aps/bandejaAnalizar.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/cambioEstatus" type="ve.gob.dem.fasdem.action.aps.CambioEstatus" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/aps/cambioEstatus.jsp" redirect="false" />
+			<forward name="input" redirect="false" path="/jsp/aps/cambioEstatus.jsp" />
+		</action>
+		<action path="/security/reembolsos/consultaeditaReembolsos" type="ve.gob.dem.fasdem.action.reembolsos.ConsultaEditaReembolsos" name="globalActionForm" scope="request" parameter="/security/reembolsos/editaReembolsos.do">
+			<forward name="input" redirect="false" path="/jsp/reembolsos/consultaEditaListoReembolsos.jsp" />
+			<forward name="success" path="/jsp/reembolsos/consultaEditaListoReembolsos.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/liquidarAps" type="ve.gob.dem.fasdem.action.aps.liquidacion.LiquidarAps" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" redirect="false" path="/jsp/aps/liquidar/liquidarAps.jsp" />
+		</action>
+		<action path="/security/aps/liquidacion/eliminarFactura" type="ve.gob.dem.fasdem.action.aps.liquidacion.EliminarFactura" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/aps/liquidar/liquidarAps.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/cargarDetalleFactura" type="ve.gob.dem.fasdem.action.aps.liquidacion.CargarDetalleFactura" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/aps/liquidar/cargarDetalleFactura.jsp" redirect="false" />
+		</action>
+		<action path="/security/medicinas/detalle" type="ve.gob.dem.fasdem.action.medicinas.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/medicinas/detalleMedicina.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/estatusLiquidado" type="ve.gob.dem.fasdem.action.aps.liquidacion.CambioEstatusLiquidado" name="globalActionForm" scope="request" validate="false">
+			<forward name="success" redirect="false" path="/jsp/aps/detalleAps.jsp" />
+			<forward name="input" path="/jsp/aps/liquidar/liquidarAps.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/bandejaPorLiquidar" type="ve.gob.dem.fasdem.action.cartaAval.liquidacion.BandejaPorLiquidar" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/cartaAval/liquidar/bandejaPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/liquidarCartaAval" type="ve.gob.dem.fasdem.action.cartaAval.liquidacion.LiquidarCartaAval" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" redirect="false" path="/jsp/cartaAval/liquidar/liquidarCartaAval.jsp" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/eliminarFactura" type="ve.gob.dem.fasdem.action.cartaAval.liquidacion.EliminarFactura" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/cartaAval/liquidar/liquidarCartaAval.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/cargarDetalleFactura" type="ve.gob.dem.fasdem.action.cartaAval.liquidacion.CargarDetalleFactura" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/cartaAval/liquidar/cargarDetalleFactura.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/estatusLiquidado" type="ve.gob.dem.fasdem.action.cartaAval.liquidacion.CambioEstatusLiquidado" name="globalActionForm" scope="request" validate="false">
+			<forward name="success" path="/security/cartaAval/liquidacion/bandejaPorLiquidar.do" redirect="false" />
+		</action>
+		<action path="/security/pago/editaPreOrden" type="ve.gob.dem.fasdem.action.pago.EditaPreorden" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/pago/fasdemBuscaPreOrdenEdicion.jsp" redirect="false" />
+			<forward name="H2" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" redirect="false" />
+			<forward name="H3" redirect="false" path="/jsp/pago/fasdemDetallePreOrdenElimina.jsp" />
+			<forward name="H4" redirect="false" path="/jsp/pago/fasdemAgregaFacturas.jsp" />
+		</action>
+		<action path="/security/pago/consultaSiniestro" type="ve.gob.dem.fasdem.action.pago.ConsultaSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/pago/fasdemConsultaSiniestro.jsp" redirect="false" />
+			<forward name="H2" path="/jsp/pago/fasdemDetallePreOrdenConsulta.jsp" redirect="false" />
+		</action>
+		<action path="/security/liquidacion/liquidaRmbls" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.LiquidarReembolso" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" path="/jsp/reembolsos/liquidar/liquidarRmbls.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/causaIngreso/nuevaCausaIngreso" type="ve.gob.dem.fasdem.action.administradores.causaIngreso.NuevaCausaIngreso" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administradores/causaIngreso/causaIngreso.jsp" />
+		</action>
+		<action path="/security/cobertura/buscarBeneficiario" type="ve.gob.dem.fasdem.action.comunes.BuscarBeneficiario" name="globalActionForm" validate="false" scope="request" parameter="/security/coberturas/buscarSiniestros.do">
+			<forward name="input" path="/jsp/comunes/buscarBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/coberturas/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestros" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/datosCoberturas.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/prepopulate/nuevo" type="ve.gob.dem.fasdem.action.aps.populate.PopulateNuevoAps" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/aps/nuevoAps.jsp" redirect="false" /><forward name="inicio" path="/jsp/index.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/AgregarProveedor" type="ve.gob.dem.fasdem.action.administrador.proveedores.agregarProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/proveedores/agregarProveedor.jsp" />
+			<forward name="success" redirect="false" path="/jsp/administrador/proveedores/proveedores.jsp" />
+		</action>
+		<action path="/security/administradores/ModificarProveedor" type="ve.gob.dem.fasdem.action.administrador.proveedores.modificarProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/proveedores/modificarProveedor.jsp" />
+			<forward name="success" redirect="false" path="/jsp/administrador/proveedores/proveedores.jsp" />
+		</action>
+		<action path="/security/pago/autorizaPreOrden" type="ve.gob.dem.fasdem.action.pago.AutorizaPreorden" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" redirect="false" path="/jsp/pago/fasdemBuscaPreOrden.jsp" />
+			<forward name="H2" redirect="false" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" />
+		</action>
+		<action path="/security/administradores/adminOrgano" type="ve.gob.dem.fasdem.action.administrador.organo.adminOrgano" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/organos/organo.jsp" />
+		</action>
+		<action path="/security/administradores/adminTratamiento" type="ve.gob.dem.fasdem.action.administrador.tratamiento.adminTratamiento" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/tratamiento/tratamiento.jsp" />
+		</action>
+		<action path="/security/pago/registroOrden" type="ve.gob.dem.fasdem.action.pago.RegistroOrden" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" redirect="false" path="/jsp/pago/fasdemRegistraOrden.jsp" />
+			<forward name="H2" redirect="false" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" />
+		</action>
+		<action path="/security/pago/registroPago" type="ve.gob.dem.fasdem.action.pago.RegistroPago" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" path="/jsp/pago/fasdemRegistraPago.jsp" redirect="false" />
+			<forward name="H2" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/CreaCuenta" type="ve.gob.dem.fasdem.action.administrador.cuenta.crearCuentaBeneficiario" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/cuentaBeneficiario/cuentaBeneficiario.jsp" redirect="false" />
+		</action>
+		<action path="/security/consulta/buscarBeneficiario" type="ve.gob.dem.fasdem.action.consulta.ConsultaSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/consulta/consulta.jsp" />
+		</action>
+		<action path="/security/consulta/buscarSiniestros" type="ve.gob.dem.fasdem.action.comunes.BuscarSiniestrosConsulta" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/buscarSiniestro.jsp" redirect="false" />
+		</action>
+		<action path="/security/consulta/detalle" type="ve.gob.dem.fasdem.action.comunes.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/detalle.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/CuentasProveedor" type="ve.gob.dem.fasdem.action.administrador.cuentaProveedor.adminCuentaProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/cuentaProveedores/proveedores.jsp" redirect="false" />
+			<forward name="success" redirect="false" path="/jsp/administrador/cuentaProveedores/CreaCuentaProveedor.jsp" />
+		</action>
+		<action path="/security/administradores/CreaCuentaProveedor" type="ve.gob.dem.fasdem.action.administrador.cuentaProveedor.crearCuentaProveedor" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/cuentaProveedores/proveedores.jsp" />
+		</action>
+		<action path="/security/administradores/causaIngreso/causaIngreso" type="ve.gob.dem.fasdem.action.administrador.causaIngreso.adminCausaIngreso" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/causaIngreso/adminCausaIngreso.jsp" />
+		</action>
+		<action path="/security/emergencia/bandejaEmergencia" type="ve.gob.dem.fasdem.action.bandeja.ConsultaBandejaPendientesEmergencia" name="globalActionForm" validate="false" scope="request">
+			<forward name="h1" path="/jsp/bandeja/fasdemBandejaEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/liquidacion/bandejaPorLiquidar" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.BandejaPorLiquidar" name="globalActionForm" scope="request" parameter="3">
+			<forward name="success" path="/jsp/reembolsos/liquidar/bandejaPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/editar/setupEditSiniestroR" type="ve.gob.dem.fasdem.action.reembolsos.SetupEditSiniestro" name="globalActionForm" scope="request" parameter="/security/reembolsos/editarSiniestros.do">
+			<forward name="input" redirect="false" path="/jsp/reembolsos/buscarSiniestros.jsp" />
+			<forward name="success" path="/jsp/reembolsos/editaReembolso.jsp" redirect="false" />
+		</action>
+		<action path="/security/Reembolsos/editarSiniestros" type="ve.gob.dem.fasdem.action.reembolsos.Editarrmbls" name="globalActionForm" scope="request">
+			<forward name="input" redirect="false" path="/jsp/reembolso/nuevoReembolso.jsp" />
+		</action>
+		<action path="/security/reembolsos/setupLiquidarSiniestro" type="org.apache.struts.actions.ForwardAction" parameter="/security/reembolsos/liquidarSiniestro.do" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/liquidarmbls.jsp" redirect="false" />
+			<forward name="success" path="/jsp/reembolsos/liquidarmbls.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/liquidarSiniestro" type="ve.gob.dem.fasdem.action.aps.LiquidarSiniestro" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/aps/liquidarmbls.jsp" redirect="false" />
+		</action>
+		<action path="/security/rembolsos/bandejaAnalizar" type="ve.gob.dem.fasdem.action.reembolsos.BandejaAnalizar" name="globalActionForm" scope="request">
+			<forward name="success" path="/jsp/reembolsos/bandejaAnalizar.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/estatusSiniestro" type="ve.gob.dem.fasdem.action.administrador.estatusSiniestro.EstatusSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" redirect="false" path="/jsp/administrador/estatusSiniestro/fasdemConsultaSiniestro.jsp" />
+		</action>
+		<action path="/security/reembolsos/liquidacion/eliminarFactura" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.EliminarFactura" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/liquidar/liquidarRmbls.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/liquidacion/estatusLiquidado" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.CambioEstatusLiquidado" name="globalActionForm" scope="request">
+			<forward name="success" path="/security/reembolsos/liquidacion/bandejaPorLiquidar.do" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/liquidacion/cargarDetalleFactura" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.CargarDetalleFactura" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/liquidar/cargarDetalleFactura.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/editarSiniestros" type="ve.gob.dem.fasdem.action.reembolsos.EditaRmbls" name="globalActionForm" scope="request">
+			<forward name="input" redirect="false" path="/jsp/reembolsos/editadoReembolsos.jsp" />
+			<forward name="success" path="/jsp/reembolsos/previewReembolso.jsp" redirect="false" />
+		</action>
+		<action path="/security/carga/buscaSiniestro" type="ve.gob.dem.fasdem.action.cargaFactura.BuscaSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/cargaFacturas/buscaSiniestroPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/carga/cargaFacturas" type="ve.gob.dem.fasdem.action.cargaFactura.CargarFactura" name="globalActionForm" scope="request" validate="false">
+			<forward name="input" redirect="false" path="/jsp/cargaFacturas/cargaFacturas.jsp" />
+		</action>
+		<action path="/security/emergencia/puenteOnline" type="ve.gob.dem.fasdem.action.emergencia.PuenteOnline" name="globalActionForm" validate="false" scope="request" parameter="/security/emergencia/nuevoEmergencia.do">
+			<forward name="input" path="/jsp/emergencia/nuevoEmergencia.jsp" redirect="false" />
+		</action>
+		<action path="/security/reembolsos/cuentas" type="org.apache.struts.actions.ForwardAction" />
+		<action path="/security/reembolsos/rItems" type="org.apache.struts.actions.ForwardAction" />
+		<action path="/security/medicinas/editarSiniestros" type="ve.gob.dem.fasdem.action.medicinas.EditaMedicinas" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/medicinas/editMedicinas.jsp" redirect="false" />
+			<forward name="success" path="/jsp/medicinas/previewMedicinas.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/eliminarDetalleFactura" type="ve.gob.dem.fasdem.action.aps.liquidacion.EliminarDetalleFactura" name="globalActionForm" scope="request">
+			<forward name="input" redirect="false" path="/security/aps/liquidacion/cargarDetalleFactura.do" />
+		</action>
+		<action path="/security/reembolsos/prereserva/prenuevo" type="ve.gob.dem.fasdem.action.reembolsos.prenew.PreNuevormbls" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/reembolsos/nuevoRmblsFirst.jsp" redirect="false" />
+		</action>
+		<action path="/security/aps/liquidacion/setupEditarFactura" type="ve.gob.dem.fasdem.action.aps.liquidacion.SetupEditFactura" name="globalActionForm" scope="request" parameter="/security/aps/liquidacion/editarFactura.do" validate="false">
+			<forward name="input" redirect="false" path="/jsp/aps/liquidar/editarFactura.jsp" />
+		</action>
+		<action path="/security/aps/liquidacion/editarFactura" type="ve.gob.dem.fasdem.action.aps.liquidacion.EditarFactura" name="globalActionForm" scope="request">
+			<forward name="success" redirect="false" path="/jsp/aps/liquidar/liquidarAps.jsp" />
+			<forward name="input" redirect="false" path="/jsp/aps/liquidar/liquidarAps.jsp" />
+		</action>
+		<action path="/security/emergencia/liquidacion/bandejaPorLiquidar" type="ve.gob.dem.fasdem.action.aps.liquidacion.BandejaPorLiquidar" parameter="1" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/aps/liquidar/bandejaPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/cartaAval/liquidacion/bandejaPorLiquidar" parameter="2" type="ve.gob.dem.fasdem.action.aps.liquidacion.BandejaPorLiquidar" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" path="/jsp/aps/liquidar/bandejaPorLiquidar.jsp" redirect="false" />
+		</action>
+		<action path="/security/administradores/adminPoliza" type="ve.gob.dem.fasdem.action.administrador.poliza.adminPoliza" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/administrador/poliza/poliza.jsp" redirect="false" />
+		</action>
+		<action path="/security/carga/eliminaFacturas" type="ve.gob.dem.fasdem.action.cargaFactura.EliminarFactura" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/cargaFacturas/cargaFacturas.jsp" />
+		</action>
+		<action path="/security/administradores/agregarCobertura" type="ve.gob.dem.fasdem.action.administrador.cobertura.agregarCobertura" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/cobertura/creaCobertura.jsp" />
+			<forward name="success" redirect="false" path="/jsp/administrador/cobertura/cobertura.jsp" />
+		</action>
+		<action path="/security/administradores/modificaCobertura" type="ve.gob.dem.fasdem.action.administrador.cobertura.modificaCobertura" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/administrador/cobertura/modificaCobertura.jsp" />
+			<forward name="success" redirect="false" path="/jsp/administrador/cobertura/cobertura.jsp" />
+		</action>
+		<action path="/security/liquidacion/liquidaRmblss" type="ve.gob.dem.fasdem.action.reembolsos.liquidacion.LiquidarReembolsos" name="globalActionForm" scope="request">
+			<forward name="input" redirect="false" path="/jsp/reembolsos/liquidar/liquidarRmblss.jsp" />
+		</action>
+		<action path="/security/reportes/CargaUsuario" type="ve.gob.dem.fasdem.action.cargaFactura.procesaReporte" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" redirect="false" path="/jsp/Reportes/CargaUsuarioSiniestro.jsp" />
+		</action>
+		<action path="/security/reportes/CargaFacturaUsuario" type="ve.gob.dem.fasdem.action.cargaFactura.procesaReporte" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/Reportes/CargaUsuarioFactura.jsp" redirect="false" />
+		</action>
+		<action path="/security/consultaExtension/buscarSiniesto" type="ve.gob.dem.fasdem.action.extension.ConsultaExtension" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/extension/consulta.jsp" redirect="false" />
+		</action>
+		<action path="/security/extension/detalle" type="ve.gob.dem.fasdem.action.extension.DetalleSiniestro" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/extension/detalle.jsp" redirect="false" />
+		</action>
+		<action path="/security/reportes/ReporteImprimir" type="ve.gob.dem.fasdem.action.reportes.reporteImprimir" name="globalActionForm" validate="false" scope="request">
+			<forward name="success" redirect="false" path="/security/reportes/imprime.do" />
+		</action>
+		<action path="/security/notamedica/saveNotaMedica" type="ve.gob.dem.fasdem.action.notaMedica.SaveNotaMedica" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/notaMedica/notaMedica.jsp" redirect="false" />
+		</action>
+		<action path="/security/reportes/imprime" type="ve.gob.dem.framework.reporte.PrintReporteExcel" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/comunes/pintaReporte.jsp" redirect="false" />
+		</action>
+		<action path="/security/extension/nueva" type="ve.gob.dem.fasdem.action.extension.NuevaExtension" name="globalActionForm" validate="false" scope="request">
+			<forward name="H1" redirect="false" path="/jsp/extension/nueva.jsp" />
+			<forward name="input" redirect="false" path="/jsp/extension/detalle.jsp" />
+		</action>
+		<action path="/security/notaMedica/setupAddNotaMedica" type="ve.gob.dem.fasdem.action.notaMedica.SetupAddNotaMedica" parameter="/security/notaMedica/addNotaMedica.do" name="globalActionForm" scope="request">
+			<forward name="input" redirect="false" path="/jsp/comunes/buscarSiniestro.jsp" />
+			<forward name="success" redirect="false" path="/jsp/notaMedica/nuevoNotaMedica.jsp" />
+		</action>
+		<action path="/security/notaMedica/addNotaMedica" type="ve.gob.dem.fasdem.action.notaMedica.AddNotaMedica" name="globalActionForm" scope="request">
+			<forward name="input" path="/jsp/notaMedica/notaMedica.jsp" redirect="false" />
+		</action>
+		<action path="/reportes/ReporteClinicaImprimir" type="ve.gob.dem.fasdem.action.reportes.reporteClinicaImprimir">
+			<forward name="success" redirect="false" path="/reportes/imprimePDF.do" />
+		</action>
+		<action path="/reportes/imprimePDF" type="ve.gob.dem.framework.reporte.PintaReporte2">
+			<forward name="input" path="/jsp/comunes/pintaReporte.jsp" redirect="false" />
+		</action>
+		<action path="/security/notaMedica/verNotaMedica" type="ve.gob.dem.fasdem.action.notaMedica.VerNotaMedica" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/notaMedica/verNotaMedica.jsp" redirect="false" />
+		</action>
+		<action path="/cpd/healthcheck" type="ve.gob.dem.cpd.HealthCheck">
+			<forward name="ok" path="/cpd/estatusok.jsp" redirect="false" />
+			<forward name="unsuccess" path="/cpd/unsuccess.jsp" redirect="false" />
+		</action>
+		<action path="/security/reportes/reporteEstadisticaGeneralSabana" type="ve.gob.dem.fasdem.action.reportes.procesaReporte" name="globalActionForm" validate="false" scope="request">
+			<forward name="input" path="/jsp/Reportes/EstadisticaGeneralSabana.jsp" redirect="false" />
+		</action>
+	<action path="/security/pago/imprimirPreOrdenXLS" type="ve.gob.dem.fasdem.action.pago.PrintPreordenxls" name="globalActionForm" validate="false" /><action path="/security/pago/cambiaAdminPreOrden" type="ve.gob.dem.fasdem.action.pago.CambiaEstatusPreorden" name="globalActionForm" validate="false"><forward name="H1" path="/jsp/pago/fasdemBuscaPreOrdenCambiaAdmin.jsp" redirect="false" /><forward name="H2" path="/jsp/pago/fasdemDetallePreOrdenPasaONT.jsp" redirect="false" /></action><action path="/security/bandeja/medico" type="ve.gob.dem.fasdem.action.notaMedica.Bandeja" name="globalActionForm" validate="false" scope="request"><forward name="h1" path="/jsp/bandeja/fasdemBandejaMedico.jsp" redirect="false" /></action><action path="/security/bandeja/puenteOnline" type="ve.gob.dem.fasdem.action.notaMedica.PuenteOnline" name="globalActionForm" validate="false" scope="request" parameter="/security/notaMedica/setupAddNotaMedica.do"><forward name="input" path="/jsp/comunes/buscarSiniestro.jsp" redirect="false" /></action></action-mappings>
+	<controller processorClass="org.apache.struts.tiles.TilesRequestProcessor" />
+	<message-resources parameter="resources.Mensajes" key="mensajes" null="false" />
+	<message-resources parameter="resources.Etiquetas" key="etiquetas" null="false" />
+	<plug-in className="org.apache.struts.tiles.TilesPlugin">
+		<set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml" />
+		<set-property property="moduleAware" value="true" />
+	</plug-in>
+	<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+		<set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml" />
+	</plug-in>
+</struts-config>

@@ -1,0 +1,198 @@
+package ve.gob.dem.fasdem.action.aps.populate;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.DynaActionForm;
+
+import ve.gob.dem.fasdem.bean.Cobertura;
+import ve.gob.dem.fasdem.bean.Mapa;
+import ve.gob.dem.fasdem.bean.Persona;
+import ve.gob.dem.fasdem.bean.Siniestro;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.per.PerCobertura;
+import ve.gob.dem.fasdem.per.PerPoliza;
+import ve.gob.dem.fasdem.per.PerSiniestro;
+import ve.gob.dem.framework.global.GenericAction;
+import ve.gob.dem.framework.recursos.Utilidad;
+
+public class PopulateNuevoAps extends GenericAction {
+	@SuppressWarnings("rawtypes")
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		setLogger(PopulateNuevoAps.class);
+		ActionMessages am = new ActionMessages();
+		Mapa mapa = new Mapa();
+		Siniestro siniPadre = null;
+		PerPoliza ppol = new PerPoliza ();
+		PerSiniestro ps = new PerSiniestro();
+		Persona t = buscarTitularBeneficiario(request);
+		Cobertura cob = new Cobertura();
+		List cobertura = new ArrayList();
+		List desgloseCobertura = new ArrayList();
+		PerCobertura pc = new PerCobertura();
+		mapa.setCedulaBeneficiario(t.getCedula());
+		mapa.setCedula(t.getBeneficiario().getCedula());
+		try{
+		mapa.setAnioSiniestro(Integer.parseInt(Utilidad.DateToString(ppol.searchActivo().getFechaFin(),"yyyy")));
+		}catch (Exception e){
+			mapa.setAnioSiniestro(getAnioBusqueda(request));
+		}
+		
+
+		int aps = 0;
+		try {
+			aps = ps.searchCedulaBeneficiarioAps(mapa);
+			request.setAttribute("aps", aps);
+		} catch (Exception e) {
+			log.info("sadgdasfg111" + aps);
+			aps = 0;
+			request.setAttribute("aps", aps);
+		}
+		if ("INACTIVO".equals(t.getBeneficiario().getEstatus())) {
+			am.add(ALERT_AVISOS, new ActionMessage("env.general.inactivo"));
+			saveMessages(request, am);
+			return mapping.findForward(FWD_INDEX);
+		}
+		Entorno ent = new Entorno(Entorno.MOD_APS_NUEVO);
+		request.setAttribute(KEY_TIPO_TRAMITE, TIPO_TRAMITE_APS);
+		request.setAttribute("form_action", "/security/aps/nuevo.do");
+		String paramSiniPadre = request.getParameter("idSiniPadre");
+		DynaActionForm dForm = (DynaActionForm) form;
+
+		if (request.getParameter("paramNewSini") != null) {
+			request.getSession().removeAttribute("siniestroPadre");
+			paramSiniPadre = null;
+		}
+		if (paramSiniPadre != null) {
+			mapa.setIdSiniestro(Integer.parseInt(paramSiniPadre));
+			siniPadre = ps.search(mapa);
+			if (siniPadre.getTipoTramite().getId() != 3 && siniPadre.getTipoTramite().getId() != 4 && siniPadre.getTipoTramite().getId() != 6) {
+				am.add(ALERT_AVISOS, new ActionMessage("env.general.padreerroneo"));
+				saveMessages(request, am);
+				return mapping.findForward("inicio");
+			} else {
+				if (siniPadre.getEstatus().getId() == 34) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.general.padreerroneo"));
+					saveMessages(request, am);
+					return mapping.findForward("inicio");
+				}
+				if (siniPadre.getCobertura().getId() == 8) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.general.coberturasecuela"));
+					saveMessages(request, am);
+					return mapping.findForward("inicio");
+				}
+				if (siniPadre.getEstatus().getId() == 35) {
+					am.add(ALERT_AVISOS, new ActionMessage("env.general.padreerroneo"));
+					saveMessages(request, am);
+					return mapping.findForward("inicio");
+				}
+			}
+			request.getSession().setAttribute("siniestroPadre", siniPadre);
+			dForm.set("idCausaIngreso", new Integer(siniPadre.getPatologiaOrganoTratamiento().getId()).toString());
+			dForm.set("causaIngreso", siniPadre.getPatologiaOrganoTratamiento().getDescripcion());
+			dForm.set("cobertura", String.valueOf(siniPadre.getCobertura().getId()));
+		} else {
+			siniPadre = (Siniestro) request.getSession().getAttribute("siniestroPadre");
+		}
+		if (null != request.getSession().getAttribute("apsAgregado")) {
+			am.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("insert.success"));
+			saveMessages(request, am);
+			request.getSession().setAttribute("apsAgregado", null);
+		}
+		if (siniPadre != null) {
+			// Modifica por metodo que se adapte al anio
+			Cobertura c = new Cobertura();
+			
+			PerPoliza pp = new PerPoliza();
+			c.setPoliza(pp.searchActivo());
+			
+			c.getTipoCobertura().setId(COD_TIPO_COBERTURA_AMBULATORIO);
+			c =pc.searchByPolizaTipoCobertura(c);
+			dForm.set("cobertura", String.valueOf(c.getId()));
+			mapa.setCedulaBeneficiario(t.getBeneficiario().getCedula());
+			mapa.setCedula(t.getCedula());
+			//dForm.set("id", String.valueOf(1));
+			mapa.setIdCobertura(siniPadre.getCobertura().getId());
+			cob = pc.searchById(mapa.getIdCobertura());
+			if (cob.isPorPatologia()) {
+				try {
+					desgloseCobertura = pc.listDesgloseCobertura(mapa);
+					cob.setDesgloseCobertura(desgloseCobertura);
+					request.setAttribute("desgloseCobertura", desgloseCobertura);
+				} catch (Exception e) {
+					log.error("error", e);
+				}
+			} else {
+				// Si es por tipo de cobertura
+				cobertura = pc.listByCedula(mapa);
+				request.setAttribute("detalleMontoCobertura", cobertura);
+			}
+			// Modifica por metodo que se adapte al anio
+			
+			dForm.set("fechaNotificacion", Utilidad.DateToString(new Date(), "dd/MM/yyyy"));
+			dForm.set("tipoTratamiento", String.valueOf(siniPadre.getTipoTratamiento().getIdTipoTratamiento()));
+			dForm.set("tipoEnfermedad", String.valueOf(siniPadre.getTipoEnfermedad().getId()));
+			dForm.set("tipoProveedor", String.valueOf(siniPadre.getProveedor().getTipoProveedor().getId()));
+			dForm.set("idProveedor", String.valueOf(siniPadre.getProveedor().getId()));
+			dForm.set("proveedor", siniPadre.getProveedor().getDescripcion());
+			dForm.set("idCausaIngreso", String.valueOf(siniPadre.getPatologiaOrganoTratamiento().getId()));
+			dForm.set("causaIngreso", siniPadre.getPatologiaOrganoTratamiento().getDescripcion());
+			dForm.set("tipoSiniestro", String.valueOf(siniPadre.getTipoSiniestro().getId()));
+		} else {
+			// Modifica por metodo que se adapte al anio
+			Cobertura c = new Cobertura();
+			
+			PerPoliza pp = new PerPoliza();
+			c.setPoliza(pp.searchActivo());
+			
+			c.getTipoCobertura().setId(COD_TIPO_COBERTURA_AMBULATORIO);
+			c =pc.searchByPolizaTipoCobertura(c);
+			dForm.set("cobertura", String.valueOf(c.getId()));
+			
+			
+			mapa.setCedulaBeneficiario(t.getBeneficiario().getCedula());
+			mapa.setCedula(t.getCedula());
+			//dForm.set("id", String.valueOf(1));
+			mapa.setIdCobertura(c.getId());
+			cob = pc.searchById(mapa.getIdCobertura());
+			if (cob.isPorPatologia()) {
+				try {
+					desgloseCobertura = pc.listDesgloseCobertura(mapa);
+					cob.setDesgloseCobertura(desgloseCobertura);
+					request.setAttribute("desgloseCobertura", desgloseCobertura);
+				} catch (Exception e) {
+					log.error("error", e);
+				}
+			} else {
+				// Si es por tipo de cobertura
+				log.info("mi mapa es " + mapa);
+				try {
+					cobertura = pc.listByCedula(mapa);
+				} catch (Exception e) {
+					log.error("error", e);
+				}
+				request.setAttribute("detalleMontoCobertura", cobertura);
+			}
+			// Modifica por metodo que se adapte al anio
+			dForm.set("fechaOcurrencia", Utilidad.DateToString(new Date(), "dd/MM/yyyy"));
+			dForm.set("fechaNotificacion", Utilidad.DateToString(new Date(), "dd/MM/yyyy"));
+			dForm.set("tipoTratamiento", "1");
+			dForm.set("tipoEnfermedad", "2");
+			dForm.set("tipoProveedor", "14");
+		}
+		// calcularCobertura(request, dForm);
+		setEntorno(request, form, ent);
+		return mapping.findForward(FWD_INPUT);
+	}
+
+}

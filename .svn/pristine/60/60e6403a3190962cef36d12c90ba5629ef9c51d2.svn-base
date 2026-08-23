@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TipoEnfermedad"> 
+	<typeAlias alias="ObjTipoEnfermedad" type="ve.gob.dem.fasdem.bean.TipoEnfermedad"/>
+	<resultMap id="result_all" class="ObjTipoEnfermedad">
+		<result property="id" column="id_tipo_enfermedad" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+	<resultMap id="result_medicinas" class="ObjTipoEnfermedad">
+		<result property="idMedicinas" column="id" jdbcType="integer"/>
+		<result property="contador" column="contador" jdbcType="integer"/>
+		<result property="dias" column="dias" jdbcType="integer"/>
+		<result property="textoInicio" column="texto_inicio" jdbcType="character varying"/>
+		<result property="textoFin" column="texto_fin" jdbcType="character varying"/>
+		<result property="monto" column="monto" jdbcType="double"/>
+		
+	</resultMap>
+	<resultMap id="result_mes" class="ObjTipoEnfermedad">
+	<result property="mesmedicina" column="mesmedicina" jdbcType="character varying"/>
+	</resultMap>
+	
+	<sql id="sql_buscarMedicinas">
+		SELECT 
+			  id,
+			  contador,
+			  dias,
+			  texto_inicio,
+			  texto_fin,
+			  monto
+  		FROM 
+			medicinas
+	</sql>
+	
+
+	<sql id="sql_buscar">
+		SELECT 
+			id_tipo_enfermedad, 
+			descripcion
+  		FROM 
+			tipo_enfermedad
+	</sql>
+
+	<select id="search" resultClass="ObjTipoEnfermedad" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_tipo_enfermedad = #value#
+	</select>
+	<select id="searchMedicinas" resultClass="ObjTipoEnfermedad" resultMap="result_medicinas">
+		<include refid="sql_buscarMedicinas"/>
+		WHERE id_tipo_enfermedad = #idMedicinas# and fecha_fin is null
+	</select>
+	
+	<select id="searchMedicinasTexto" resultClass="ObjTipoEnfermedad" resultMap="result_medicinas">
+		<include refid="sql_buscarMedicinas"/>
+
+		WHERE 
+			id_tipo_enfermedad = #idMedicinas# and 
+		
+			(#fechaCreado#::date 
+		between 
+			fecha_inicio 
+		and 
+			coalesce(fecha_fin, cast(now() as date)))
+		
+		
+	</select>
+
+	<select id="list" resultClass="ObjTipoEnfermedad" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE editable is true order by descripcion
+	</select>
+	 <select id="searchAguda" resultClass="int">
+        SELECT 
+            count(*)::int
+        FROM 
+            siniestro 
+        WHERE 
+	        anio_siniestro = #anioSiniestro# AND
+            cedula_beneficiario=#cedulaBeneficiario# AND
+            aniomes_codigo LIKE (to_char(now(),'YY')||to_char(now(),'MM')) AND
+            id_tipo_siniestro=9 AND
+            id_tipo_tramite=6 AND
+            id_tipo_enfermedad=1 AND
+            id_estatus not in (31,32,33,34,35)
+    </select>
+    <select id="searchCronica" resultClass="int">
+        select 
+            count(*)::int
+        from 
+            siniestro 
+        where 
+            anio_siniestro = #anioSiniestro# AND
+            cedula_beneficiario=#cedulaBeneficiario# and
+            id_tipo_siniestro=9 and
+            id_tipo_tramite=6 and
+            id_tipo_enfermedad=2 and
+            (fecha_notificacion BETWEEN current_date - #dias#::int and current_date + integer '1') and
+            id_estatus not in (31,32,33,34,35)
+    </select>
+    
+    <procedure id="searchmesCronica"  resultMap="result_mes" >
+		select mesmedicina(array[#today#])
+	</procedure>
+    
+</sqlMap>
+
+	
+	

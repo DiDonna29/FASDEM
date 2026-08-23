@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcatProjectProperties>
+    <rootDir></rootDir>
+    <exportSource>false</exportSource>
+    <reloadable>true</reloadable>
+    <redirectLogger>true</redirectLogger>
+    <updateXml>true</updateXml>
+    <warLocation></warLocation>
+    <extraInfo>+%3CLogger+className%3D%22org.apache.catalina.logger.FileLogger%22+prefix%3D%22fasdem.%22+suffix%3D%22.txt%22+timestamp%3D%22true%22+%2F%3E%0D%0A++%3CResource+%0D%0A++++++name%3D%22jdbc%2Fseguridad%22+%0D%0A++++++auth%3D%22Application%22+%0D%0A++++++type%3D%22javax.sql.DataSource%22+%0D%0A++++++driverClassName%3D%22oracle.jdbc.OracleDriver%22+%0D%0A++++++url%3D%22jdbc%3Aoracle%3Athin%3A%40172.26.96.248%3A1521%3Aorclprd%22+%0D%0A++++++username%3D%22SYS_GLOBAL%22+%0D%0A++++++password%3D%22tqagsr3X%22+%0D%0A++++++maxActive%3D%2220%22+%0D%0A++++++maxIdle%3D%2210%22+%0D%0A++++++maxWait%3D%223000%22+%2F%3E%09%0A%0D%0A++%3CResource+%0D%0A++++name%3D%22jdbc%2Ffasdem%22+%0D%0A++++auth%3D%22Application%22%0D%0A++++type%3D%22javax.sql.DataSource%22+%0D%0A++++driverClassName%3D%22org.postgresql.Driver%22%0D%0A++++url%3D%22jdbc%3Apostgresql%3A%2F%2F172.26.96.194%3A5434%2Fsys_fasdem%22%0D%0A++++username%3D%22barrjime%22+%0D%0A++++password%3D%22Jime123%2B%22+%0D%0A++++maxActive%3D%2220%22+%0D%0A++++maxIdle%3D%2210%22%0D%0A++++maxWait%3D%223000%22%2F%3E%0D%0A%0D%0A+%3CResource+%0D%0A++++name%3D%22jdbc%2Fservmedico%22+%0D%0A++++auth%3D%22Application%22%0D%0A++++type%3D%22javax.sql.DataSource%22+%0D%0A++++driverClassName%3D%22org.postgresql.Driver%22%0D%0A++++url%3D%22jdbc%3Apostgresql%3A%2F%2F172.26.96.194%3A5434%2Fdsm%22%0D%0A++++username%3D%22barrjime%22+%0D%0A++++password%3D%22Jime123%2B%22+%0D%0A++++maxActive%3D%2220%22+%0D%0A++++maxIdle%3D%2210%22%0D%0A++++maxWait%3D%223000%22%2F%3E%0D%0A%0D%0A++%3CResource+%0D%0A++++name%3D%22jdbc%2Fbienestar%22+%0D%0A++++auth%3D%22Application%22%0D%0A++++type%3D%22javax.sql.DataSource%22+%0D%0A++++driverClassName%3D%22oracle.jdbc.OracleDriver%22%0D%0A++++url%3D%22jdbc%3Aoracle%3Athin%3A%40172.26.96.248%3A1521%3Aorclprd%22%0D%0A++++username%3D%22sys_bienestar%22+%0D%0A++++password%3D%22mndtxZaq%22%0D%0A++++maxActive%3D%2220%22+%0D%0A++++maxIdle%3D%2210%22%0D%0A++++maxWait%3D%223000%22%2F%3E%0D%0A</extraInfo>
+    <webPath>/fasdem</webPath>
+    <webClassPathEntries>
+    </webClassPathEntries>
+</tomcatProjectProperties>

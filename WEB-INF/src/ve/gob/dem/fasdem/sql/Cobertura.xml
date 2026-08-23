@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Cobertura">
+	<typeAlias alias="ObjCobertura" type="ve.gob.dem.fasdem.bean.Cobertura"/>
+	<resultMap id="result_all" class="ObjCobertura">
+		<result property="id" column="id_cobertura" jdbcType="numeric"/>
+		<result property="poliza" column="id_poliza" jdbcType="numeric" select="Poliza.search"/>
+		<result property="tipoCobertura" column="id_tipo_cobertura" jdbcType="numeric" select="TipoCobertura.search"/>
+		<result property="monto" column="monto" jdbcType="double"/>
+		<result property="porPatologia" column="por_patologia" jdbcType="boolean"/>
+		<result property="descripcion" column="descripcion" jdbcType="String"/>
+	</resultMap>
+    <resultMap id="result_solo" class="ObjCobertura">
+        <result property="id" column="id_cobertura" jdbcType="numeric"/>
+        <result property="poliza" column="id_poliza" jdbcType="numeric" select="Poliza.search"/>
+        <result property="tipoCobertura" column="id_tipo_cobertura" jdbcType="numeric" select="TipoCobertura.search"/>
+        <result property="monto" column="monto" jdbcType="double"/>
+        <result property="porPatologia" column="por_patologia" jdbcType="boolean"/>
+       
+    </resultMap>	
+	<resultMap id="result_allmofificar" class="ObjCobertura">
+        <result property="id" column="id_cobertura" jdbcType="numeric"/>
+        <result property="poliza" column="id_poliza" jdbcType="numeric" select="Poliza.search"/>
+        <result property="tipoCobertura" column="id_tipo_cobertura" jdbcType="numeric" select="TipoCobertura.search"/>
+        <result property="monto" column="monto" jdbcType="double"/>
+        <result property="porPatologia" column="por_patologia" jdbcType="boolean"/>
+        <result property="descripcion" column="descripcion" jdbcType="String"/>
+    </resultMap>
+	<resultMap id="result_montos" class="ObjCobertura" extends="result_solo">
+		<result property="montoAgotada" column="agotada" jdbcType="double"/>
+		<result property="montoDisponible" column="disponible" jdbcType="double"/>
+	</resultMap>
+	<resultMap id="result_desglose" class="ObjCobertura" extends="result_montos">
+		<result property="patologia" column="patologia" jdbcType="character varying"/>
+	</resultMap>
+	<select id="searchCobertura" resultClass="double">
+		select 
+	       c.monto 
+		from 
+	       tipo_cobertura a, 
+			poliza b, 
+			cobertura c
+		where
+	       c.id_poliza=b.id_poliza AND
+	       c.id_tipo_cobertura=a.id_tipo_cobertura and 
+	        c.id_cobertura=#values# 
+	</select>
+	<select id="searchCobertura1" resultClass="ObjCobertura">
+        select c.monto
+            from tipo_cobertura a,
+            poliza b,
+            cobertura c
+            where
+               c.id_poliza=b.id_poliza AND
+               c.id_tipo_cobertura=a.id_tipo_cobertura and
+               c.id_tipo_cobertura=#values# and
+                b.is_activo=true
+    </select>
+	<select id="CoberturaPatologia" resultClass="double">
+	select coalesce(sum(s.monto_amparado), 0)as monto from siniestro s ,patologia_organo_tratamiento pot,  patologias pa
+	where 
+	   s.anio_siniestro=#anioSiniestro# and
+	 s.cedula_beneficiario=#cedulaBeneficiario# AND
+	s.id_cobertura=#idCobertura# AND
+	s.id_patologia_organo_tratamiento=pot.id_pat_org_trat_esp AND
+	pot.id_patologia=pa.id_patologia AND
+	pa.id_patologia=#idPatologia#
+	
+	</select>
+	<select id="search" resultClass="ObjCobertura" resultMap="result_solo">
+		select id_cobertura, id_poliza, id_tipo_cobertura, monto, por_patologia
+			from 
+			cobertura c
+			where 
+			id_cobertura = #value#
+	</select>
+	
+	
+	<select id="searchByPolizaTipoCobertura" parameterClass="ObjCobertura" resultClass="ObjCobertura" resultMap="result_solo">
+		SELECT 
+		  	c.id_cobertura, 
+			c.id_poliza, 
+			c.id_tipo_cobertura, 
+			c.monto, 
+			c.por_patologia
+		FROM 
+		  public.cobertura c, 
+		  public.tipo_cobertura tc, 
+		  public.poliza p
+		WHERE 
+		  tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+		  p.id_poliza = c.id_poliza AND
+		  c.is_activo = true AND 
+		  p.id_poliza = #poliza.id# AND
+		  tc.id_tipo_cobertura = #tipoCobertura.id#
+    </select>
+	
+
+	
+	
+	
+	<select id="listDesgloseCobertura" resultClass="ObjCobertura" resultMap="result_desglose">
+	select 
+		* 
+	from 
+		(select  
+			c.id_cobertura, 
+			c.id_poliza, 
+			c.id_tipo_cobertura, 
+			c.monto, 
+			c.por_patologia, 
+			pa.descripcion as patologia,
+			coalesce(sum(s.monto_amparado), 0)as agotada, 
+			(c.monto- coalesce(sum(s.monto_amparado), 0)) as disponible 
+		from 
+			public.cobertura c,   
+			public.siniestro s ,
+			public.patologia_organo_tratamiento pot, 
+			public.patologias pa, 
+			tipo_cobertura tc, 
+			public.poliza p     
+		where 
+			s.anio_siniestro=#anioSiniestro# AND
+	        s.cedula_beneficiario=#cedulaBeneficiario# <isNotEmpty property="cedula"
+		>AND cedula=#cedula# </isNotEmpty> AND 
+	        s.id_cobertura=#idCobertura# AND
+			s.id_patologia_organo_tratamiento=pot.id_pat_org_trat_esp AND
+			p.id_poliza=c.id_poliza AND
+			c.is_activo=true AND
+			pot.id_patologia=pa.id_patologia AND 
+			c.id_tipo_cobertura=tc.id_tipo_cobertura AND
+			c.id_cobertura=s.id_cobertura
+		group by 
+			c.id_cobertura, 
+			c.id_poliza, 
+			c.id_tipo_cobertura,
+			c.por_patologia,
+			c.is_activo,
+			tc.descripcion,pa.descripcion,c.monto ) as desglose 
+	where 
+		desglose.agotada>0
+</select>
+	<select id="listByTipoTramite" resultClass="ObjCobertura" resultMap="result_all">
+		SELECT 
+	 	  c.id_cobertura,	 
+	      p.id_poliza,
+		  tc.id_tipo_cobertura,
+		  c.monto, c.por_patologia ,
+	tc.descripcion || ' - ' || p.descripcion as descripcion  
+		FROM 
+		  public.cobertura_tipo_tramite ctt, 
+		  public.cobertura c, 
+		  public.tipo_tramite tt, 
+		  public.poliza p, 
+		  public.tipo_cobertura tc
+		WHERE 
+		  c.id_cobertura = ctt.id_cobertura AND
+		  tt.id_tipo_tramite = ctt.id_tipo_tramite AND
+		  p.id_poliza = c.id_poliza AND
+		  tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+		  tt.id_tipo_tramite = #value# AND
+	      c.is_activo = true AND
+		  p.is_activo= true
+	</select>
+	<select id="listByCedula" parameterClass="map" resultClass="ObjCobertura" resultMap="result_montos">	
+		SELECT
+			co.id_cobertura,
+			co.id_poliza,
+			co.id_tipo_cobertura,
+			co.tope as monto,
+			co.por_patologia,
+			coalesce(m.monto, 0) as agotada,
+			coalesce((co.tope - m.monto), co.tope) as disponible
+		FROM
+			(SELECT 
+			  tc.id_tipo_cobertura,
+			  c.id_cobertura,
+			  c.monto as tope,
+			  p.id_poliza,c.por_patologia
+			FROM 
+			  public.tipo_cobertura tc, 
+			  public.cobertura c, 
+			  public.poliza p
+			WHERE 
+			  tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+			  p.id_poliza = c.id_poliza 
+			  <isNotEmpty property="idCobertura">
+				AND c.id_cobertura = #idCobertura#
+			  </isNotEmpty>) as co
+		LEFT JOIN
+			  (SELECT 
+			    id_cobertura, 
+			    cedula_beneficiario,
+			    sum(monto_amparado) as monto
+			   FROM 
+			    siniestro s
+			   WHERE
+			     s.anio_siniestro = #anioSiniestro#  AND
+			     cedula_beneficiario = #cedulaBeneficiario#  
+			     <isNotEmpty property="cedula">
+			         AND cedula=#cedula# 
+			     </isNotEmpty>
+			   GROUP BY 
+			     id_cobertura, cedula_beneficiario) as m
+		ON
+			co.id_cobertura =m.id_cobertura
+	</select>
+	<select id="coberturaTipo" parameterClass="map" resultClass="double">	
+	select 
+	   coalesce(sum(s.monto_amparado), 0)as monto 
+    from 
+	   siniestro s 
+	where
+	   s.anio_siniestro=#anioSiniestro# AND
+	   s.cedula_beneficiario=#cedulaBeneficiario# AND 
+	   s.id_cobertura=#idCobertura#
+	</select>
+	<update id="updateCobertura" parameterClass="map">
+		UPDATE cobertura SET monto=#monto# WHERE id_cobertura=#id#
+	</update>
+	<insert id="insert" parameterClass="map">
+        INSERT INTO cobertura(descripcion) VALUES( #descripcion#)
+     </insert>
+     
+     
+     
+     
+      <select id="listByTipoTramiteRangoFecha" resultClass="ObjCobertura" resultMap="result_allmofificar">
+        SELECT 
+          c.id_cobertura,    
+          p.id_poliza,
+          tc.id_tipo_cobertura,
+          c.monto, c.por_patologia,
+          tc.descripcion || ' - ' || p.descripcion as descripcion  
+        
+        FROM 
+          public.cobertura_tipo_tramite ctt, 
+          public.cobertura c, 
+          public.tipo_tramite tt, 
+          public.poliza p, 
+          public.tipo_cobertura tc
+        WHERE 
+          c.id_cobertura = ctt.id_cobertura AND
+          tt.id_tipo_tramite = ctt.id_tipo_tramite AND
+          p.id_poliza = c.id_poliza AND
+          tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+          tt.id_tipo_tramite = #idTipoTramite# AND
+          c.is_activo = true AND  
+          #fechaOcurrencia# BETWEEN p.fecha_inicio AND p.fecha_fin
+        ORDER BY 
+          id_poliza DESC, 
+          descripcion
+     </select>
+     <select id="listByTipoTramiteModificar" resultClass="ObjCobertura" resultMap="result_allmofificar">
+        SELECT 
+          c.id_cobertura,    
+          p.id_poliza,
+          tc.id_tipo_cobertura,
+          c.monto, c.por_patologia,
+        tc.descripcion || ' - ' || p.descripcion as descripcion  
+        
+        FROM 
+          public.cobertura_tipo_tramite ctt, 
+          public.cobertura c, 
+          public.tipo_tramite tt, 
+          public.poliza p, 
+          public.tipo_cobertura tc
+        WHERE 
+          c.id_cobertura = ctt.id_cobertura AND
+          tt.id_tipo_tramite = ctt.id_tipo_tramite AND
+          p.id_poliza = c.id_poliza AND
+          tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+          tt.id_tipo_tramite = #idTipoTramite# AND
+          c.is_activo = true
+        
+        
+        <isNotEmpty prepend="AND" property="polizaVieja">
+            <iterate property="polizaVieja" open="(" close=")" conjunction="OR">
+                p.id_poliza = #polizaVieja[]#
+            </iterate>
+        </isNotEmpty>   
+
+    </select>
+    
+    
+    
+    
+    
+    <select id="listCoberturaByCedula" parameterClass="map" resultClass="ObjCobertura" resultMap="result_montos">
+	    SELECT 
+	        coberturas.id_cobertura,
+	        coberturas.id_poliza,
+            coberturas.id_tipo_cobertura,
+            coberturas.por_patologia,
+	        coberturas.monto,
+	        coalesce(gastado.amparado, 0) as agotada,
+	        coalesce((coalesce(monto, 0) - coalesce(amparado,0)),0) as disponible
+	    FROM
+	        (SELECT 
+	            c.id_cobertura,
+                p.id_poliza,
+                c.id_tipo_cobertura,
+                c.por_patologia,
+	            c.monto,
+	            (p.descripcion || '-' || tc.descripcion) as descripcion
+	        FROM 
+	            public.cobertura c, 
+	            public.poliza p, 
+	            public.tipo_cobertura tc
+	        WHERE 
+	            p.id_poliza = c.id_poliza AND
+	            tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+	            c.is_activo = true AND 
+	            c.id_poliza = #id_poliza# AND
+	            por_patologia = false) as coberturas
+	    LEFT JOIN
+	        (SELECT 
+	            id_cobertura,
+	            sum(monto_amparado) as amparado
+	        FROM 
+	            public.siniestro as s
+	        WHERE
+	            anio_siniestro = #anio_siniestro# AND
+	            cedula_beneficiario = #cedula_beneficiario# AND
+	            cedula = #cedula_titular#
+	        GROUP BY
+	            id_cobertura) as gastado
+	    ON
+	        coberturas.id_cobertura = gastado.id_cobertura
+    </select>
+    
+    
+    
+    <select id="listCoberturaByPatologia" parameterClass="map" resultClass="ObjCobertura" resultMap="result_desglose">
+        SELECT 
+            coberturas.id_cobertura,
+            coberturas.id_poliza,
+            coberturas.id_tipo_cobertura,
+            coberturas.por_patologia,
+            coberturas.monto,
+            gastado.id_patologia_organo_tratamiento,
+            gastado.descripcion as patologia,
+            coalesce(gastado.amparado, 0) as agotada,
+            coalesce((coalesce(monto, 0) - coalesce(amparado,0)),0) as disponible
+        FROM
+            (SELECT 
+                c.id_cobertura,
+                p.id_poliza,
+                c.id_tipo_cobertura,
+                c.por_patologia,
+                c.monto,
+                (p.descripcion || '-' || tc.descripcion) as descripcion
+            FROM 
+                public.cobertura c, 
+                public.poliza p, 
+                public.tipo_cobertura tc
+            WHERE 
+                p.id_poliza = c.id_poliza AND
+                tc.id_tipo_cobertura = c.id_tipo_cobertura AND
+                c.is_activo = true AND 
+                c.id_poliza = #id_poliza# AND
+                por_patologia = true) as coberturas
+        LEFT JOIN
+            (SELECT 
+			    id_cobertura,
+		        id_patologia_organo_tratamiento,
+		        pat.descripcion,
+		        sum(monto_amparado) as amparado
+			FROM 
+			    public.siniestro s, 
+			    public.patologia_organo_tratamiento pot, 
+			    public.patologias pat
+			WHERE 
+			    pot.id_pat_org_trat_esp = s.id_patologia_organo_tratamiento AND
+			    pot.id_patologia = pat.id_patologia AND
+			    anio_siniestro = #anio_siniestro# AND
+			    cedula_beneficiario = #cedula_beneficiario# AND
+			    cedula = #cedula_titular#
+			GROUP BY
+			    id_cobertura,
+		        id_patologia_organo_tratamiento,
+		        pat.descripcion) as gastado
+        ON
+            coberturas.id_cobertura = gastado.id_cobertura
+    </select>    
+</sqlMap>

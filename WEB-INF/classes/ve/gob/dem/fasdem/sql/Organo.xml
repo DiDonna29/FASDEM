@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Organo">
+	<typeAlias alias="ObjOrgano" type="ve.gob.dem.fasdem.bean.Organo"/>
+	<resultMap id="result_all" class="ObjOrgano">
+		<result property="id" column="id_organo" jdbcType="integer"/>
+		<result property="descripcion" column="descripcion" jdbcType="character varying"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+			id_organo, 
+			descripcion
+  		FROM 
+			organo 
+	</sql>
+	<select id="list" resultClass="ObjOrgano" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		order by descripcion
+	</select>
+	<select id="search" resultClass="ObjOrgano" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE id_organo = #value# order by descripcion
+	</select>
+	<select id="porEspecialidad" resultClass="ObjOrgano" resultMap="result_all">
+		SELECT 
+			distinct(o.id_organo) as id_organo,
+			o.descripcion
+		FROM 
+			public.organo o, 
+			public.patologia_organo_tratamiento pot
+		WHERE 
+			o.id_organo = pot.id_organo AND
+			pot.is_activo=TRUE AND
+			pot.id_especialidad = #value#
+		ORDER BY
+			descripcion
+	</select>
+</sqlMap>

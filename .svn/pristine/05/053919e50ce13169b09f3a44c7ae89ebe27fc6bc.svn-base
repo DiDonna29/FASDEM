@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="CartaAsegurabilidad"
+
+		 language="groovy"		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="528"
+		 columnSpacing="0"
+		 leftMargin="42"
+		 rightMargin="42"
+		 topMargin="42"
+		 bottomMargin="42"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="85" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="RUTA" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["http://localhost:8080/fd/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="descripcion_usuario" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["http://intranet/fasdem/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="monto_cobertura" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[75000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cedula" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="token" isForPrompting="false" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT * from (select 
+	   	(CASE WHEN cedrif='X' THEN 'N/P' ELSE cedrif||'.-'||cedula END )as cedula,
+		  cedrif,	  
+		  (nombres ||' '|| apellidos)as beneficiario,
+		  id_parentesco,
+		  parentesco,	  
+		  fecha_nacimiento,		  
+		  sexo	  
+		FROM
+		  beneficiarios_fasdem 
+		  WHERE to_char(certif) = $P{cedula} and tipo='T'   and estatus='ACTIVO' ORDER BY estatus ASC )where rownum = 1]]></queryString>
+
+	<field name="CEDULA" class="java.lang.String"/>
+	<field name="CEDRIF" class="java.lang.String"/>
+	<field name="BENEFICIARIO" class="java.lang.String"/>
+	<field name="ID_PARENTESCO" class="java.math.BigDecimal"/>
+	<field name="PARENTESCO" class="java.lang.String"/>
+	<field name="FECHA_NACIMIENTO" class="java.sql.Timestamp"/>
+	<field name="SEXO" class="java.lang.String"/>
+
+	<variable name="sexo" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[( "F".equals($F{SEXO}) ? " la señora " : " el señor " )]]></variableExpression>
+	</variable>
+	<variable name="coberturaLetras" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[ new ve.gob.dem.reportes.utilidades.NumerosLetras().convertirLetras($P{monto_cobertura}.toString())]]></variableExpression>
+	</variable>
+	<variable name="coberturaNumero" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[new ve.gob.dem.reportes.utilidades.FormatoNumeros().formatoNumero($P{monto_cobertura}.toString())]]></variableExpression>
+	</variable>
+	<variable name="asegurado" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[($F{SEXO}.equals("F") ? "amparada" : "amparado" )]]></variableExpression>
+	</variable>
+	<variable name="beneficiario" class="java.lang.String" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[($F{SEXO}.equals("F") ? "de la referida funcionaria " : "del referido funcionario " )]]></variableExpression>
+	</variable>
+	<variable name="eje" class="java.lang.String" resetType="Report" calculation="Nothing">
+	</variable>
+
+		<group  name="siniestro" >
+			<groupExpression><![CDATA[$F{CEDULA}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="121"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="21"
+						width="528"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="101"
+						width="528"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font size="12"/>
+					</textElement>
+				<text><![CDATA[Por la Dirección Ejecutiva de la Magistratura.]]></text>
+				</staticText>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="beneficiarios" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="16"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="46"
+						y="0"
+						width="432"
+						height="16"
+						key="textField-7"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font size="12"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["\n\n"+
+"    Constancia que se expide a petición de la parte interesada al "+new SimpleDateFormat("EEEEE dd").format(new Date())+" de "+new SimpleDateFormat("MMMMM").format(new Date())+" de "+new SimpleDateFormat("yyyy").format(new Date())+"."]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="pie" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="10"  isSplitAllowed="true" >
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="46"
+						y="0"
+						width="432"
+						height="10"
+						key="subreport-1"/>
+					<subreportParameter  name="cedula">
+						<subreportParameterExpression><![CDATA[$P{cedula}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/jasper/CartaAsegurabilidad_subreport1.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="119"  isSplitAllowed="true" >
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="385"
+						y="11"
+						width="111"
+						height="47"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//fasdem.gif"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="46"
+						y="99"
+						width="432"
+						height="20"
+						key="staticText"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[CARTA DE ASEGURABILIDAD]]></text>
+				</staticText>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="46"
+						y="0"
+						width="129"
+						height="88"
+						key="image-3"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{RUTA}+"//images//logo.jpg"]]></imageExpression>
+				</image>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="24"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="46"
+						y="0"
+						width="432"
+						height="24"
+						key="textField-6"
+						isPrintWhenDetailOverflows="true"/>
+					<box></box>
+					<textElement textAlignment="Justified">
+						<font size="12"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["\n\n"+
+"    Por medio de la presente se hace constar que "+$V{sexo}+$F{BENEFICIARIO}+", titular cédula de identidad número "+$F{CEDULA}+", se encuentra "+$V{asegurado}+" por la cobertura de salud de Hospitalización, Cirugía y Maternidad, de la DIRECCIÓN EJECUTIVA DE LA MAGISTRATURA, hasta por la suma de "+$V{coberturaLetras}+ "DE BOLÍVARES (" +$V{coberturaNumero} + "), asimismo se encuentran amparados, bajo las misma condiciones, los siguientes beneficiarios "+$V{beneficiario}+":\n\n"]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="58"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="1"
+						width="514"
+						height="18"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Funcionario FASDEM: "+$P{descripcion_usuario}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="14"
+						y="17"
+						width="415"
+						height="24"
+						key="staticText-10"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Av. Francisco de miranda, entre calle Elice y la Joya. Edif. Tribunal Supremo de Justicia-Dirección Ejecutiva de la Magistratura. Cod Postal 1060. Chacao. Caracas - Venezuela. Rif. G-20000028-7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="429"
+						y="17"
+						width="78"
+						height="24"
+						key="staticText-11"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<text><![CDATA[DEM.TSJ.GOB.VE]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="14"
+						y="45"
+						width="493"
+						height="13"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{token}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

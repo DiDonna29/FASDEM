@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="PdfOrdenMedicina">
+	<typeAlias alias="ObjPdfOrdenMedicina" type="ve.gob.dem.fasdem.bean.PdfOrdenMedicina"/>
+	<resultMap id="result_all" class="ObjPdfOrdenMedicina">
+		<result property="id" column="id_pdf_orden_medicina" jdbcType="integer"/>
+		<result property="codigoValidacion" column="codigo_valiacion" jdbcType="character varying"/>
+		<result property="pdf" column="pdf" jdbcType="bytea"/>
+
+	</resultMap>
+
+	<select id="search" resultClass="ObjPdfOrdenMedicina" resultMap="result_all">
+		SELECT 	
+			id_pdf_orden_medicina,
+			codigo_valiacion,
+			pdf
+		FROM 
+			pdf_orden_medicina 
+		WHERE 
+			codigo_valiacion = #value#
+	</select>
+
+	<insert id="insert" parameterClass="ObjPdfOrdenMedicina">
+		INSERT INTO pdf_orden_medicina
+			(codigo_valiacion, pdf) 
+		VALUES 
+			(#codigoValidacion#, #pdf#);
+	</insert>
+
+</sqlMap>

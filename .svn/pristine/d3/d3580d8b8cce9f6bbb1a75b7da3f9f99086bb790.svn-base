@@ -1,0 +1,251 @@
+@charset "utf-8";
+
+/* CSS Document */
+
+
+.corner-rounded {
+	-ms-border-radius : 4px;
+	-moz-border-radius : 4px;
+	-webkit-border-radius : 4px;
+	-khtml-border-radius : 4px;
+}
+
+
+.container {
+	width : 770px;
+	height : 100%;
+	/*overflow: hidden;*/
+	margin : 0 auto 0 auto;
+}
+
+.header {
+	margin : 0 auto 0 auto;
+	width : 770px;
+}
+
+.imgTsj {
+	float : left;
+	width : 80%;
+	height : 34px
+}
+
+.cerrarSesion {
+	float : left;
+	width : 20%;
+	height : 34px;
+}
+
+.cabeceraUsuario {
+	float : left;
+	width : 49.4%;
+	background-color : #09357A;
+	padding-left : 5px;
+	text-align : left;
+}
+
+.cerrarFecha {
+	float : left;
+	width : 49.3%;
+	background-color : #09357A;
+	text-align : right;
+	padding-left : 5px;
+}
+
+.botonera {
+	float : left;
+	width : 20%;
+	background-color : #EEEEEE;
+	/*border-right-color:#000;
+	border-right-style:solid;
+	border-right-width:thin;*/
+}
+
+.contenido {
+	width : 80%;
+	padding-left : 0px;
+	padding-right : 0px;
+
+	float : right;
+	/*background-color:#CFF*/
+}
+
+a:hover {
+	color : #096;
+}
+
+a.nodo {
+	color : #096;
+}
+
+.tablecell-title {
+	float : left;
+	width : 10%;
+	height : 18px;
+	overflow : hidden;
+	/*background-color: fuchsia;*/
+	margin-left : 0px;
+	padding : 2px;
+	border-bottom-style : solid;
+	border-bottom-width : thin;
+	border-bottom-color : black;
+	border-right-style : solid;
+	border-right-width : thin;
+	border-right-color : black;
+	border-top-style : solid;
+	border-top-width : thin;
+	border-top-color : black;
+	text-align : center;
+}
+
+.tablecell-content {
+	float : left;
+	width : 10%;
+	height : 25px;
+	overflow : hidden;
+	/*background-color: fuchsia;*/
+	margin-left : 0px;
+	padding : 2px;
+	border-bottom-style : solid;
+	border-bottom-width : thin;
+	border-bottom-color : black;
+	border-right-style : solid;
+	border-right-width : thin;
+	border-right-color : black;
+	text-align : center;
+}
+
+.etiqueta {
+	clear : left;
+	float : left;
+	width : 19%;
+	padding-top : 1px;
+	overflow : hidden;
+}
+
+.parametro {
+	width : 79%;
+	padding-top : 1px;
+	float : left;
+}
+
+.imagenBotonera {
+	width : 80px;
+	height : 80px;
+	padding : 5px;
+	margin-top : 5px;
+	margin-left : auto;
+	margin-right : auto;
+	background-color : #ffffff;
+	border-left-color : #000;
+	border-left-width : 1px;
+	border-left-style : solid;
+	border-top-color : #000;
+	border-top-width : 1px;
+	border-top-style : solid;
+	border-right-color : #000;
+	border-right-width : 1px;
+	border-right-style : solid;
+	border-bottom-color : #000;
+	border-bottom-width : 1px;
+	border-bottom-style : solid;
+}
+
+h3 {
+	padding : 0px;
+	margin : 2px;
+}
+
+tr.tituloCabecera {
+	FONT-WEIGHT : normal;
+	FONT-SIZE : 8pt;
+	COLOR : #77859B;
+	FONT-STYLE : normal;
+	FONT-FAMILY : Verdana, Tahoma, Arial;
+	FONT-VARIANT : normal;
+	TEXT-DECORATION : none;
+	line-height : normal;
+	text-transform : none;
+}
+tr.item {
+	FONT-WEIGHT : normal;
+	FONT-SIZE : 7.5pt;
+	COLOR : #868686;
+	FONT-STYLE : normal;
+	FONT-FAMILY : Verdana, Tahoma, Arial;
+	FONT-VARIANT : normal;
+	TEXT-DECORATION : none
+}
+
+tr.item:hover {
+	FONT-WEIGHT : normal;
+	COLOR : #006699;
+	cursor : pointer;
+	cursor : hand;
+	padding : 0px;
+}
+
+tr.itemPadre {
+	FONT-WEIGHT : normal;
+	FONT-SIZE : 7.5pt;
+	COLOR : #7e0001;
+
+	FONT-STYLE : normal;
+	FONT-FAMILY : Verdana, Tahoma, Arial;
+	FONT-VARIANT : normal;
+	TEXT-DECORATION : none
+}
+tr.itemPadre:hover {
+	COLOR : #7e0001;
+	background-color:#EEEEEE;
+	cursor : pointer;
+	cursor : hand;
+
+}
+
+	/*003366;660066;660033;666600;336600;*/
+
+	/*	6C6400;535E00;3A5F61;0D3265;252471;432141;*/
+
+
+	/*5F633B;
+4A633B;
+3B5F63;
+3B4A63;
+633B5F;
+633B4A;
+*/
+
+	/*
+336500;650033;006565;003365;000065;656500;653200;650000;
+*/
+table.tabla {
+	background-color : #EEEEEE;
+	width : 100%;
+}
+
+
+
+
+select {
+	border-color : #868686;
+	border-style : solid;
+	border-width : thin;
+	width : 60%;
+
+}
+option {
+	border : 0px;
+
+}
+textarea {
+	border-color : #868686;
+	border-style : solid;
+	border-width : 1px;
+	width : 75%;
+	height : 100px;
+}
+input {
+	border-color : #868686;
+	border-style : solid;
+	border-width : 1px
+}

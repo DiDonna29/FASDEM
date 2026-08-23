@@ -1,0 +1,857 @@
+/**15/07/2010
+ * marcenrl
+ */
+package ve.gob.dem.fasdem.persit.pagos;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+import org.jfree.util.Log;
+
+import ve.gob.dem.fasdem.bean.Clinica;
+import ve.gob.dem.fasdem.bean.DetallePreOrdenPago;
+import ve.gob.dem.fasdem.bean.HojaRuta;
+import ve.gob.dem.fasdem.bean.PreOrdenPago;
+import ve.gob.dem.fasdem.bean.ResumenPreOrdenPago;
+import ve.gob.dem.fasdem.exp.ExpClinica;
+import ve.gob.dem.fasdem.exp.ExpHojaRuta;
+import ve.gob.dem.fasdem.exp.ExpPersona;
+import ve.gob.dem.fasdem.exp.pagos.ExpEstatusPreorden;
+import ve.gob.dem.fasdem.exp.pagos.ExpPreOrdenPago;
+import ve.gob.dem.fasdem.exp.pagos.ExpTipoEmpleado;
+import ve.gob.dem.framework.exception.PersonalNotFoundException;
+
+/**
+ * @author marcenrl
+ * 
+ */
+@SuppressWarnings("unchecked")
+public class PerPreOrdenPago {
+	private Connection cnx = null;
+	static protected Logger log = Logger.getLogger(PerPreOrdenPago.class);
+
+	public PerPreOrdenPago(Connection c) {
+		this.cnx = c;
+	}
+
+	private ArrayList buscar(String arg) throws SQLException, PersonalNotFoundException, NamingException {
+		ArrayList array = new ArrayList();
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "SELECT * FROM pre_orden_pago ";
+		if (arg != null) {
+			sql = sql + " " + arg;
+		}
+		try {
+			sentencia = cnx.createStatement();
+			log.info("sql "+ sql);
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				PreOrdenPago pre = new PreOrdenPago();
+				pre.setId(rs.getInt("id_pre_orden"));
+				pre.setAniomes(rs.getString("aniomes"));
+				pre.setCodigo_preorden(rs.getString("codigo_preorden"));
+				pre.setFecha_preorden(rs.getDate("fecha_pre_orden"));
+				pre.setFecha_orden(rs.getDate("fecha_orden"));
+				pre.setFecha_pagado(rs.getDate("fecha_pagado"));
+				pre.setNro_orden(rs.getString("numero_orden"));
+				pre.setRetencion_iva(rs.getDouble("porcentaje_retencion_iva"));
+				pre.setUsuario(rs.getString("id_usuario"));
+				try {
+					pre.setTitular(ExpPersona.buscarporCedula(rs.getString("id_beneficiario")));
+				} catch (Exception e) {}
+				try {
+					pre.setProveedor(ExpClinica.BuscarPorid(rs.getInt("id_proveedor")));
+				} catch (Exception e) {
+					pre.setProveedor(null);
+					pre.setTitular(ExpPersona.buscarporCedula(rs.getString("id_beneficiario")));
+				}
+				pre.setTipo_empleado(ExpTipoEmpleado.buscarporID(rs.getInt("id_tipo_empleado")));
+				pre.setEstatus(ExpEstatusPreorden.buscarpoID(rs.getInt("id_estatus")));
+				pre.setCod_completo(rs.getString("pre_orden"));
+				pre.setUnidad_tributaria(rs.getDouble("unidad_tributaria"));
+				log.info("aplica ?? "+rs.getInt("aplica_timbre"));
+				pre.setAplicaTimbre(rs.getInt("aplica_timbre"));
+				pre.setTipo_preorden(rs.getInt("id_tipo_pre_orden_pago"));
+				pre.setAplica_isrl(rs.getBoolean("is_isrl"));
+				
+				try {
+					pre.setHoja(ExpHojaRuta.BuscarPorid(rs.getInt("hoja_ruta"))) ;
+				} catch (Exception e) {
+					
+				}
+				
+				
+				
+				array.add(pre);
+			}
+			return array;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @param arg
+	 * @return
+	 * @throws SQLException
+	 * @throws PersonalNotFoundException
+	 * @throws NamingException
+	 * @throws ClassNotFoundException
+	 */
+	private ArrayList buscarResumenHoja(String arg) throws SQLException, PersonalNotFoundException, NamingException, ClassNotFoundException {
+		ArrayList array = new ArrayList();
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "SELECT * FROM pre_orden_pago ";
+		if (arg != null) {
+			sql = sql + " " + arg;
+		}
+        
+        log.info("SQL PREORDEN " + sql);
+		
+		
+		
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				PreOrdenPago pre = new PreOrdenPago();
+				pre.setId(rs.getInt("id_pre_orden"));
+				pre.setAnioPreorden(rs.getInt("anio_preordenpago"));
+				pre.setFecha_preorden(rs.getDate("fecha_pre_orden"));
+				pre.setAniomes(rs.getString("aniomes"));
+				pre.setNro_orden(rs.getString("numero_orden"));
+				
+				try {
+				pre.setHoja(ExpHojaRuta.BuscarPorid(rs.getInt("hoja_ruta")));
+				} catch (Exception e) {}
+				
+				if(rs.getInt("id_proveedor")==44){
+					try {
+						pre.setTitular(ExpPersona.buscarporCedula(rs.getString("id_beneficiario")));
+					} catch (Exception e) {}
+				}
+					
+					
+				try {
+					pre.setProveedor(ExpClinica.BuscarPorid(rs.getInt("id_proveedor")));
+				} catch (Exception e) {
+					pre.setProveedor(null);
+					pre.setTitular(ExpPersona.buscarporCedula(rs.getString("id_beneficiario")));
+				}
+				
+				pre.setCod_completo(rs.getString("pre_orden"));
+				
+				log.info("ENTRE A A BUSCAR DETALLE");
+				//pre.setDetalle(ExpPreOrdenPago.buscarDetallePreOrdenPorCodigo(pre.getCod_completo(), 2011));
+			    
+				array.add(pre);
+			}
+			return array;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+	}
+
+
+	public void crearPreOrdenPago(PreOrdenPago po, String codigo_completo, Double unidad_trib, int tim, int tipo, Double porcent ) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "INSERT INTO pre_orden_pago (aniomes,codigo_preorden,fecha_pre_orden,fecha_orden,fecha_pagado,numero_orden,id_proveedor,id_tipo_pre_orden_pago,id_tipo_empleado,secuencia_preorden,anio_preordenpago,pre_orden,unidad_tributaria,aplica_timbre,id_dependencia,id_usuario,id_beneficiario,porcentaje_retencion_iva,is_isrl) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setString(1, po.getAniomes());
+			sentencia.setString(2, po.getCodigo_preorden());
+			sentencia.setDate(3, (po.getFecha_preorden() != null) ? new java.sql.Date(po.getFecha_preorden().getTime()) : null);
+			sentencia.setDate(4, (po.getFecha_orden() != null) ? new java.sql.Date(po.getFecha_orden().getTime()) : null);
+			sentencia.setDate(5, (po.getFecha_pagado() != null) ? new java.sql.Date(po.getFecha_pagado().getTime()) : null);
+			sentencia.setString(6, (po.getNro_orden() != null) ? po.getNro_orden() : null);
+			sentencia.setInt(7, (po.getProveedor() != null) ? po.getProveedor().getId() : 0);
+			
+			log.info("tipo "+tipo);
+			sentencia.setInt(8, tipo);
+			try {
+			sentencia.setInt(9, (po.getTitular().getIdTipoEmpleado()));
+			} catch (Exception e) {
+				sentencia.setInt(9, 1);
+			}
+			sentencia.setInt(10, po.getSecuenciaPreOrden());
+			sentencia.setInt(11, po.getAnioPreorden());
+			sentencia.setString(12, codigo_completo);
+			sentencia.setDouble(13, unidad_trib);
+			sentencia.setInt(14, tim);
+			sentencia.setInt(15, po.getId_dependencia());
+			sentencia.setString(16, po.getUsuario());
+			log.info("po titular "+po.getTitular());
+			
+			if(po.getTitular() != null)
+			{
+				sentencia.setInt(17,  Integer.parseInt(po.getTitular().getCedula()));	
+			}else
+			{
+				sentencia.setObject(17, null);
+			}
+			
+			
+			sentencia.setDouble(18, porcent);
+			sentencia.setBoolean(19, po.isAplica_isrl());
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public void cambiarEstatusPreOrden(String codigo_pre, String numero, int estatus, Date fecha_orden, Date fecha_cheque, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=?, numero_orden=?, fecha_orden=?, fecha_pagado=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, estatus);
+			sentencia.setString(2, numero);
+			sentencia.setDate(3, (fecha_orden != null) ? new java.sql.Date(fecha_orden.getTime()) : null);
+			sentencia.setDate(4, (fecha_cheque != null) ? new java.sql.Date(fecha_cheque.getTime()) : null);
+			sentencia.setString(5, codigo_pre);
+			sentencia.setInt(6, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public void cambiarEstatusPagado(String codigo_pre, int estatus, Date fecha_cheque, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=?, fecha_pagado=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			
+			sentencia.setInt(1, estatus);
+			sentencia.setDate(2, (fecha_cheque != null) ? new java.sql.Date(fecha_cheque.getTime()) : null);
+			sentencia.setString(3, codigo_pre);
+			sentencia.setInt(4, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public void autorizarEstatusPreOrden(String codigo_pre, int estatus, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, estatus);
+			sentencia.setString(2, codigo_pre);
+			sentencia.setInt(3, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public void anularPreOrden(String codigo_pre, int estatus, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, estatus);
+			sentencia.setString(2, codigo_pre);
+			sentencia.setInt(3, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public void cambiarTopePreOrden(String codigo_pre, int aplica, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET aplica_timbre=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, aplica);
+			sentencia.setString(2, codigo_pre);
+			sentencia.setInt(3, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	
+	
+	public void asignarHojaPreOrden(int codigo_pre, int hoja,int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET hoja_ruta=? where id_pre_orden=? and anio_preordenpago=?  ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, hoja);
+			sentencia.setInt(2, codigo_pre);
+			sentencia.setInt(3, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	
+	public void SacarHojaPreOrden(int codigo_pre,int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET hoja_ruta=null where id_pre_orden=? and anio_preordenpago=?  ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setInt(1, codigo_pre);
+			sentencia.setInt(2, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	
+	public void SacarHojaPreOrden(String codigo_pre,int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET hoja_ruta=null where pre_orden=? and anio_preordenpago=?  ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setString(1, codigo_pre);
+			sentencia.setInt(2, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	} 
+
+	public ArrayList buscarListaProveedorFechaPreOrden(int id_proveedor, String desde, String hasta, int estatus, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		return this.buscar("WHERE anio_preordenpago=" + anio + "  AND ID_ESTATUS=" + estatus + " AND ID_PROVEEDOR=" + id_proveedor + " AND TO_DATE(TO_CHAR(fecha_pre_orden,'DD/MM/YYYY'),'DD/MM/YYYY')>= TO_DATE('" + desde + "','DD/MM/YYYY') AND TO_DATE(TO_CHAR(fecha_pre_orden ,'DD/MM/YYYY'),'DD/MM/YYYY')<= TO_DATE('" + hasta + "','DD/MM/YYYY')");
+	}
+	
+	
+	public ArrayList buscarListaFechaPreOrdenHojaRuta(String desde, String hasta,int anio, int status) throws SQLException, PersonalNotFoundException, NamingException, ClassNotFoundException {
+		return this.buscarResumenHoja("WHERE id_proveedor<> 0 and anio_preordenpago=" + anio + "  AND ID_ESTATUS=" + status + " AND TO_DATE(TO_CHAR(fecha_pre_orden,'DD/MM/YYYY'),'DD/MM/YYYY')>= TO_DATE('" + desde + "','DD/MM/YYYY') AND TO_DATE(TO_CHAR(fecha_pre_orden ,'DD/MM/YYYY'),'DD/MM/YYYY')<= TO_DATE('" + hasta + "','DD/MM/YYYY')");
+	}
+	
+
+	public ArrayList buscarPorCodigoPreOrdenHojaRuta(String codigo,int anio, int status) throws SQLException, PersonalNotFoundException, NamingException, ClassNotFoundException {
+		//return this.buscarResumenHoja("WHERE id_proveedor<> 0 and anio_preordenpago=" + anio + "  AND ID_ESTATUS=" + status + " AND pre_orden='" + codigo + "'");
+		return this.buscarResumenHoja("WHERE anio_preordenpago=" + anio + "  AND ID_ESTATUS=" + status + " AND pre_orden='" + codigo + "'");
+	}
+	
+	
+	public ArrayList buscarPorCodigoPreOrdenHojaRutaAnulaONT(String codigo,int anio) throws SQLException, PersonalNotFoundException, NamingException, ClassNotFoundException {
+		return this.buscarResumenHoja("WHERE id_proveedor<> 0 and anio_preordenpago=" + anio + "  AND pre_orden='" + codigo + "'");
+	}
+	
+	
+	public PreOrdenPago buscarPorIdPreOrdenHojaRuta(int id,int anio) throws SQLException, PersonalNotFoundException, NamingException, ClassNotFoundException {
+		return (PreOrdenPago)this.buscarResumenHoja("WHERE anio_preordenpago=" + anio + " AND id_pre_orden=" + id ).get(0);
+	}
+	
+	
+	public ArrayList buscarporCodigo(String codigo, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		return this.buscar("WHERE anio_preordenpago=" + anio + "  AND pre_orden = '" + codigo + "'");
+	}
+
+	public ArrayList buscarporCodigoEstatus(String codigo, int anio, String estatus) throws SQLException, PersonalNotFoundException, NamingException {
+		return this.buscar("WHERE id_estatus IN (" + estatus + ")  and   anio_preordenpago=" + anio + "  AND pre_orden = '" + codigo + "'");
+	}
+
+	public ArrayList buscarporAnioEstatus(int anio, int estatus) throws SQLException, PersonalNotFoundException, NamingException {
+		return this.buscar("WHERE id_estatus = " + estatus + "  and   anio_preordenpago=" + anio);
+	}
+
+	public PreOrdenPago buscarUnicoporCodigo(String codigo, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		return (PreOrdenPago) this.buscar("WHERE anio_preordenpago=" + anio + "  AND pre_orden = '" + codigo + "'").get(0);
+	}
+
+	public void agregarFacturasOrden(String cadena, String Orden, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE FACTURAS SET pre_orden='" + Orden + "', fecha_pre_orden=now() WHERE anio_siniestro=" + anio + " and id_factura IN (" + cadena + ")";
+		log.info("CADENA DE ACTUALIZACION DE FACTURAS " + sql);
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+
+	public int buscarCodigoNuevo(int anio,String aniomes) throws SQLException, PersonalNotFoundException, NamingException {
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "select COALESCE(max(secuencia_preorden),0) as codigo from pre_orden_pago where anio_preordenpago=" + anio + " and aniomes='"  + aniomes + "'";
+		int cod = 0;
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				cod = rs.getInt("codigo");
+			}
+			return cod;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	private ArrayList buscarDetalle(String variable, int anio, boolean cond) throws SQLException, PersonalNotFoundException, NamingException {
+		ArrayList array = new ArrayList();
+		String verificapro="";
+		String verificapro1="";
+	
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String variable_Condicion = "";
+		
+	
+		
+		String alias="";
+		
+		switch (anio)
+		{
+			case 2010:
+			alias="000";
+			break;
+			case 2011:
+				alias="010";
+				break;
+			case 2012:
+				alias="020";
+				break;
+			case 2013:
+				alias="030";
+				break;
+			case 2014:
+				alias="040";
+				break;
+			case 2015:
+				alias="050";
+				break;
+			case 2016:
+				alias="060";
+				break;
+			case 2017:
+				alias="070";
+				break;
+			case 2018:
+				alias="080";
+				break;
+			case 2019:
+				alias="090";
+				break;
+			case 2020:
+				alias="100";
+				break;
+			case 2021:
+				alias="110";				
+				break;
+			case 2022:
+				alias="120";				
+				break;
+			case 2023:
+				alias="130";				
+				break;
+			case 2024:
+				alias="140";				
+				break;
+			case 2025:
+				alias="150";				
+				break;
+			default:
+			break;
+		}
+		
+		
+		if (cond == true) {
+			variable_Condicion = " and anio_siniestro= " + anio + " and id_factura in (" + variable + ") ) fact ";
+			
+		} else {
+			variable_Condicion = " and anio_siniestro= " + anio + " and pre_orden= '" + variable + "' ) fact ";
+		
+		}
+		String sql="";
+       
+	
+	
+			
+			sql = "select   sum(COALESCE(gastos_clinicos, 0::double precision)) AS  gastos_clinicos,   sum(COALESCE(honorarios_medicos, 0::double  precision)) AS honorarios_medicos,   sum(COALESCE(material_iva,  0::double precision))AS material_iva,   sum(COALESCE(material, 0::double  precision)) AS material,   sum(COALESCE(odontologia, 0::double  precision)) AS odontologia,   sum(COALESCE(funerarios, 0::double  precision)) AS funerarios,                  sum(COALESCE(vida, 0::double precision)) AS vida,    sum(COALESCE(farmacia, 0::double precision)) AS medicinas,    sum(COALESCE(otros, 0::double precision)) AS otros,   sum(COALESCE(iva,  0::double precision)) AS monto_iva,   sum((COALESCE(gastos_clinicos,  0::double precision)+     COALESCE(odontologia, 0::double precision)   +    COALESCE(funerarios, 0::double precision) +    COALESCE(otros,  0::double precision) +                  COALESCE(vida, 0::double precision) +     COALESCE(material_iva, 0::double precision) +    COALESCE(material,  0::double precision) ) ) as base_imponible_isrl,    sum((COALESCE(gastos_clinicos, 0::double precision) +     COALESCE(odontologia, 0::double precision)  +    COALESCE(funerarios,  0::double precision) +    COALESCE(otros, 0::double precision) +     COALESCE(material, 0::double precision) +                  COALESCE(material_iva, 0::double precision) +     COALESCE(vida, 0::double precision) +    COALESCE(honorarios_medicos,  0::double precision) +     COALESCE(farmacia, 0::double precision) +    COALESCE(iva, 0::double precision))) as monto_liquidado,    sum(fact.porcentaje_isrl * ( COALESCE(gastos_clinicos, 0::double  precision) +  COALESCE(honorarios_medicos, 0::double  precision) +    COALESCE(odontologia, 0::double precision)  +     COALESCE(funerarios, 0::double precision) +                  COALESCE(otros, 0::double precision) +     COALESCE(vida, 0::double precision) +    COALESCE(material_iva,  0::double precision) +    COALESCE(material, 0::double precision) )/100)  as monto_isrl,   sum(fact.porcentaje_timbre * (COALESCE(gastos_clinicos,  0::double precision) +    COALESCE(odontologia, 0::double precision)   +    COALESCE(funerarios, 0::double precision) +    COALESCE(otros,  0::double precision) +                  COALESCE(material, 0::double precision) +     COALESCE(material_iva, 0::double precision) +    COALESCE(vida,  0::double precision) +    COALESCE(honorarios_medicos, 0::double  precision) +     COALESCE(farmacia, 0::double precision))/100) as  monto_timbre,   count(id_factura) AS numero_pagos   from   (select     id_factura,   porcentaje_isrl,   porcentaje_timbre,   porcentaje_iva,    anio_siniestro                  from facturas"+alias+" facturas where is_factura is true"
+					+ variable_Condicion
+					+ "LEFT JOIN ( SELECT df.id_factura AS id_facturagc,  sum(df.monto_amparado) AS gastos_clinicos                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 3 and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  gc ON fact.id_factura = gc.id_facturagc                  LEFT JOIN ( SELECT df.id_factura AS id_facturahm,  sum(df.monto_amparado) AS honorarios_medicos                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 6 and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  hm ON fact.id_factura = hm.id_facturahm                  LEFT JOIN ( SELECT df.id_factura AS id_factura_mativa,  sum(df.monto_amparado) AS material_iva                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 9  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  mmi ON fact.id_factura = mmi.id_factura_mativa                  LEFT JOIN ( SELECT df.id_factura AS id_factura_mat,  sum(df.monto_amparado) AS material                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 10  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  mm ON fact.id_factura = mm.id_factura_mat                  LEFT JOIN ( SELECT df.id_factura AS id_factura_odo,  sum(df.monto_amparado) AS odontologia                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 1  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  od ON fact.id_factura = od.id_factura_odo                  LEFT JOIN ( SELECT df.id_factura AS id_factura_fun,  sum(df.monto_amparado) AS funerarios                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 2  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  fu ON fact.id_factura = fu.id_factura_fun                  LEFT JOIN ( SELECT df.id_factura AS id_factura_vida,  sum(df.monto_amparado) AS vida                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 4  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  vid ON fact.id_factura = vid.id_factura_vida                  LEFT JOIN ( SELECT df.id_factura AS  id_factura_farmacia, sum(df.monto_amparado) AS farmacia                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 7  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  farm ON fact.id_factura = farm.id_factura_farmacia                  LEFT JOIN ( SELECT df.id_factura AS id_factura_otros,  sum(df.monto_amparado) AS otros                  FROM detalles_factura"+alias+" df,tipo_gasto tg                  WHERE df.id_tipo_gasto=tg.id_tipo_gasto and  tg.id_tip_gas_gen = 8  and anio_siniestro= "+anio+"  GROUP BY df.id_factura)  otr ON fact.id_factura = otr.id_factura_otros   LEFT JOIN ( SELECT  df.id_factura AS id_factura_iva, sum(df.monto_amparado) AS iva   FROM  detalles_factura"+alias+" df,tipo_gasto tg   WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 11  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) iva ON fact.id_factura =  iva.id_factura_iva";
+			  
+			log.info("sql malo nuevo" + sql);
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			
+			while (rs.next()) {
+				DetallePreOrdenPago pre = new DetallePreOrdenPago();
+				pre.setBase_imponible_timbre(rs.getDouble("monto_liquidado"));
+				pre.setBase_imponible_isrl(rs.getDouble("base_imponible_isrl"));
+				pre.setMonto_Liquidado(rs.getDouble("monto_liquidado"));
+				pre.setMonto_ISRL(rs.getDouble("monto_isrl"));
+				pre.setMonto_Timbre(rs.getDouble("monto_timbre"));
+				pre.setMonto_Iva(rs.getDouble("monto_iva"));
+				pre.setNro_pagos(rs.getInt("numero_pagos"));
+				pre.setMedicinas(rs.getDouble("medicinas"));
+				pre.setMaterial_Medico_IVA(rs.getDouble("material_iva"));
+				pre.setMaterial_Medico(rs.getDouble("material"));
+				pre.setHonorarios_Medicos(rs.getDouble("honorarios_medicos"));
+				pre.setGastos_Clinicos(rs.getDouble("gastos_clinicos"));
+				pre.setOtros_Gastos(rs.getDouble("otros"));
+				pre.setVida(rs.getDouble("vida"));
+				pre.setFunerarios(rs.getDouble("funerarios"));
+				pre.setOdontologia(rs.getDouble("odontologia"));
+				array.add(pre);
+			}
+			return array;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+	}
+	public String verifica(String alias, String anio, String variable) throws SQLException, PersonalNotFoundException, NamingException {
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "select id_siniestro from facturas"+alias+" where anio_siniestro= " + anio + " and pre_orden= '"+variable+"'";
+		log.info("SQL dddd "+sql);
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				return rs.getString("id_siniestro");
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error("error", e);
+			}
+		}
+		return "";
+	}
+	public String verificatipo(int verificapro) throws SQLException, PersonalNotFoundException, NamingException {
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "select id_tipo_tramite from siniestro where id_siniestro="+verificapro;
+		
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				return rs.getString("id_tipo_tramite");
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error("error", e);
+			}
+		}
+		return "";
+	}
+	public DetallePreOrdenPago buscarDetallePreOrden(String cadena_facturas, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		return (DetallePreOrdenPago) this.buscarDetalle(cadena_facturas, anio, true).get(0);
+	}
+	
+	
+	public DetallePreOrdenPago buscarDetallePreOrdenPorCodigo(String codigo, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		return (DetallePreOrdenPago) this.buscarDetalle(codigo, anio, false).get(0);
+	}
+	
+	
+	
+	public ArrayList buscarIvaVacio(String preOrden) throws SQLException, PersonalNotFoundException, NamingException {
+		ArrayList array = new ArrayList();
+		ResultSet rs = null;
+		Statement sentencia = null;
+
+		String sql = "select * from hoja_ruta_preorden";
+		if (preOrden!=null){
+		    sql = sql + " " + preOrden;
+		}
+		
+		log.info("SQL RESUMEN " + sql);
+		
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				PreOrdenPago pre = new PreOrdenPago();
+				pre.setIva(rs.getInt("IVA"));
+				pre.setMtoisr(rs.getInt("MONTO_ISRL"));
+				pre.setMtotmf(rs.getInt("MONTO_TIMBRE"));
+				array.add(pre);
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error("error", e);
+			}
+		}
+		return array;
+	}
+	
+	
+	public PreOrdenPago buscarporIdVacio(String preOrden) throws SQLException, PersonalNotFoundException, NamingException  {
+	 	   return (PreOrdenPago) this.buscarIvaVacio("  WHERE codigo='" + preOrden +"' ").get(0);
+	 }
+	
+	
+	
+	
+	
+	public ArrayList buscarResumen(String preO, int anio) throws SQLException, PersonalNotFoundException, NamingException {
+		ArrayList array = new ArrayList();
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String verificapro="";
+		String verificapro1="";
+		
+String alias="";
+		
+		switch (anio)
+		{
+			case 2010:
+			alias="000";
+			break;
+			case 2011:
+				alias="010";
+				break;
+			case 2012:
+				alias="020";
+				break;
+			case 2013:
+				alias="030";
+				break;
+			case 2014:
+				alias="040";
+				break;
+			case 2015:
+				alias="050";
+				break;
+			case 2016:
+				alias="060";
+				break;
+			case 2017:
+				alias="070";
+				break;
+			case 2018:
+				alias="080";
+				break;
+			case 2019:
+				alias="090";
+				break;
+			case 2020:
+				alias="100";
+				break;
+			case 2021:
+				alias="110";
+				break;
+			case 2022:
+				alias="120";				
+				break;
+			case 2023:
+				alias="130";				
+				break;
+			case 2024:
+				alias="140";				
+				break;
+			case 2025:
+				alias="150";				
+				break;
+			default:
+			break;
+		}
+		String sql="";
+	
+	
+		
+		
+		
+			sql = "select  id_tipo_empleado AS TIPO_EMPLEADO,   sum(mtoliq) as  MONTO_LIQUIDADO,   sum(mtoisr) AS MONTO_ISRL,  sum(porriv) AS MONTO_IVA,   sum(mtotmf) AS MONTO_TIMBRE, sum(monto_tot) as MONTO_IVA_PAGAR from   (select  fact.id_tipo_empleado, (COALESCE(gastos_clinicos, 0::double precision) +     COALESCE(odontologia, 0::double precision)  +   COALESCE(funerarios, 0::double precision) +    COALESCE(otros, 0::double  precision) +    COALESCE(material, 0::double precision) +   COALESCE(material_iva, 0::double precision) +    COALESCE(vida,  0::double precision) +    COALESCE(honorarios_medicos, 0::double  precision) +     COALESCE(farmacia, 0::double precision)  ) as MTOLIQ,      fact.porcentaje_isrl *    (COALESCE(gastos_clinicos, 0::double  precision) +  COALESCE(honorarios_medicos, 0::double  precision)  +   COALESCE(odontologia, 0::double precision)  +    COALESCE(funerarios,  0::double precision) +    COALESCE(otros, 0::double precision) +     COALESCE(material, 0::double precision) +    COALESCE(material_iva,  0::double precision) +    COALESCE(vida, 0::double precision))/100 as  MTOISR,      COALESCE(iva, 0::double precision)as PORRIV,    fact.porcentaje_timbre *    (COALESCE(gastos_clinicos, 0::double  precision) +       COALESCE(odontologia, 0::double precision)  +     COALESCE(funerarios, 0::double precision) +    COALESCE(otros, 0::double  precision) +       COALESCE(material, 0::double precision) +     COALESCE(material_iva, 0::double precision) +    COALESCE(vida,  0::double precision) +         COALESCE(honorarios_medicos, 0::double precision) +      COALESCE(farmacia, 0::double precision) )/100 as MTOTMF,  COALESCE(funerarios,  0::double precision) + COALESCE(material_iva,  0::double precision) + COALESCE(otros, 0::double  precision) as monto_tot         from    (select siniestro.id_tipo_empleado,    porcentaje_isrl,     porcentaje_timbre,    porcentaje_iva,id_factura         from facturas"+alias+" facturas,siniestro"+alias+" siniestro where  facturas.id_siniestro=siniestro.id_siniestro and    is_factura is true  and facturas.anio_siniestro= "+anio+"  and        siniestro.anio_siniestro="+anio+"  and pre_orden= '"+preO+"'   )  fact    LEFT JOIN ( SELECT df.id_factura AS id_facturagc,  sum(df.monto_amparado) AS gastos_clinicos         FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 3  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) gc        ON fact.id_factura = gc.id_facturagc      LEFT JOIN ( SELECT  df.id_factura AS id_facturahm, sum(df.monto_amparado) AS  honorarios_medicos            FROM detalles_factura"+alias+" df,tipo_gasto tg    WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 6 and  anio_siniestro="+anio+"         GROUP BY df.id_factura) hm ON fact.id_factura =  hm.id_facturahm    LEFT JOIN ( SELECT df.id_factura AS  id_factura_mativa, sum(df.monto_amparado) AS material_iva            FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 9 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) mmi          ON fact.id_factura = mmi.id_factura_mativa    LEFT JOIN (  SELECT df.id_factura AS id_factura_mat, sum(df.monto_amparado) AS  material             FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 10  and  anio_siniestro="+anio+"           GROUP BY df.id_factura) mm ON fact.id_factura =  mm.id_factura_mat     LEFT JOIN ( SELECT df.id_factura AS  id_factura_odo, sum(df.monto_amparado) AS odontologia              FROM detalles_factura"+alias+" df,tipo_gasto tg      WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 1 and  anio_siniestro="+anio+"           GROUP BY df.id_factura) od ON fact.id_factura =  od.id_factura_odo    LEFT JOIN ( SELECT df.id_factura AS id_factura_fun,  sum(df.monto_amparado) AS funerarios             FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 2  and  anio_siniestro="+anio+"  GROUP BY df.id_factura) fu          ON fact.id_factura = fu.id_factura_fun     LEFT JOIN ( SELECT  df.id_factura AS id_factura_vida, sum(df.monto_amparado) AS vida             FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 4 and  anio_siniestro="+anio+"            GROUP BY df.id_factura) vid ON fact.id_factura =  vid.id_factura_vida    LEFT JOIN ( SELECT df.id_factura AS  id_factura_farmacia, sum(df.monto_amparado)           AS farmacia     FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 7 and  anio_siniestro="+anio+"            GROUP BY df.id_factura) farm ON fact.id_factura =  farm.id_factura_farmacia    LEFT JOIN ( SELECT df.id_factura AS  id_factura_otros, sum(df.monto_amparado)            AS otros      FROM detalles_factura"+alias+" df,tipo_gasto tg     WHERE df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 8 and  anio_siniestro="+anio+"             GROUP BY df.id_factura) otr ON fact.id_factura =  otr.id_factura_otros   LEFT JOIN ( SELECT df.id_factura AS  id_factura_iva, sum(df.monto_amparado) AS iva               FROM detalles_factura"+alias+" df,tipo_gasto tg    WHERE  df.id_tipo_gasto=tg.id_tipo_gasto and tg.id_tip_gas_gen = 11 and  anio_siniestro="+anio+"  GROUP BY df.id_factura) iva ON fact.id_factura = iva.id_factura_iva)  detalle GROUP BY id_tipo_empleado   ";
+			
+	
+		////
+	
+		////
+		
+		log.info("SQL RESUMEN NUEVO JIMMY" + sql);
+		
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				ResumenPreOrdenPago pre = new ResumenPreOrdenPago();
+				pre.setMONTO_LIQUIDADO(rs.getDouble("MONTO_LIQUIDADO"));
+				pre.setMONTO_ISRL(rs.getDouble("MONTO_ISRL"));
+				pre.setMONTO_IVA(rs.getDouble("MONTO_IVA"));
+				pre.setMONTO_TIMBRE(rs.getDouble("MONTO_TIMBRE"));
+				pre.setTIPO_EMPLEADO(rs.getInt("TIPO_EMPLEADO"));
+				pre.setMONTO_IVA_PAGAR(rs.getDouble("MONTO_IVA_PAGAR"));
+				array.add(pre);
+			}
+			return array;
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+	}
+
+	public String estatusPreOrden(String preOrden) throws SQLException, PersonalNotFoundException, NamingException {
+		String anio = "";
+		anio = "21".concat(preOrden.substring(0, 2));
+		ResultSet rs = null;
+		Statement sentencia = null;
+		String sql = "SELECT " + " ep.descripcion, " + " pop.pre_orden  " + " FROM  " + " public.pre_orden_pago pop, " + " public.estatus_preorden ep " + " WHERE  " + " pop.anio_preordenpago = " + anio +  " AND  pop.pre_orden = '" + preOrden + "'" + " AND ep.id_estatus = pop.id_estatus  " ;
+		log.info("sqlestatusPreOrden " + sql);
+		try {
+			sentencia = cnx.createStatement();
+			rs = sentencia.executeQuery(sql);
+			while (rs.next()) {
+				return rs.getString("descripcion");
+			}
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (sentencia != null)
+					sentencia.close();
+			} catch (SQLException e) {
+				log.error("error", e);
+			}
+		}
+		return "No Disponible";
+	}
+	
+	public void RechazoPreorden(String pre, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE hoja_ruta_preorden SET rechazo=2 where codigo=? and anio_preorden=?  ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			sentencia.setString(1, pre);
+			sentencia.setInt(2, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	public void cambiarEstatusRechazo(String codigo_pre, int estatus, int anio) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=? where pre_orden=? and anio_preordenpago=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			
+			sentencia.setInt(1, estatus);
+			sentencia.setString(2, codigo_pre);
+			sentencia.setInt(3, anio);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	public void buscarporCodigoCambioStatus(int hoja_ruta, int estatus) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE pre_orden_pago SET id_estatus=? where hoja_ruta=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			
+			sentencia.setInt(1, estatus);
+			sentencia.setInt(2, hoja_ruta);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+	
+	public void buscarporCodigoCambioStatusSiniestroAnu(int id_siniestro, int estatus) throws SQLException, ClassNotFoundException, IOException {
+		PreparedStatement sentencia = null;
+		String sql = "UPDATE siniestro SET id_estatus=? , fecha_liquidacion = null where id_siniestro=? ";
+		try {
+			sentencia = cnx.prepareStatement(sql);
+			
+			sentencia.setInt(1, estatus);
+			sentencia.setInt(2, id_siniestro);
+			sentencia.executeUpdate();
+		} finally {
+			if (sentencia != null)
+				sentencia.close();
+		}
+	}
+}

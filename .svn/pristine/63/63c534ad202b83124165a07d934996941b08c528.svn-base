@@ -1,0 +1,116 @@
+package ve.gob.dem.fasdem.action.aps.liquidacion;
+
+import java.sql.SQLException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.DynaActionForm;
+
+import ve.gob.dem.fasdem.bean.Factura;
+import ve.gob.dem.fasdem.bean.Mapa;
+import ve.gob.dem.fasdem.bean.Siniestro;
+import ve.gob.dem.fasdem.ent.Entorno;
+import ve.gob.dem.fasdem.per.PerFactura;
+import ve.gob.dem.fasdem.per.PerSiniestro;
+import ve.gob.dem.framework.exception.PersonalNotFillItems;
+import ve.gob.dem.framework.exception.PersonalNotFoundException;
+import ve.gob.dem.framework.global.GenericAction;
+
+public class EditarFactura extends GenericAction {
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ActionMessages am = new ActionMessages();
+		Entorno ent = new Entorno(Entorno.MOD_APS_LIQUIDAR);
+		PerSiniestro ps = new PerSiniestro();
+		Siniestro s = new Siniestro();
+		Factura f = new Factura();
+		Mapa m = new Mapa();
+		PerFactura pf = new PerFactura();
+
+		DynaActionForm dForm = (DynaActionForm) form;
+		request.setAttribute(KEY_TIPO_TRAMITE, TIPO_TRAMITE_APS);
+		try {
+			validarAction(request, form, ent, am, this.getClass());
+		} catch (PersonalNotFillItems e) {
+			return mapping.findForward(FWD_SUCCESS);
+		}
+		try {
+			m = getDForm(request, form, ent);
+			m.setIdSiniestro(Integer.parseInt(dForm.getString("idSiniestro")));
+			m.setIdFactura(Integer.parseInt(dForm.getString("idFactura")));
+			m.setIssFactura(true);
+			m.setAnioSiniestro(getAnioBusqueda(request));
+			s = ps.search(m);
+			f = pf.search(m);
+			if (!validarFacturaUnica(m)) {
+				am.add(ALERT_AVISOS, new ActionMessage("general.factura.duplicada", String.valueOf(m.getAnioSiniestro())));
+				saveMessages(request, am);
+				return mapping.findForward(FWD_INPUT);
+			}
+			if ((!"0".equals(f.getPreOrden())) && (f.getPreOrden() != null)) {
+				am.add(ALERT_AVISOS, new ActionMessage("update.estatusnoeditable"));
+				saveMessages(request, am);
+				request.setAttribute("id", s.getId());
+				setSiniestros(request, form, m, ent, s);
+				return mapping.findForward(FWD_SUCCESS);
+			} else {
+				pf.updateFactura(m);
+				m.setMontoPresupuestado(m.getMontoFactura());
+				pf.updateTotalFactura(m);
+				am.add(ALERT_VALIDACION, new ActionMessage("update.success"));
+				saveMessages(request, am);
+				setSiniestros(request, form, m, ent, s);
+				return mapping.findForward(FWD_SUCCESS);
+			}
+		} catch (Exception e) {
+			log.error("error ", e);
+			am.add(ALERT_AVISOS, new ActionMessage("update.unsuccess"));
+			setSiniestros(request, form, m, ent, s);
+			saveMessages(request, am);
+		}
+		return mapping.findForward(FWD_SUCCESS);
+	}
+
+	private void setSiniestros(HttpServletRequest request, ActionForm form, Mapa m, Entorno ent, Siniestro s) {
+		PerFactura pf = new PerFactura();
+		request.setAttribute("siniestro", s);
+		try {
+			m = new Mapa();
+			m.setIdSiniestro(s.getId());
+			m.setAnioSiniestro(getAnioBusqueda(request));
+			request.setAttribute("facturas", pf.listSearchIdSiniestro(m));
+		} catch (PersonalNotFoundException e) {
+			request.setAttribute("facturas", null);
+		} catch (Exception e) {
+			log.error("error", e);
+			request.setAttribute("facturas", null);
+		}
+		ent = new Entorno(Entorno.MOD_APS_LIQUIDAR);
+		request.setAttribute(KEY_ENTORNO, ent);
+		request.setAttribute("form_action", "/security/aps/liquidacion/liquidarAps.do");
+		DynaActionForm dForm = (DynaActionForm) form;
+		dForm.set("numeroFactura", " ");
+		dForm.set("controlFactura", " ");
+		dForm.set("porcentajeIva", " ");
+		dForm.set("listIva", " ");
+		dForm.set("fechaFactura", " ");
+		dForm.set("fechaRecepcionFactura", " ");
+		dForm.set("montoFactura", " ");
+	}
+
+	private boolean validarFacturaUnica(Mapa m) throws SQLException {
+		PerFactura pf = new PerFactura();
+		try {
+			pf.validaFactura(m);
+		} catch (PersonalNotFoundException e) {
+			return true;
+		}
+		return false;
+	}
+}

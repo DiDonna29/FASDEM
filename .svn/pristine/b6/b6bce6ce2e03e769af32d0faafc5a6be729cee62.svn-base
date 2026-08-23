@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Cuenta">
+	<typeAlias alias="ObjCuenta" type="ve.gob.dem.fasdem.bean.Cuenta"/>
+	<resultMap id="result_cuenta" class="ObjCuenta">
+		<result property="cedula" column="cedula" jdbcType="character varying"/>
+		<result property="cuenta" column="cuenta" jdbcType="character varying"/>
+		<result property="tipoCuenta" column="tipo_cuenta" jdbcType="character varying"/> 
+		<result property="codBanco" column="cod_banco" jdbcType="character varying"/>
+		<result property="nombreBanco" column="banco" jdbcType="character varying"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT cedula,cuenta,tipo_cuenta,cod_banco,banco
+			
+		FROM
+			view_cuentas_
+	</sql>
+	
+	<select id="search" resultClass="ObjCuenta" resultMap="result_cuenta">
+		<include refid="sql_buscar"/>WHERE cedula::text = #value#  order by fuente asc LIMIT 1</select>
+</sqlMap>

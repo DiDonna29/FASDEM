@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Recipe">
+	<typeAlias alias="ObjRecipe" type="ve.gob.dem.fasdem.bean.Recipe"/>
+	<resultMap id="result_recipe" class="ObjRecipe">
+		<result property="idConsulta" column="consulta" jdbcType="NUMBER"/>
+		<result property="medicamentos" column="recipe" select="Medicamento.searchRecipes"/>
+		<result property="idRecipe" column="recipe" jdbcType="NUMBER"/>
+		<result property="observaciones" column="observaciones" jdbcType="VARCHAR"/>
+		<result property="especialidad" column="especialidad" jdbcType="VARCHAR"/>
+		<result property="fechaRegistro" column="f_registro" jdbcType="DATE"/>
+	</resultMap>
+	<sql id="sql_buscar">SELECT consulta, recipe, observaciones, especialidad, f_registro FROM recipes </sql>
+	<select id="searchConsulta" resultClass="ObjRecipe" resultMap="result_recipe">
+		<include refid="sql_buscar"/>
+		WHERE consulta = #value# 
+	</select>
+</sqlMap>

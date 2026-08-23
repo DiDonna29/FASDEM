@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DetalleFactura">
+	<typeAlias alias="ObjDetalleFactura" type="ve.gob.dem.fasdem.bean.DetalleFactura"/>
+	<resultMap id="result_all" class="ObjDetalleFactura">
+		<result property="id" column="id_detalle" jdbcType="integer"/>
+		<result property="idFactura" column="id_factura" jdbcType="integer"/>
+		<result property="tipoGasto" column="id_tipo_gasto" select="TipoGasto.search"/>
+		<result property="monto" column="monto_amparado" nullValue="0.0" jdbcType="double"/>
+		<result property="anioSiniestro" column="anio_siniestro" jdbcType="numeric"/>
+	</resultMap>
+	<sql id="sql_buscar">
+		SELECT 
+  			df.id_detalle, 
+  			df.id_factura, 
+  			df.id_tipo_gasto, 
+  			df.monto_amparado, 
+  			df.anio_siniestro
+		FROM 
+  			public.detalles_factura df
+			
+	</sql>
+	<select id="search" resultClass="ObjDetalleFactura" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE
+			anio_siniestro=#anioSiniestro# AND
+			id_detalle= #idDetalle#
+	</select>
+	<select id="searchByFactura" resultClass="ObjDetalleFactura" resultMap="result_all">
+		/*NO LOAD BALANCE*/
+		<include refid="sql_buscar"/>
+		WHERE
+			anio_siniestro=#anioSiniestro# AND
+			id_factura= #idFactura# AND
+			id_tipo_gasto != 34
+
+		</select>
+		<select id="searchByFacturaIva" resultClass="ObjDetalleFactura" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE
+			anio_siniestro=#anioSiniestro# AND
+			id_factura= #idFactura# 
+
+		</select>
+	
+	<insert id="insert" parameterClass="map">
+		INSERT INTO detalles_factura
+			(anio_siniestro,id_factura, 	id_tipo_gasto, 	monto_amparado,monto_no_amparado, 	monto_presupuestado, monto_negociado)
+		VALUES
+			(#anioSiniestro#,#idFactura#,			#idTipoGasto#,		#monto#,		#monto#,	#monto#, #monto#)
+			
+		<selectKey resultClass="int" type="post" keyProperty="id">SELECT currval('detalles_factura_id_detalle_seq')</selectKey>
+	</insert>
+	<update id="updateDetalleFactura" parameterClass="map">
+		UPDATE 
+			detalles_factura 
+		SET 
+			monto_amparado=#montoAmparado#,
+			monto_no_amparado=#montoNoAmparado#,
+			monto_presupuestado=#montoPresupuestado#,
+			monto_negociado=#montoNegociado# 
+		WHERE 
+			id_detalle=#idDetalle#
+	</update>
+
+	<delete id="delete">
+		DELETE FROM 
+			detalles_factura
+ 		WHERE 
+ 			id_detalle = #value#
+	</delete>	
+	
+	
+	
+	<delete id="deleteIva" parameterClass="map">
+	DELETE FROM 
+		detalles_factura
+	WHERE 
+		id_factura = #idFactura# AND
+		id_tipo_gasto = #idTipoGasto#
+	</delete>	
+	
+	
+	<select id="searchByTipoConcepto" resultClass="ObjDetalleFactura" resultMap="result_all">
+		<include refid="sql_buscar"/>
+		WHERE
+			anio_siniestro=#anioSiniestro# AND
+			id_detalle= #idDetalle#
+	</select>
+	
+</sqlMap>
